@@ -1,10 +1,12 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Briefcase, Users, Star, Building } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
+  const { user, signOut } = useAuth();
+
   const stats = [
     { label: "Active Jobs", value: "150+", icon: Briefcase },
     { label: "Registered Candidates", value: "5000+", icon: Users },
@@ -26,9 +28,20 @@ const Index = () => {
               <Link to="/jobs">
                 <Button variant="ghost">Browse Jobs</Button>
               </Link>
-              <Link to="/admin">
-                <Button variant="outline">Admin Portal</Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/admin">
+                    <Button variant="outline">Admin Portal</Button>
+                  </Link>
+                  <Button variant="ghost" onClick={signOut}>
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="outline">Sign In</Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -50,11 +63,19 @@ const Index = () => {
                 Explore Jobs
               </Button>
             </Link>
-            <Link to="/admin">
-              <Button size="lg" variant="outline" className="px-8 py-3">
-                Post a Job
-              </Button>
-            </Link>
+            {user ? (
+              <Link to="/admin">
+                <Button size="lg" variant="outline" className="px-8 py-3">
+                  Post a Job
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/auth">
+                <Button size="lg" variant="outline" className="px-8 py-3">
+                  Join Now
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </section>

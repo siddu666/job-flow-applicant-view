@@ -7,68 +7,32 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, MapPin, Clock, DollarSign, Search } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useJobs } from "@/hooks/useJobs";
 
 const Jobs = () => {
+  const { user, signOut } = useAuth();
+  const { data: jobs = [], isLoading } = useJobs();
   const [searchTerm, setSearchTerm] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
 
-  const jobs = [
-    {
-      id: 1,
-      title: "Senior Frontend Developer",
-      company: "TechCorp Inc.",
-      location: "San Francisco, CA",
-      type: "Full-time",
-      salary: "$120k - $150k",
-      skills: ["React", "TypeScript", "Tailwind CSS"],
-      postedDate: "2 days ago",
-      description: "We're looking for a senior frontend developer to join our growing team...",
-    },
-    {
-      id: 2,
-      title: "UX/UI Designer",
-      company: "Design Studio",
-      location: "New York, NY",
-      type: "Full-time",
-      salary: "$80k - $110k",
-      skills: ["Figma", "Adobe Creative Suite", "User Research"],
-      postedDate: "1 week ago",
-      description: "Join our creative team to design beautiful and intuitive user experiences...",
-    },
-    {
-      id: 3,
-      title: "Backend Engineer",
-      company: "DataFlow Systems",
-      location: "Remote",
-      type: "Contract",
-      salary: "$100k - $130k",
-      skills: ["Node.js", "PostgreSQL", "AWS"],
-      postedDate: "3 days ago",
-      description: "Build scalable backend systems for our data processing platform...",
-    },
-    {
-      id: 4,
-      title: "Product Manager",
-      company: "InnovateLabs",
-      location: "Austin, TX",
-      type: "Full-time",
-      salary: "$110k - $140k",
-      skills: ["Product Strategy", "Agile", "Analytics"],
-      postedDate: "5 days ago",
-      description: "Lead product development and strategy for our flagship products...",
-    },
-  ];
-
   const filteredJobs = jobs.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()));
+                         job.company.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesLocation = !locationFilter || job.location.includes(locationFilter);
     const matchesType = !typeFilter || job.type === typeFilter;
     
     return matchesSearch && matchesLocation && matchesType;
   });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading jobs...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -81,9 +45,20 @@ const Jobs = () => {
               <span className="text-xl font-bold text-gray-900">CareerHub</span>
             </Link>
             <div className="flex items-center space-x-4">
-              <Link to="/admin">
-                <Button variant="outline">Admin Portal</Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/admin">
+                    <Button variant="outline">Admin Portal</Button>
+                  </Link>
+                  <Button variant="ghost" onClick={signOut}>
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="outline">Sign In</Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -140,9 +115,15 @@ const Jobs = () => {
                       {job.company}
                     </CardDescription>
                   </div>
-                  <Link to={`/apply/${job.id}`}>
-                    <Button className="bg-blue-600 hover:bg-blue-700">Apply Now</Button>
-                  </Link>
+                  {user ? (
+                    <Link to={`/apply/${job.id}`}>
+                      <Button className="bg-blue-600 hover:bg-blue-700">Apply Now</Button>
+                    </Link>
+                  ) : (
+                    <Link to="/auth">
+                      <Button className="bg-blue-600 hover:bg-blue-700">Sign In to Apply</Button>
+                    </Link>
+                  )}
                 </div>
               </CardHeader>
               <CardContent>
@@ -155,20 +136,17 @@ const Jobs = () => {
                     <Clock className="h-4 w-4" />
                     {job.type}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <DollarSign className="h-4 w-4" />
-                    {job.salary}
+                  {job.salary_range && (
+                    <div className="flex items-center gap-1">
+                      <DollarSign className="h-4 w-4" />
+                      {job.salary_range}
+                    </div>
+                  )}
+                  <div className="ml-auto text-gray-500">
+                    {new Date(job.created_at).toLocaleDateString()}
                   </div>
-                  <div className="ml-auto text-gray-500">{job.postedDate}</div>
                 </div>
                 <p className="text-gray-700 mb-4">{job.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {job.skills.map((skill, index) => (
-                    <Badge key={index} variant="secondary" className="bg-blue-50 text-blue-700">
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
               </CardContent>
             </Card>
           ))}
