@@ -1,16 +1,17 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Plus, Users, Eye, Download } from "lucide-react";
+import { Building, Plus, Users, Eye, Download } from "lucide-react";
 import JobPostForm from "@/components/JobPostForm";
 import ApplicationReview from "@/components/ApplicationReview";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const { signOut } = useAuth();
 
   const stats = {
     totalJobs: 12,
@@ -23,23 +24,23 @@ const Admin = () => {
     {
       id: 1,
       title: "Senior Frontend Developer",
-      company: "TechCorp Inc.",
+      location: "Stockholm",
       status: "Active",
       applications: 15,
       postedDate: "2024-01-15",
     },
     {
       id: 2,
-      title: "UX/UI Designer",
-      company: "Design Studio",
+      title: "Cloud Solutions Architect",
+      location: "Gothenburg",
       status: "Active",
       applications: 8,
       postedDate: "2024-01-12",
     },
     {
       id: 3,
-      title: "Backend Engineer",
-      company: "DataFlow Systems",
+      title: "DevOps Engineer",
+      location: "Malmö",
       status: "Closed",
       applications: 22,
       postedDate: "2024-01-10",
@@ -50,58 +51,67 @@ const Admin = () => {
     {
       id: 1,
       jobTitle: "Senior Frontend Developer",
-      applicantName: "John Doe",
-      email: "john.doe@email.com",
+      applicantName: "Erik Andersson",
+      email: "erik.andersson@email.com",
       appliedDate: "2024-01-16",
       status: "Pending",
       skills: ["React", "TypeScript", "Node.js"],
     },
     {
       id: 2,
-      jobTitle: "UX/UI Designer",
-      applicantName: "Jane Smith",
-      email: "jane.smith@email.com",
+      jobTitle: "Cloud Solutions Architect",
+      applicantName: "Anna Lindström",
+      email: "anna.lindstrom@email.com",
       appliedDate: "2024-01-15",
       status: "Reviewed",
-      skills: ["Figma", "Adobe XD", "User Research"],
+      skills: ["AWS", "Azure", "Docker"],
     },
     {
       id: 3,
-      jobTitle: "Backend Engineer",
-      applicantName: "Mike Johnson",
-      email: "mike.johnson@email.com",
+      jobTitle: "DevOps Engineer",
+      applicantName: "Lars Johansson",
+      email: "lars.johansson@email.com",
       appliedDate: "2024-01-14",
       status: "Pending",
-      skills: ["Python", "PostgreSQL", "AWS"],
+      skills: ["Kubernetes", "CI/CD", "Python"],
     },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200">
+      <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link to="/" className="flex items-center space-x-2">
-              <Briefcase className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">CareerHub Admin</span>
+            <Link to="/" className="flex items-center space-x-3">
+              <Building className="h-8 w-8 text-blue-600" />
+              <div>
+                <span className="text-xl font-bold text-gray-900">Justera Group AB</span>
+                <p className="text-xs text-gray-600">Admin Portal</p>
+              </div>
             </Link>
             <div className="flex items-center space-x-4">
               <Link to="/jobs">
                 <Button variant="outline">View Jobs</Button>
               </Link>
+              <Button variant="ghost" onClick={signOut}>
+                Sign Out
+              </Button>
             </div>
           </div>
         </div>
       </nav>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">IT Recruitment Dashboard</h1>
+          <p className="text-gray-600">Manage IT positions and applications for Justera Group AB</p>
+        </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="post-job">Post Job</TabsTrigger>
+            <TabsTrigger value="post-job">Post IT Position</TabsTrigger>
             <TabsTrigger value="applications">Applications</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
@@ -114,10 +124,10 @@ const Admin = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Total Jobs</p>
+                      <p className="text-sm font-medium text-gray-600">Total IT Positions</p>
                       <p className="text-3xl font-bold text-gray-900">{stats.totalJobs}</p>
                     </div>
-                    <Briefcase className="h-8 w-8 text-blue-600" />
+                    <Building className="h-8 w-8 text-blue-600" />
                   </div>
                 </CardContent>
               </Card>
@@ -125,7 +135,7 @@ const Admin = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Active Jobs</p>
+                      <p className="text-sm font-medium text-gray-600">Active IT Positions</p>
                       <p className="text-3xl font-bold text-green-600">{stats.activeJobs}</p>
                     </div>
                     <Plus className="h-8 w-8 text-green-600" />
@@ -136,7 +146,7 @@ const Admin = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Total Applications</p>
+                      <p className="text-sm font-medium text-gray-600">Total IT Applications</p>
                       <p className="text-3xl font-bold text-blue-600">{stats.totalApplications}</p>
                     </div>
                     <Users className="h-8 w-8 text-blue-600" />
@@ -147,7 +157,7 @@ const Admin = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Pending Reviews</p>
+                      <p className="text-sm font-medium text-gray-600">Pending IT Reviews</p>
                       <p className="text-3xl font-bold text-orange-600">{stats.pendingReviews}</p>
                     </div>
                     <Eye className="h-8 w-8 text-orange-600" />
@@ -161,8 +171,8 @@ const Admin = () => {
               {/* Recent Jobs */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Recent Job Postings</CardTitle>
-                  <CardDescription>Latest jobs posted on the platform</CardDescription>
+                  <CardTitle>Recent IT Job Postings</CardTitle>
+                  <CardDescription>Latest IT positions posted at Justera Group AB</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -170,7 +180,7 @@ const Admin = () => {
                       <div key={job.id} className="flex items-center justify-between p-4 border rounded-lg">
                         <div>
                           <h3 className="font-medium">{job.title}</h3>
-                          <p className="text-sm text-gray-600">{job.company}</p>
+                          <p className="text-sm text-gray-600">{job.location}, Sweden</p>
                           <p className="text-xs text-gray-500">Posted: {job.postedDate}</p>
                         </div>
                         <div className="text-right">
@@ -189,7 +199,7 @@ const Admin = () => {
               <Card>
                 <CardHeader>
                   <CardTitle>Recent Applications</CardTitle>
-                  <CardDescription>Latest job applications received</CardDescription>
+                  <CardDescription>Latest IT job applications received</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -239,17 +249,17 @@ const Admin = () => {
           <TabsContent value="analytics">
             <Card>
               <CardHeader>
-                <CardTitle>Analytics & Reports</CardTitle>
+                <CardTitle>IT Recruitment Analytics & Reports</CardTitle>
                 <CardDescription>
-                  Detailed analytics and reporting features coming soon...
+                  Detailed analytics for IT positions and recruitment metrics
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-12">
-                  <p className="text-gray-500 mb-4">Advanced analytics dashboard will be available soon.</p>
+                  <p className="text-gray-500 mb-4">Advanced IT recruitment analytics dashboard will be available soon.</p>
                   <Button variant="outline" disabled>
                     <Download className="h-4 w-4 mr-2" />
-                    Generate Report
+                    Generate IT Recruitment Report
                   </Button>
                 </div>
               </CardContent>
