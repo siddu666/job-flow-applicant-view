@@ -4,6 +4,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/compo
 import {Briefcase, Users, Star, Building, Phone, Mail, MapPin, CheckCircle} from "lucide-react";
 import {Link} from "react-router-dom";
 import {useAuth} from "@/contexts/AuthContext.tsx";
+import {supabase} from "@/integrations/supabase/client";
 
 
 const Index = () => {
@@ -14,6 +15,31 @@ const Index = () => {
     });
 
     const {user, signOut} = useAuth();
+    const [profile, setProfile] = useState(null);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            if (user) {
+                try {
+                    const { data, error } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', user.id)
+                        .single();
+                    
+                    if (!error && data) {
+                        setProfile(data);
+                    }
+                } catch (error) {
+                    console.error('Error fetching profile:', error);
+                }
+            } else {
+                setProfile(null);
+            }
+        };
+
+        fetchProfile();
+    }, [user]);
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
@@ -41,33 +67,35 @@ const Index = () => {
                             <span className="text-xl font-bold">Justera Group AB</span>
                         </div>
                         <div className="flex items-center space-x-4">
-                            <Link to="/jobs">
-                                <Button variant="ghost" className="text-white hover:bg-blue-700 transition-colors">
-                                    Browse Jobs
-                                </Button>
-                            </Link>
-                            {user ? (
-                                <>
-                                    {
-                                        user.id == "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858" ? (
-                                            <Link to="/admin">
-                                                <Button variant="outline">Admin Portal</Button>
-                                            </Link>) : <Button variant="ghost" onClick={signOut}>
-                                            Sign Out
-                                        </Button>
-                                    }
-
-                                </>
-                            ) : (
-                                <Link to="/auth">
-                                    <Button
-                                        variant="outline"
-                                        className="text-blue-600 bg-white hover:bg-blue-700 hover:text-white transition-colors"
-                                    >
-                                        Sign In
-                                    </Button>
-                                </Link>
-                            )}
+              {user ? (
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm text-gray-600">
+                    Welcome, {user.email}
+                  </span>
+                  {profile?.role === 'applicant' && (
+                    <Link to="/profile">
+                      <Button variant="ghost">My Profile</Button>
+                    </Link>
+                  )}
+                  {(profile?.role === 'admin' || profile?.role === 'hr' || profile?.role === 'hiring_manager') && (
+                    <Link to="/admin">
+                      <Button variant="ghost">Admin Panel</Button>
+                    </Link>
+                  )}
+                  <Button variant="ghost" onClick={() => signOut()}>
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-4">
+                  <Link to="/auth">
+                    <Button variant="ghost">Sign In</Button>
+                  </Link>
+                  <Link to="/jobs">
+                    <Button>Browse Jobs</Button>
+                  </Link>
+                </div>
+              )}
                         </div>
                     </div>
                 </div>

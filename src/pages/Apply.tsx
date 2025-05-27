@@ -11,15 +11,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, Upload, MapPin, Clock, DollarSign } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import {supabase} from "@/integrations/supabase/client.ts";
-import {useAuth} from "@/contexts/AuthContext.tsx";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Apply = () => {
   const { jobId } = useParams();
   const { toast } = useToast();
   const auth = useAuth();
-  const applicantId = auth?.user.id;
-  
+  const applicantId = auth?.user?.id;
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -45,7 +45,7 @@ const Apply = () => {
     company: "TechCorp Inc.",
     location: "San Francisco, CA",
     type: "Full-time",
-    salary: "$120k - $150k",
+    salary_range: "$120k - $150k",
     skills: ["React", "TypeScript", "Tailwind CSS"],
     description: "We're looking for a senior frontend developer to join our growing team...",
   };
@@ -85,47 +85,22 @@ const Apply = () => {
     }
 
     try {
-      /*const { data: storageData, error: storageError } = await supabase.storage
-          .from("applications")
-          .upload(`cvs/${Date.now()}-${cvFile.name}`, cvFile);
+      const values = {
+        applicant_id: applicantId,
+        job_id: jobId,
+        full_name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        phone: formData.phone || null,
+        availability: formData.availability || null,
+        cover_letter: formData.coverLetter || null,
+        skills: formData.skills.length > 0 ? formData.skills : null,
+        cv_url: 'https://example.com/cv-placeholder',
+        status: "pending",
+      };
 
-      if (storageError || !storageData) {
-        throw new Error("CV upload failed.");
-      } */
+      console.log("Application values:", values);
 
-      // ✅ FIX: Get public URL
-      /*const { data: publicUrlData } = supabase
-          .storage
-          .from("applications")
-          .getPublicUrl(storageData.path);*/
-
-      //const publicURL = publicUrlData.publicUrl;
-
-      let values = [
-        {
-          applicant_id: applicantId,
-          job_id: job.id,
-          full_name: `${formData.firstName} ${formData.lastName}`,
-          email: formData.email,
-          phone: formData.phone || null,
-          //location: formData.location || null,
-          //experience: formData.experience || null,
-          //expected_salary: formData.expectedSalary || null,
-          availability: formData.availability || null,
-          //portfolio_url: formData.portfolioUrl || null,
-          //linkedin_url: formData.linkedinUrl || null,
-          //github_url: formData.githubUrl || null,
-          cover_letter: formData.coverLetter || null,
-          skills: formData.skills.length > 0 ? formData.skills : null,
-          //cv_url: null,
-          cv_url: 'https://ssup.uidai.gov.in/web/guest/aadhaar-home',
-          status: "pending",
-        },
-      ];
-      
-      console.log("values", values);
-      
-      const { error: insertError } = await supabase.from("applications").insert(values);
+      const { error: insertError } = await supabase.from("applications").insert([values]);
 
       if (insertError) throw insertError;
 
@@ -168,7 +143,7 @@ const Apply = () => {
           <CardHeader>
             <CardTitle className="text-2xl">{job.title}</CardTitle>
             <CardDescription className="text-lg font-medium text-gray-900">
-              {job.company}
+              Justera Group AB
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -181,18 +156,22 @@ const Apply = () => {
                 <Clock className="h-4 w-4" />
                 {job.type}
               </div>
-              <div className="flex items-center gap-1">
-                <DollarSign className="h-4 w-4" />
-                {job.salary}
+              {job.salary_range && (
+                <div className="flex items-center gap-1">
+                  <DollarSign className="h-4 w-4" />
+                  {job.salary_range}
+                </div>
+              )}
+            </div>
+            {job.skills && job.skills.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {job.skills.map((skill, index) => (
+                  <Badge key={index} variant="secondary" className="bg-blue-50 text-blue-700">
+                    {skill}
+                  </Badge>
+                ))}
               </div>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {job.skills.map((skill, index) => (
-                <Badge key={index} variant="secondary" className="bg-blue-50 text-blue-700">
-                  {skill}
-                </Badge>
-              ))}
-            </div>
+            )}
           </CardContent>
         </Card>
 

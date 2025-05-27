@@ -43,35 +43,40 @@ const Jobs = () => {
       <div className="min-h-screen bg-gray-50">
         {/* Navigation */}
         <nav className="bg-white border-b border-gray-200 shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <Link to="/" className="flex items-center space-x-3">
-                <Building className="h-8 w-8 text-blue-600" />
-                <div>
-                  <span className="text-xl font-bold text-gray-900">Justera Group AB</span>
-                  <p className="text-xs text-gray-600">IT Careers in Sweden</p>
-                </div>
-              </Link>
-              <div className="flex items-center space-x-4">
-                {user ? (
-                    <>
-                      {user.id == "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858" && (
-                          <Link to="/admin">
-                            <Button variant="outline">Admin Portal</Button>
-                          </Link>
-                      )}
-                      <Button variant="ghost" onClick={signOut}>
-                        Sign Out
-                      </Button>
-                    </>
-                ) : (
-                    <Link to="/auth">
-                      <Button variant="outline">Sign In</Button>
-                    </Link>
-                )}
+          
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <Link to="/" className="flex items-center space-x-3">
+              <Building className="h-8 w-8 text-blue-600" />
+              <div>
+                <span className="text-xl font-bold text-gray-900">Justera Group AB</span>
+                <p className="text-xs text-gray-600">IT Careers in Sweden</p>
               </div>
+            </Link>
+            <div className="flex items-center space-x-4">
+              {user ? (
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm text-gray-600">Welcome, {user.email}</span>
+                  {/* <Link to="/profile">
+                      <Button variant="ghost">My Profile</Button>
+                    </Link> */}
+                  {user.id == "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858" && (
+                    <Link to="/admin">
+                      <Button variant="ghost">Admin Panel</Button>
+                    </Link>
+                  )}
+                  <Button variant="ghost" onClick={signOut}>
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="outline">Sign In</Button>
+                </Link>
+              )}
             </div>
           </div>
+        </div>
         </nav>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
