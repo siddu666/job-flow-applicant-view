@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
   user: User | null;
@@ -28,12 +29,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Handle auth tokens in URL (from email confirmation)
+    const handleAuthCallback = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error('Error getting session:', error);
+      }
+      
+      // Clear URL fragments after processing
+      if (window.location.hash) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    };
+
+    handleAuthCallback();
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth event:', event, session);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // Redirect to home after successful email confirmation
+        if (event === 'SIGNED_IN' && session && window.location.hash) {
+          window.location.href = '/';
+        }
       }
     );
 
@@ -55,6 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         data: {
           full_name: fullName,
         },
+        emailRedirectTo: `${window.location.origin}/auth`,
       },
     });
     return { data, error };
