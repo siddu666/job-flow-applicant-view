@@ -11,10 +11,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, Upload, MapPin, Clock, DollarSign } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {supabase} from "@/integrations/supabase/client.ts";
+import {useAuth} from "@/contexts/AuthContext.tsx";
 
 const Apply = () => {
   const { jobId } = useParams();
   const { toast } = useToast();
+  const auth = useAuth();
+  const applicantId = auth?.user.id;
   
   const [formData, setFormData] = useState({
     firstName: "",
@@ -68,10 +72,9 @@ const Apply = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Basic validation
+
     if (!formData.firstName || !formData.lastName || !formData.email || !cvFile) {
       toast({
         title: "Missing Information",
@@ -81,13 +84,65 @@ const Apply = () => {
       return;
     }
 
-    // Simulate application submission
-    toast({
-      title: "Application Submitted!",
-      description: "Your application has been successfully submitted. We'll be in touch soon.",
-    });
+    try {
+      /*const { data: storageData, error: storageError } = await supabase.storage
+          .from("applications")
+          .upload(`cvs/${Date.now()}-${cvFile.name}`, cvFile);
 
-    console.log("Application submitted:", { ...formData, cvFile });
+      if (storageError || !storageData) {
+        throw new Error("CV upload failed.");
+      } */
+
+      // ✅ FIX: Get public URL
+      /*const { data: publicUrlData } = supabase
+          .storage
+          .from("applications")
+          .getPublicUrl(storageData.path);*/
+
+      //const publicURL = publicUrlData.publicUrl;
+
+      let values = [
+        {
+          applicant_id: applicantId,
+          job_id: job.id,
+          full_name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          phone: formData.phone || null,
+          //location: formData.location || null,
+          //experience: formData.experience || null,
+          //expected_salary: formData.expectedSalary || null,
+          availability: formData.availability || null,
+          //portfolio_url: formData.portfolioUrl || null,
+          //linkedin_url: formData.linkedinUrl || null,
+          //github_url: formData.githubUrl || null,
+          cover_letter: formData.coverLetter || null,
+          skills: formData.skills.length > 0 ? formData.skills : null,
+          //cv_url: null,
+          cv_url: 'https://ssup.uidai.gov.in/web/guest/aadhaar-home',
+          status: "pending",
+        },
+      ];
+      
+      console.log("values", values);
+      
+      const { error: insertError } = await supabase.from("applications").insert(values);
+
+      if (insertError) throw insertError;
+
+      toast({
+        title: "Application Submitted!",
+        description: "Your application was successfully submitted.",
+      });
+
+      console.log("Application data saved to Supabase.");
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Submission Failed",
+        description: "There was an error submitting your application.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -98,7 +153,7 @@ const Apply = () => {
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center space-x-2">
               <Briefcase className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">CareerHub</span>
+              <span className="text-xl font-bold text-gray-900">Justera Group AB</span>
             </Link>
             <Link to="/jobs">
               <Button variant="outline">Back to Jobs</Button>
