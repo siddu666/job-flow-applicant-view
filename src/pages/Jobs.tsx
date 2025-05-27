@@ -56,7 +56,7 @@ const Jobs = () => {
             <div className="flex items-center space-x-4">
               {user ? (
                 <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-600">Welcome, {user.email}</span>
+                  <span className="text-sm text-white-600">Welcome, {user.email}</span>
                   {/* <Link to="/profile">
                       <Button variant="ghost">My Profile</Button>
                     </Link> */}

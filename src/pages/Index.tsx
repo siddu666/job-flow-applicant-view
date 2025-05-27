@@ -21,12 +21,12 @@ const Index = () => {
         const fetchProfile = async () => {
             if (user) {
                 try {
-                    const { data, error } = await supabase
+                    const {data, error} = await supabase
                         .from('profiles')
                         .select('*')
                         .eq('id', user.id)
                         .single();
-                    
+
                     if (!error && data) {
                         setProfile(data);
                     }
@@ -67,35 +67,37 @@ const Index = () => {
                             <span className="text-xl font-bold">Justera Group AB</span>
                         </div>
                         <div className="flex items-center space-x-4">
-              {user ? (
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-600">
+                            {user ? (
+                                <div className="flex items-center space-x-4">
+                                    <div className="flex items-center space-x-4">
+                                        <Link to="/jobs">
+                                            <Button>Looking for a Job</Button>
+                                        </Link>
+                                    </div>
+                                    <span className="text-sm text-white-600">
                     Welcome, {user.email}
                   </span>
-                  {profile?.role === 'applicant' && (
-                    <Link to="/profile">
-                      <Button variant="ghost">My Profile</Button>
-                    </Link>
-                  )}
-                  {(profile?.role === 'admin' || profile?.role === 'hr' || profile?.role === 'hiring_manager') && (
-                    <Link to="/admin">
-                      <Button variant="ghost">Admin Panel</Button>
-                    </Link>
-                  )}
-                  <Button variant="ghost" onClick={() => signOut()}>
-                    Sign Out
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-4">
-                  <Link to="/auth">
-                    <Button variant="ghost">Sign In</Button>
-                  </Link>
-                  <Link to="/jobs">
-                    <Button>Browse Jobs</Button>
-                  </Link>
-                </div>
-              )}
+                                    {profile?.role === 'applicant' && (
+                                        <Link to="/profile">
+                                            <Button variant="ghost">My Profile</Button>
+                                        </Link>
+                                    )}
+                                    {(profile?.role === 'admin' || profile?.role === 'hr' || profile?.role === 'hiring_manager') && (
+                                        <Link to="/admin">
+                                            <Button variant="ghost">Admin Panel</Button>
+                                        </Link>
+                                    )}
+                                    <Button variant="ghost" onClick={() => signOut()}>
+                                        Sign Out
+                                    </Button>
+                                </div>
+                            ) : (
+                                <div className="flex items-center space-x-4">
+                                    <Link to="/jobs">
+                                        <Button>Looking for a Job</Button>
+                                    </Link>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -115,14 +117,6 @@ const Index = () => {
                         At Justera Group AB, we provide cutting-edge IT solutions to help businesses thrive in the
                         digital age.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                        <Link to="/jobs">
-                            <Button size="lg"
-                                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                                If you are looking for IT Career at Justera Group AB
-                            </Button>
-                        </Link>
-                    </div>
                 </div>
             </section>
 

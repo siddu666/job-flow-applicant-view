@@ -43,7 +43,7 @@ const Admin = () => {
           <div className="flex justify-between items-center h-16">
             <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-white-600">
                 Welcome, {profile?.full_name || user.email}
               </span>
               <Button
