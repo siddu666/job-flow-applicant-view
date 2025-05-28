@@ -1,12 +1,32 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 
-export type Job = Tables<'jobs'>;
-export type JobInsert = TablesInsert<'jobs'>;
-export type JobUpdate = TablesUpdate<'jobs'>;
+// Simple type definitions to avoid recursive type issues
+export type Job = {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  type: string;
+  salary_range?: string;
+  description: string;
+  requirements: string;
+  experience_level?: string;
+  skills?: string[];
+  posted_by: string;
+  created_at: string;
+  updated_at?: string;
+};
+
+export type JobInsert = Omit<Job, 'id' | 'created_at' | 'updated_at'> & {
+  id?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type JobUpdate = Partial<JobInsert>;
 
 export const useJobs = (filters?: {
   status?: string;
@@ -46,7 +66,7 @@ export const useJobs = (filters?: {
           throw new Error(`Failed to fetch jobs: ${error.message}`);
         }
 
-        return data || [];
+        return (data || []) as Job[];
       } catch (error) {
         console.error("Unexpected error fetching jobs:", error);
         throw error;
@@ -95,7 +115,7 @@ export const usePublishedJobs = (filters?: {
           throw new Error(`Failed to fetch published jobs: ${error.message}`);
         }
 
-        return data || [];
+        return (data || []) as Job[];
       } catch (error) {
         console.error("Unexpected error fetching published jobs:", error);
         throw error;
@@ -122,7 +142,7 @@ export const useCreateJob = () => {
           throw new Error(`Failed to create job: ${error.message}`);
         }
 
-        return data;
+        return data as Job;
       } catch (error) {
         console.error("Unexpected error creating job:", error);
         throw error;
@@ -150,7 +170,7 @@ export const useUpdateJob = () => {
       updates: JobUpdate;
     }) => {
       try {
-        const updateData: JobUpdate = {
+        const updateData = {
           ...updates,
           updated_at: new Date().toISOString(),
         };
@@ -167,7 +187,7 @@ export const useUpdateJob = () => {
           throw new Error(`Failed to update job: ${error.message}`);
         }
 
-        return data;
+        return data as Job;
       } catch (error) {
         console.error("Unexpected error updating job:", error);
         throw error;
@@ -232,7 +252,7 @@ export const useJobById = (id: string) => {
           throw new Error(`Failed to fetch job: ${error.message}`);
         }
 
-        return data;
+        return data as Job;
       } catch (error) {
         console.error("Unexpected error fetching job:", error);
         throw error;
