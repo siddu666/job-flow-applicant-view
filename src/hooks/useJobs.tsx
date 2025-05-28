@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -66,32 +65,28 @@ interface PublishedJobFilters {
 
 const fetchJobs = async (filters?: JobFilters): Promise<Job[]> => {
   try {
-    // Build query object first, then apply filters
-    const queryBuilder = supabase
+    let query = supabase
       .from("jobs")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false }) as any;
 
-    // Apply filters in a simpler way to avoid complex type inference
-    let finalQuery = queryBuilder;
-    
     if (filters?.status) {
-      finalQuery = finalQuery.eq("status", filters.status);
+      query = query.eq("status", filters.status);
     }
 
     if (filters?.location) {
-      finalQuery = finalQuery.ilike("location", `%${filters.location}%`);
+      query = query.ilike("location", `%${filters.location}%`);
     }
 
     if (filters?.type) {
-      finalQuery = finalQuery.eq("type", filters.type);
+      query = query.eq("type", filters.type);
     }
 
     if (filters?.posted_by) {
-      finalQuery = finalQuery.eq("posted_by", filters.posted_by);
+      query = query.eq("posted_by", filters.posted_by);
     }
 
-    const { data, error } = await finalQuery;
+    const { data, error } = await query;
 
     if (error) {
       console.error("Error fetching jobs:", error);
@@ -116,30 +111,28 @@ export const useJobs = (filters?: JobFilters) => {
 
 const fetchPublishedJobs = async (filters?: PublishedJobFilters): Promise<Job[]> => {
   try {
-    const queryBuilder = supabase
+    let query = supabase
       .from("jobs")
       .select("*")
-      .order("created_at", { ascending: false });
-
-    let finalQuery = queryBuilder;
+      .order("created_at", { ascending: false }) as any;
 
     if (filters?.location) {
-      finalQuery = finalQuery.ilike("location", `%${filters.location}%`);
+      query = query.ilike("location", `%${filters.location}%`);
     }
 
     if (filters?.type) {
-      finalQuery = finalQuery.eq("type", filters.type);
+      query = query.eq("type", filters.type);
     }
 
     if (filters?.experience) {
-      finalQuery = finalQuery.eq("experience_level", filters.experience);
+      query = query.eq("experience_level", filters.experience);
     }
 
     if (filters?.search) {
-      finalQuery = finalQuery.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+      query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
     }
 
-    const { data, error } = await finalQuery;
+    const { data, error } = await query;
 
     if (error) {
       console.error("Error fetching published jobs:", error);
