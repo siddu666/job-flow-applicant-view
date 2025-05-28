@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import { toast } from "sonner";
+import {UseAllCandidatesResult} from "@/interfaces/UseAllCandidatesResult.ts";
 
 export type Profile = Tables<'profiles'>;
 export type ProfileInsert = TablesInsert<'profiles'>;
@@ -99,20 +100,24 @@ export const useUploadCV = () => {
   });
 };
 
+
+
 export const useAllCandidates = (filters?: {
   skills?: string[];
   experience_years?: number;
   location?: string;
   job_seeking_status?: string;
   search?: string;
-}) => {
-  return useQuery({
+  page?: number;
+  limit?: number;
+}): UseAllCandidatesResult => {
+  const queryResult = useQuery<{ data: Profile[]; total: number }, Error>({
     queryKey: ['candidates', filters],
-    queryFn: async (): Promise<Profile[]> => {
+    queryFn: async (): Promise<{ data: Profile[]; total: number }> => {
       try {
         let query = supabase
-          .from("profiles")
-          .select("*");
+            .from("profiles")
+            .select("*", { count: 'exact' });
 
         if (filters?.skills && filters.skills.length > 0) {
           query = query.contains("skills", filters.skills);
@@ -134,14 +139,19 @@ export const useAllCandidates = (filters?: {
           query = query.or(`full_name.ilike.%${filters.search}%,bio.ilike.%${filters.search}%`);
         }
 
-        const { data, error } = await query;
+        if (filters?.page && filters?.limit) {
+          const { from, to } = getPaginationRange(filters.page, filters.limit);
+          query = query.range(from, to);
+        }
+
+        const { data, error, count } = await query;
 
         if (error) {
           console.error("Error fetching candidates:", error);
           throw new Error(`Failed to fetch candidates: ${error.message}`);
         }
 
-        return data || [];
+        return { data: data || [], total: count || 0 };
       } catch (error) {
         console.error("Unexpected error fetching candidates:", error);
         throw error;
@@ -149,7 +159,21 @@ export const useAllCandidates = (filters?: {
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  return {
+    ...queryResult,
+    data: queryResult.data?.data || [],
+    total: queryResult.data?.total || 0,
+  };
 };
+
+const getPaginationRange = (page: number, limit: number) => {
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+  return { from, to };
+};
+
+
 
 export const useHandlePeriodicResponse = () => {
   return {

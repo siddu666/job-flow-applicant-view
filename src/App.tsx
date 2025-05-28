@@ -37,13 +37,11 @@ function App() {
               <Route path="/jobs" element={<Jobs />} />
               <Route path="/apply/:jobId" element={<Apply />} />
               <Route path="/profile" element={
-                <ProtectedRoute allowedRoles={['applicant']}>
                   <Profile />
-                </ProtectedRoute>
               } />
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={
-                <ProtectedRoute allowedRoles={['admin', 'hr', 'hiring_manager']}>
+                <ProtectedRoute allowedRoles={['dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858']}>
                   <Admin />
                 </ProtectedRoute>
               } />

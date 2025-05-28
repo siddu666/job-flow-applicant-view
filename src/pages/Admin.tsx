@@ -60,7 +60,7 @@ const Admin = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Briefcase className="h-4 w-4" />
               Overview
@@ -72,10 +72,6 @@ const Admin = () => {
             <TabsTrigger value="candidates" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Candidates
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              Settings
             </TabsTrigger>
           </TabsList>
 
@@ -145,17 +141,6 @@ const Admin = () => {
 
           <TabsContent value="candidates">
             <AdminCandidates />
-          </TabsContent>
-
-          <TabsContent value="settings">
-            <Card>
-              <CardHeader>
-                <CardTitle>System Settings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">System settings and configuration options.</p>
-              </CardContent>
-            </Card>
           </TabsContent>
         </Tabs>
       </div>

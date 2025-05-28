@@ -160,18 +160,12 @@ const Jobs = () => {
                       </div>
                       {job.salary_range && (
                           <div className="flex items-center gap-1">
-                            <DollarSign className="h-4 w-4" />
-                            {job.salary_range}
+                            SEK {job.salary_range}
                           </div>
                       )}
                       <div className="ml-auto text-gray-500">
                         {new Date(job.created_at).toLocaleDateString('sv-SE')}
                       </div>
-                    </div>
-                    <p className="text-gray-700 mb-4">{job.description}</p>
-                    <div className="text-sm text-gray-600">
-                      <strong>About Justera Group AB:</strong> Future Ready IT Solutions for Smarter Businesses.
-                      We deliver intelligent IT solutions that propel businesses into the future.
                     </div>
                   </CardContent>
                 </Card>

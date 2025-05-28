@@ -16,10 +16,10 @@ const Profile = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  // Only applicants can access this profile page
+ /* // Only applicants can access this profile page
   if (profile?.role !== 'applicant') {
     return <Navigate to="/admin" replace />;
-  }
+  } */
 
   return <CandidateProfile />;
 };
