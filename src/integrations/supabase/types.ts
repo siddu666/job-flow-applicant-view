@@ -1,4 +1,3 @@
-
 export type Json =
   | string
   | number
@@ -7,81 +6,51 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       applications: {
         Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          job_id: string
           applicant_id: string
-          full_name: string
-          email: string
-          phone: string | null
-          cv_url: string | null
+          availability: string | null
           cover_letter: string | null
+          created_at: string | null
+          cv_url: string | null
+          email: string
+          full_name: string
+          id: string
+          job_id: string
+          phone: string | null
           skills: string[] | null
-          status: 'pending' | 'under_review' | 'interview_scheduled' | 'rejected' | 'accepted'
-          gdpr_consent: boolean
-          gdpr_consent_date: string
-          gdpr_marketing_consent: boolean | null
-          application_source: string | null
-          notes: string | null
-          interview_date: string | null
-          salary_expectation: number | null
-          available_start_date: string | null
-          anonymized: boolean
-          data_retention_date: string
+          status: string | null
         }
         Insert: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          job_id: string
           applicant_id: string
-          full_name: string
-          email: string
-          phone?: string | null
-          cv_url?: string | null
+          availability?: string | null
           cover_letter?: string | null
+          created_at?: string | null
+          cv_url?: string | null
+          email: string
+          full_name: string
+          id?: string
+          job_id: string
+          phone?: string | null
           skills?: string[] | null
-          status?: 'pending' | 'under_review' | 'interview_scheduled' | 'rejected' | 'accepted'
-          gdpr_consent: boolean
-          gdpr_consent_date?: string
-          gdpr_marketing_consent?: boolean | null
-          application_source?: string | null
-          notes?: string | null
-          interview_date?: string | null
-          salary_expectation?: number | null
-          available_start_date?: string | null
-          anonymized?: boolean
-          data_retention_date?: string
+          status?: string | null
         }
         Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          job_id?: string
           applicant_id?: string
-          full_name?: string
-          email?: string
-          phone?: string | null
-          cv_url?: string | null
+          availability?: string | null
           cover_letter?: string | null
+          created_at?: string | null
+          cv_url?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          job_id?: string
+          phone?: string | null
           skills?: string[] | null
-          status?: 'pending' | 'under_review' | 'interview_scheduled' | 'rejected' | 'accepted'
-          gdpr_consent?: boolean
-          gdpr_consent_date?: string
-          gdpr_marketing_consent?: boolean | null
-          application_source?: string | null
-          notes?: string | null
-          interview_date?: string | null
-          salary_expectation?: number | null
-          available_start_date?: string | null
-          anonymized?: boolean
-          data_retention_date?: string
+          status?: string | null
         }
         Relationships: [
           {
@@ -97,393 +66,152 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "jobs"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       jobs: {
         Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          title: string
+          company: string
+          created_at: string | null
           description: string
-          requirements: string[] | null
+          experience_level: string | null
+          id: string
           location: string
-          employment_type: 'full_time' | 'part_time' | 'contract' | 'internship' | 'temporary'
-          salary_min: number | null
-          salary_max: number | null
-          salary_currency: string
-          remote_work: boolean
-          benefits: string[] | null
-          company_id: string
-          department: string | null
-          experience_level: 'entry' | 'mid' | 'senior' | 'executive'
           posted_by: string
-          status: 'draft' | 'published' | 'closed' | 'filled'
-          application_deadline: string | null
-          start_date: string | null
-          working_hours: string | null
-          application_instructions: string | null
-          gdpr_notice: string
-          data_controller_info: string
+          requirements: string
+          salary_range: string | null
+          skills: string[] | null
+          title: string
+          type: string
+          updated_at: string | null
         }
         Insert: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          title: string
+          company: string
+          created_at?: string | null
           description: string
-          requirements?: string[] | null
+          experience_level?: string | null
+          id?: string
           location: string
-          employment_type: 'full_time' | 'part_time' | 'contract' | 'internship' | 'temporary'
-          salary_min?: number | null
-          salary_max?: number | null
-          salary_currency?: string
-          remote_work?: boolean
-          benefits?: string[] | null
-          company_id: string
-          department?: string | null
-          experience_level: 'entry' | 'mid' | 'senior' | 'executive'
           posted_by: string
-          status?: 'draft' | 'published' | 'closed' | 'filled'
-          application_deadline?: string | null
-          start_date?: string | null
-          working_hours?: string | null
-          application_instructions?: string | null
-          gdpr_notice?: string
-          data_controller_info?: string
+          requirements: string
+          salary_range?: string | null
+          skills?: string[] | null
+          title: string
+          type: string
+          updated_at?: string | null
         }
         Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          title?: string
+          company?: string
+          created_at?: string | null
           description?: string
-          requirements?: string[] | null
+          experience_level?: string | null
+          id?: string
           location?: string
-          employment_type?: 'full_time' | 'part_time' | 'contract' | 'internship' | 'temporary'
-          salary_min?: number | null
-          salary_max?: number | null
-          salary_currency?: string
-          remote_work?: boolean
-          benefits?: string[] | null
-          company_id?: string
-          department?: string | null
-          experience_level?: 'entry' | 'mid' | 'senior' | 'executive'
           posted_by?: string
-          status?: 'draft' | 'published' | 'closed' | 'filled'
-          application_deadline?: string | null
-          start_date?: string | null
-          working_hours?: string | null
-          application_instructions?: string | null
-          gdpr_notice?: string
-          data_controller_info?: string
+          requirements?: string
+          salary_range?: string | null
+          skills?: string[] | null
+          title?: string
+          type?: string
+          updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "jobs_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "jobs_posted_by_fkey"
             columns: ["posted_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       profiles: {
         Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          email: string
-          full_name: string | null
-          role: 'admin' | 'hr' | 'hiring_manager' | 'applicant'
-          avatar_url: string | null
-          phone: string | null
-          linkedin_url: string | null
-          github_url: string | null
-          portfolio_url: string | null
+          availability: string | null
           bio: string | null
-          skills: string[] | null
-          experience_years: number | null
-          current_position: string | null
-          current_company: string | null
-          location: string | null
-          preferred_salary: number | null
-          job_seeking_status: 'actively_looking' | 'open_to_offers' | 'not_looking' | null
-          gdpr_consent: boolean
-          gdpr_consent_date: string
-          gdpr_marketing_consent: boolean | null
-          last_login: string | null
-          email_verified: boolean
-          profile_completion: number
-          anonymized: boolean
-          data_retention_date: string
-        }
-        Insert: {
-          id: string
-          created_at?: string
-          updated_at?: string
+          certifications: string[] | null
+          created_at: string | null
+          current_location: string | null
+          cv_url: string | null
           email: string
-          full_name?: string | null
-          role?: 'admin' | 'hr' | 'hiring_manager' | 'applicant'
-          avatar_url?: string | null
-          phone?: string | null
-          linkedin_url?: string | null
-          github_url?: string | null
-          portfolio_url?: string | null
-          bio?: string | null
-          skills?: string[] | null
-          experience_years?: number | null
-          current_position?: string | null
-          current_company?: string | null
-          location?: string | null
-          preferred_salary?: number | null
-          job_seeking_status?: 'actively_looking' | 'open_to_offers' | 'not_looking' | null
-          gdpr_consent: boolean
-          gdpr_consent_date?: string
-          gdpr_marketing_consent?: boolean | null
-          last_login?: string | null
-          email_verified?: boolean
-          profile_completion?: number
-          anonymized?: boolean
-          data_retention_date?: string
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          email?: string
-          full_name?: string | null
-          role?: 'admin' | 'hr' | 'hiring_manager' | 'applicant'
-          avatar_url?: string | null
-          phone?: string | null
-          linkedin_url?: string | null
-          github_url?: string | null
-          portfolio_url?: string | null
-          bio?: string | null
-          skills?: string[] | null
-          experience_years?: number | null
-          current_position?: string | null
-          current_company?: string | null
-          location?: string | null
-          preferred_salary?: number | null
-          job_seeking_status?: 'actively_looking' | 'open_to_offers' | 'not_looking' | null
-          gdpr_consent?: boolean
-          gdpr_consent_date?: string
-          gdpr_marketing_consent?: boolean | null
-          last_login?: string | null
-          email_verified?: boolean
-          profile_completion?: number
-          anonymized?: boolean
-          data_retention_date?: string
-        }
-        Relationships: []
-      }
-      companies: {
-        Row: {
+          expected_salary_sek: number | null
+          experience_years: number | null
+          first_name: string | null
+          full_name: string | null
+          github_url: string | null
           id: string
-          created_at: string
-          updated_at: string
-          name: string
-          description: string | null
-          website: string | null
-          logo_url: string | null
-          industry: string | null
-          size: string | null
-          location: string | null
-          founded_year: number | null
+          job_seeking_status: string | null
+          last_name: string | null
           linkedin_url: string | null
-          culture_values: string[] | null
-          benefits: string[] | null
-          gdpr_contact_email: string
-          data_protection_officer: string | null
-          privacy_policy_url: string
+          phone: string | null
+          portfolio_url: string | null
+          preferred_cities: string[] | null
+          role: string | null
+          skills: string[] | null
+          updated_at: string | null
+          willing_to_relocate: boolean | null
         }
         Insert: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          name: string
-          description?: string | null
-          website?: string | null
-          logo_url?: string | null
-          industry?: string | null
-          size?: string | null
-          location?: string | null
-          founded_year?: number | null
+          availability?: string | null
+          bio?: string | null
+          certifications?: string[] | null
+          created_at?: string | null
+          current_location?: string | null
+          cv_url?: string | null
+          email: string
+          expected_salary_sek?: number | null
+          experience_years?: number | null
+          first_name?: string | null
+          full_name?: string | null
+          github_url?: string | null
+          id: string
+          job_seeking_status?: string | null
+          last_name?: string | null
           linkedin_url?: string | null
-          culture_values?: string[] | null
-          benefits?: string[] | null
-          gdpr_contact_email: string
-          data_protection_officer?: string | null
-          privacy_policy_url: string
+          phone?: string | null
+          portfolio_url?: string | null
+          preferred_cities?: string[] | null
+          role?: string | null
+          skills?: string[] | null
+          updated_at?: string | null
+          willing_to_relocate?: boolean | null
         }
         Update: {
+          availability?: string | null
+          bio?: string | null
+          certifications?: string[] | null
+          created_at?: string | null
+          current_location?: string | null
+          cv_url?: string | null
+          email?: string
+          expected_salary_sek?: number | null
+          experience_years?: number | null
+          first_name?: string | null
+          full_name?: string | null
+          github_url?: string | null
           id?: string
-          created_at?: string
-          updated_at?: string
-          name?: string
-          description?: string | null
-          website?: string | null
-          logo_url?: string | null
-          industry?: string | null
-          size?: string | null
-          location?: string | null
-          founded_year?: number | null
+          job_seeking_status?: string | null
+          last_name?: string | null
           linkedin_url?: string | null
-          culture_values?: string[] | null
-          benefits?: string[] | null
-          gdpr_contact_email?: string
-          data_protection_officer?: string | null
-          privacy_policy_url?: string
+          phone?: string | null
+          portfolio_url?: string | null
+          preferred_cities?: string[] | null
+          role?: string | null
+          skills?: string[] | null
+          updated_at?: string | null
+          willing_to_relocate?: boolean | null
         }
         Relationships: []
-      }
-      audit_logs: {
-        Row: {
-          id: string
-          created_at: string
-          user_id: string | null
-          action: string
-          resource_type: string
-          resource_id: string | null
-          ip_address: string | null
-          user_agent: string | null
-          metadata: Json | null
-          gdpr_related: boolean
-        }
-        Insert: {
-          id?: string
-          created_at?: string
-          user_id?: string | null
-          action: string
-          resource_type: string
-          resource_id?: string | null
-          ip_address?: string | null
-          user_agent?: string | null
-          metadata?: Json | null
-          gdpr_related?: boolean
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          user_id?: string | null
-          action?: string
-          resource_type?: string
-          resource_id?: string | null
-          ip_address?: string | null
-          user_agent?: string | null
-          metadata?: Json | null
-          gdpr_related?: boolean
-        }
-        Relationships: [
-          {
-            foreignKeyName: "audit_logs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      gdpr_requests: {
-        Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          user_id: string
-          request_type: 'data_export' | 'data_deletion' | 'data_rectification' | 'data_portability' | 'processing_restriction'
-          status: 'pending' | 'in_progress' | 'completed' | 'rejected'
-          requested_by_email: string
-          verification_token: string | null
-          verified_at: string | null
-          processed_by: string | null
-          processed_at: string | null
-          completion_details: Json | null
-          rejection_reason: string | null
-          legal_basis: string | null
-        }
-        Insert: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          user_id: string
-          request_type: 'data_export' | 'data_deletion' | 'data_rectification' | 'data_portability' | 'processing_restriction'
-          status?: 'pending' | 'in_progress' | 'completed' | 'rejected'
-          requested_by_email: string
-          verification_token?: string | null
-          verified_at?: string | null
-          processed_by?: string | null
-          processed_at?: string | null
-          completion_details?: Json | null
-          rejection_reason?: string | null
-          legal_basis?: string | null
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          user_id?: string
-          request_type?: 'data_export' | 'data_deletion' | 'data_rectification' | 'data_portability' | 'processing_restriction'
-          status?: 'pending' | 'in_progress' | 'completed' | 'rejected'
-          requested_by_email?: string
-          verification_token?: string | null
-          verified_at?: string | null
-          processed_by?: string | null
-          processed_at?: string | null
-          completion_details?: Json | null
-          rejection_reason?: string | null
-          legal_basis?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "gdpr_requests_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gdpr_requests_processed_by_fkey"
-            columns: ["processed_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          }
-        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      anonymize_user_data: {
-        Args: {
-          user_id: string
-        }
-        Returns: void
-      }
-      cleanup_expired_data: {
-        Args: Record<PropertyKey, never>
-        Returns: void
-      }
+      [_ in never]: never
     }
     Enums: {
-      application_status: 'pending' | 'under_review' | 'interview_scheduled' | 'rejected' | 'accepted'
-      employment_type: 'full_time' | 'part_time' | 'contract' | 'internship' | 'temporary'
-      experience_level: 'entry' | 'mid' | 'senior' | 'executive'
-      job_status: 'draft' | 'published' | 'closed' | 'filled'
-      user_role: 'admin' | 'hr' | 'hiring_manager' | 'applicant'
-      job_seeking_status: 'actively_looking' | 'open_to_offers' | 'not_looking'
-      gdpr_request_type: 'data_export' | 'data_deletion' | 'data_rectification' | 'data_portability' | 'processing_restriction'
-      gdpr_request_status: 'pending' | 'in_progress' | 'completed' | 'rejected'
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -582,31 +310,22 @@ export type Enums<
     : never
 
 export type CompositeTypes<
-  DefaultSchemaCompositeTypeNameOrOptions extends
+  PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof Database },
-  CompositeTypeName extends DefaultSchemaCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database
   }
-    ? keyof Database[DefaultSchemaCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = DefaultSchemaCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : DefaultSchemaCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-    ? DefaultSchema["CompositeTypes"][DefaultSchemaCompositeTypeNameOrOptions]
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
 export const Constants = {
   public: {
-    Enums: {
-      application_status: ['pending', 'under_review', 'interview_scheduled', 'rejected', 'accepted'] as const,
-      employment_type: ['full_time', 'part_time', 'contract', 'internship', 'temporary'] as const,
-      experience_level: ['entry', 'mid', 'senior', 'executive'] as const,
-      job_status: ['draft', 'published', 'closed', 'filled'] as const,
-      user_role: ['admin', 'hr', 'hiring_manager', 'applicant'] as const,
-      job_seeking_status: ['actively_looking', 'open_to_offers', 'not_looking'] as const,
-      gdpr_request_type: ['data_export', 'data_deletion', 'data_rectification', 'data_portability', 'processing_restriction'] as const,
-      gdpr_request_status: ['pending', 'in_progress', 'completed', 'rejected'] as const,
-    },
+    Enums: {},
   },
 } as const

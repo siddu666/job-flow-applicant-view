@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useProfile, useUpdateProfile, useUploadCV } from "@/hooks/useProfile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,8 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Upload, Plus, X, User, FileText, Briefcase, MapPin, Phone, Mail, Linkedin, Github, Globe } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Upload, Plus, X, User, FileText, Briefcase, MapPin } from "lucide-react";
 import { toast } from "sonner";
 
 const CandidateProfile = () => {
@@ -18,40 +18,59 @@ const CandidateProfile = () => {
   const uploadCV = useUploadCV();
   const [isEditing, setIsEditing] = useState(false);
   const [newSkill, setNewSkill] = useState("");
+  const [newCertification, setNewCertification] = useState("");
+
+  const swedishCities = [
+    "Stockholm", "Gothenburg", "Malmö", "Uppsala", "Västerås", "Örebro", 
+    "Linköping", "Helsingborg", "Jönköping", "Norrköping", "Lund", "Umeå"
+  ];
 
   const [formData, setFormData] = useState({
-    full_name: profile?.full_name || "",
-    phone: profile?.phone || "",
-    linkedin_url: profile?.linkedin_url || "",
-    github_url: profile?.github_url || "",
-    portfolio_url: profile?.portfolio_url || "",
-    bio: profile?.bio || "",
-    skills: profile?.skills || [],
-    experience_years: profile?.experience_years || 0,
-    current_position: profile?.current_position || "",
-    current_company: profile?.current_company || "",
-    location: profile?.location || "",
-    preferred_salary: profile?.preferred_salary || 0,
-    job_seeking_status: profile?.job_seeking_status || "not_looking",
+    full_name: "",
+    first_name: "",
+    last_name: "",
+    phone: "",
+    current_location: "",
+    willing_to_relocate: false,
+    preferred_cities: [] as string[],
+    linkedin_url: "",
+    github_url: "",
+    portfolio_url: "",
+    bio: "",
+    skills: [] as string[],
+    certifications: [] as string[],
+    experience_years: 0,
+    expected_salary_sek: 0,
+    availability: "",
+    job_seeking_status: "actively_looking",
   });
 
-  useState(() => {
+  useEffect(() => {
     if (profile) {
       setFormData({
         full_name: profile.full_name || "",
+        first_name: profile.first_name || "",
+        last_name: profile.last_name || "",
         phone: profile.phone || "",
+        current_location: profile.current_location || "",
+        willing_to_relocate: profile.willing_to_relocate || false,
+        preferred_cities: profile.preferred_cities || [],
         linkedin_url: profile.linkedin_url || "",
         github_url: profile.github_url || "",
         portfolio_url: profile.portfolio_url || "",
         bio: profile.bio || "",
         skills: profile.skills || [],
+        certifications: profile.certifications || [],
         experience_years: profile.experience_years || 0,
-        current_position: profile.current_position || "",
-        current_company: profile.current_company || "",
-        location: profile.location || "",
-        preferred_salary: profile.preferred_salary || 0,
-        job_seeking_status: profile.job_seeking_status || "not_looking",
+        expected_salary_sek: profile.expected_salary_sek || 0,
+        availability: profile.availability || "",
+        job_seeking_status: profile.job_seeking_status || "actively_looking",
       });
+      
+      // If this is a new user with minimal profile, enable editing
+      if (!profile.phone && !profile.current_location && !profile.skills?.length) {
+        setIsEditing(true);
+      }
     }
   }, [profile]);
 
@@ -95,6 +114,32 @@ const CandidateProfile = () => {
     }));
   };
 
+  const addCertification = () => {
+    if (newCertification.trim() && !formData.certifications.includes(newCertification.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        certifications: [...prev.certifications, newCertification.trim()]
+      }));
+      setNewCertification("");
+    }
+  };
+
+  const removeCertification = (certToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      certifications: prev.certifications.filter(cert => cert !== certToRemove)
+    }));
+  };
+
+  const togglePreferredCity = (city: string) => {
+    setFormData(prev => ({
+      ...prev,
+      preferred_cities: prev.preferred_cities.includes(city)
+        ? prev.preferred_cities.filter(c => c !== city)
+        : [...prev.preferred_cities, city]
+    }));
+  };
+
   if (isLoading) {
     return <div className="flex items-center justify-center p-8">Loading...</div>;
   }
@@ -120,13 +165,22 @@ const CandidateProfile = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="full_name">Full Name</Label>
+              <Label htmlFor="first_name">First Name</Label>
               <Input
-                id="full_name"
-                value={formData.full_name}
-                onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
+                id="first_name"
+                value={formData.first_name}
+                onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
+                disabled={!isEditing}
+              />
+            </div>
+            <div>
+              <Label htmlFor="last_name">Last Name</Label>
+              <Input
+                id="last_name"
+                value={formData.last_name}
+                onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
                 disabled={!isEditing}
               />
             </div>
@@ -139,6 +193,9 @@ const CandidateProfile = () => {
                 className="bg-gray-50"
               />
             </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="phone">Phone</Label>
               <Input
@@ -146,18 +203,57 @@ const CandidateProfile = () => {
                 value={formData.phone}
                 onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                 disabled={!isEditing}
+                placeholder="+46 70 123 45 67"
               />
             </div>
             <div>
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                value={formData.location}
-                onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+              <Label htmlFor="current_location">Current Location</Label>
+              <Select
+                value={formData.current_location}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, current_location: value }))}
                 disabled={!isEditing}
-                placeholder="City, Country"
-              />
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select your current city" />
+                </SelectTrigger>
+                <SelectContent>
+                  {swedishCities.map((city) => (
+                    <SelectItem key={city} value={city}>{city}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="willing_to_relocate"
+                checked={formData.willing_to_relocate}
+                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, willing_to_relocate: !!checked }))}
+                disabled={!isEditing}
+              />
+              <Label htmlFor="willing_to_relocate">Willing to relocate within Sweden</Label>
+            </div>
+
+            {formData.willing_to_relocate && (
+              <div>
+                <Label>Preferred Cities for Relocation</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                  {swedishCities.map((city) => (
+                    <div key={city} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`city-${city}`}
+                        checked={formData.preferred_cities.includes(city)}
+                        onCheckedChange={() => togglePreferredCity(city)}
+                        disabled={!isEditing}
+                      />
+                      <Label htmlFor={`city-${city}`} className="text-sm">{city}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -171,25 +267,7 @@ const CandidateProfile = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="current_position">Current Position</Label>
-              <Input
-                id="current_position"
-                value={formData.current_position}
-                onChange={(e) => setFormData(prev => ({ ...prev, current_position: e.target.value }))}
-                disabled={!isEditing}
-              />
-            </div>
-            <div>
-              <Label htmlFor="current_company">Current Company</Label>
-              <Input
-                id="current_company"
-                value={formData.current_company}
-                onChange={(e) => setFormData(prev => ({ ...prev, current_company: e.target.value }))}
-                disabled={!isEditing}
-              />
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="experience_years">Years of Experience</Label>
               <Input
@@ -202,15 +280,34 @@ const CandidateProfile = () => {
               />
             </div>
             <div>
-              <Label htmlFor="preferred_salary">Preferred Salary (SEK)</Label>
+              <Label htmlFor="expected_salary_sek">Expected Salary (SEK/year)</Label>
               <Input
-                id="preferred_salary"
+                id="expected_salary_sek"
                 type="number"
-                value={formData.preferred_salary}
-                onChange={(e) => setFormData(prev => ({ ...prev, preferred_salary: parseInt(e.target.value) || 0 }))}
+                value={formData.expected_salary_sek}
+                onChange={(e) => setFormData(prev => ({ ...prev, expected_salary_sek: parseInt(e.target.value) || 0 }))}
                 disabled={!isEditing}
                 min="0"
+                placeholder="500000"
               />
+            </div>
+            <div>
+              <Label htmlFor="availability">Availability</Label>
+              <Select
+                value={formData.availability}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, availability: value }))}
+                disabled={!isEditing}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select availability" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="immediately">Immediately</SelectItem>
+                  <SelectItem value="2-weeks">2 weeks notice</SelectItem>
+                  <SelectItem value="1-month">1 month</SelectItem>
+                  <SelectItem value="2-months">2-3 months</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -249,7 +346,7 @@ const CandidateProfile = () => {
       {/* Skills */}
       <Card>
         <CardHeader>
-          <CardTitle>Skills</CardTitle>
+          <CardTitle>Technical Skills</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-2">
@@ -271,7 +368,7 @@ const CandidateProfile = () => {
               <Input
                 value={newSkill}
                 onChange={(e) => setNewSkill(e.target.value)}
-                placeholder="Add a skill"
+                placeholder="Add a technical skill (e.g., React, Python, AWS)"
                 onKeyPress={(e) => e.key === 'Enter' && addSkill()}
               />
               <Button onClick={addSkill} size="sm">
@@ -282,7 +379,43 @@ const CandidateProfile = () => {
         </CardContent>
       </Card>
 
-      {/* Links */}
+      {/* Certifications */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Certifications</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            {formData.certifications.map((cert, index) => (
+              <Badge key={index} variant="outline" className="px-3 py-1">
+                {cert}
+                {isEditing && (
+                  <X
+                    className="h-3 w-3 ml-2 cursor-pointer"
+                    onClick={() => removeCertification(cert)}
+                  />
+                )}
+              </Badge>
+            ))}
+          </div>
+          
+          {isEditing && (
+            <div className="flex gap-2">
+              <Input
+                value={newCertification}
+                onChange={(e) => setNewCertification(e.target.value)}
+                placeholder="Add a certification (e.g., AWS Solutions Architect)"
+                onKeyPress={(e) => e.key === 'Enter' && addCertification()}
+              />
+              <Button onClick={addCertification} size="sm">
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Professional Links */}
       <Card>
         <CardHeader>
           <CardTitle>Professional Links</CardTitle>
@@ -290,10 +423,7 @@ const CandidateProfile = () => {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="linkedin_url" className="flex items-center gap-2">
-                <Linkedin className="h-4 w-4" />
-                LinkedIn
-              </Label>
+              <Label htmlFor="linkedin_url">LinkedIn URL</Label>
               <Input
                 id="linkedin_url"
                 value={formData.linkedin_url}
@@ -303,10 +433,7 @@ const CandidateProfile = () => {
               />
             </div>
             <div>
-              <Label htmlFor="github_url" className="flex items-center gap-2">
-                <Github className="h-4 w-4" />
-                GitHub
-              </Label>
+              <Label htmlFor="github_url">GitHub URL</Label>
               <Input
                 id="github_url"
                 value={formData.github_url}
@@ -316,10 +443,7 @@ const CandidateProfile = () => {
               />
             </div>
             <div>
-              <Label htmlFor="portfolio_url" className="flex items-center gap-2">
-                <Globe className="h-4 w-4" />
-                Portfolio
-              </Label>
+              <Label htmlFor="portfolio_url">Portfolio URL</Label>
               <Input
                 id="portfolio_url"
                 value={formData.portfolio_url}
