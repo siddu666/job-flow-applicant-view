@@ -16,7 +16,7 @@ export const useJobs = (filters?: {
 }) => {
   return useQuery({
     queryKey: ['jobs', filters],
-    queryFn: async (): Promise<Job[]> => {
+    queryFn: async () => {
       try {
         let query = supabase
           .from("jobs")
@@ -65,7 +65,7 @@ export const usePublishedJobs = (filters?: {
 }) => {
   return useQuery({
     queryKey: ['published-jobs', filters],
-    queryFn: async (): Promise<Job[]> => {
+    queryFn: async () => {
       try {
         let query = supabase
           .from("jobs")
@@ -109,7 +109,7 @@ export const useCreateJob = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (job: JobInsert): Promise<Job> => {
+    mutationFn: async (job: JobInsert) => {
       try {
         const { data, error } = await supabase
           .from("jobs")
@@ -148,7 +148,7 @@ export const useUpdateJob = () => {
     }: { 
       id: string; 
       updates: JobUpdate;
-    }): Promise<Job> => {
+    }) => {
       try {
         const updateData: JobUpdate = {
           ...updates,
@@ -187,7 +187,7 @@ export const useDeleteJob = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: string): Promise<void> => {
+    mutationFn: async (id: string) => {
       try {
         const { error } = await supabase
           .from("jobs")
@@ -216,7 +216,7 @@ export const useDeleteJob = () => {
 export const useJobById = (id: string) => {
   return useQuery({
     queryKey: ['job', id],
-    queryFn: async (): Promise<Job | null> => {
+    queryFn: async () => {
       try {
         const { data, error } = await supabase
           .from("jobs")
