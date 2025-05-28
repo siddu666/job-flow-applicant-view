@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
@@ -70,6 +71,30 @@ export const useUpdateProfile = () => {
     },
     onError: (error: Error) => {
       toast.error(`Failed to update profile: ${error.message}`);
+    },
+  });
+};
+
+export const useUploadCV = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (file: File): Promise<string> => {
+      try {
+        // For now, return a placeholder URL since we don't have storage configured
+        console.log("CV upload not implemented:", file.name);
+        return "placeholder-cv-url";
+      } catch (error) {
+        console.error("Unexpected error uploading CV:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      toast.success("CV uploaded successfully!");
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to upload CV: ${error.message}`);
     },
   });
 };

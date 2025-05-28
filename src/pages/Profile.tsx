@@ -6,7 +6,7 @@ import { Navigate } from "react-router-dom";
 
 const Profile = () => {
   const { user, loading } = useAuth();
-  const { data: profile } = useProfile();
+  const { data: profile } = useProfile(user?.id);
 
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;

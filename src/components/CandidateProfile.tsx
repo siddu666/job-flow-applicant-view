@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { useProfile, useUpdateProfile, useUploadCV } from "@/hooks/useProfile";
+import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +13,8 @@ import { Upload, Plus, X, User, FileText, Briefcase, MapPin } from "lucide-react
 import { toast } from "sonner";
 
 const CandidateProfile = () => {
-  const { data: profile, isLoading } = useProfile();
+  const { user } = useAuth();
+  const { data: profile, isLoading } = useProfile(user?.id);
   const updateProfile = useUpdateProfile();
   const uploadCV = useUploadCV();
   const [isEditing, setIsEditing] = useState(false);
@@ -75,7 +76,12 @@ const CandidateProfile = () => {
   }, [profile]);
 
   const handleSave = async () => {
-    await updateProfile.mutateAsync(formData);
+    if (!user?.id) return;
+    
+    await updateProfile.mutateAsync({
+      id: user.id,
+      updates: formData
+    });
     setIsEditing(false);
   };
 

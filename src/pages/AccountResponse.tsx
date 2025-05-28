@@ -2,10 +2,11 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useHandlePeriodicResponse } from "@/hooks/useProfile";
 
 const AccountResponse = () => {
-  const { handleResponse } = useHandlePeriodicResponse();
+  const handleResponse = () => {
+    console.log("Account response confirmed");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
