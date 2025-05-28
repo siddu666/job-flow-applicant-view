@@ -103,7 +103,7 @@ const fetchJobs = async (filters?: JobFilters) => {
 
 export const useJobs = (filters?: JobFilters) => {
   return useQuery({
-    queryKey: ['jobs', filters],
+    queryKey: ['jobs', filters] as const,
     queryFn: () => fetchJobs(filters),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
@@ -149,7 +149,7 @@ const fetchPublishedJobs = async (filters?: PublishedJobFilters) => {
 
 export const usePublishedJobs = (filters?: PublishedJobFilters) => {
   return useQuery({
-    queryKey: ['published-jobs', filters],
+    queryKey: ['published-jobs', filters] as const,
     queryFn: () => fetchPublishedJobs(filters),
     staleTime: 5 * 60 * 1000,
   });
@@ -282,7 +282,7 @@ const fetchJobById = async (id: string) => {
 
 export const useJobById = (id: string) => {
   return useQuery({
-    queryKey: ['job', id],
+    queryKey: ['job', id] as const,
     queryFn: () => fetchJobById(id),
     enabled: !!id,
     staleTime: 5 * 60 * 1000,
@@ -291,7 +291,7 @@ export const useJobById = (id: string) => {
 
 export const useJobStats = () => {
   return useQuery({
-    queryKey: ['job-stats'],
+    queryKey: ['job-stats'] as const,
     queryFn: async () => {
       try {
         const { data, error } = await supabase
