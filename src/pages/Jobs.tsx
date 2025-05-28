@@ -57,9 +57,11 @@ const Jobs = () => {
               {user ? (
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-white-600">Welcome, {user.email}</span>
-                  {/* <Link to="/profile">
-                      <Button variant="ghost">My Profile</Button>
-                    </Link> */}
+                  {user.id != "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858" && (
+                      <Link to="/profile">
+                        <Button variant="ghost">My Profile</Button>
+                      </Link>
+                  )}
                   {user.id == "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858" && (
                     <Link to="/admin">
                       <Button variant="ghost">Admin Panel</Button>

@@ -24,6 +24,8 @@ export const useProfile = (userId?: string) => {
           console.error("Error fetching profile:", error);
           throw new Error(`Failed to fetch profile: ${error.message}`);
         }
+        
+        console.log(data)
 
         return data;
       } catch (error) {

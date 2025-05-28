@@ -77,12 +77,12 @@ const Index = () => {
                                     <span className="text-sm text-white-600">
                     Welcome, {user.email}
                   </span>
-                                    {profile?.role === 'applicant' && (
+                                    {user.id != "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858" && (
                                         <Link to="/profile">
                                             <Button variant="ghost">My Profile</Button>
                                         </Link>
                                     )}
-                                    {(profile?.role === 'admin' || profile?.role === 'hr' || profile?.role === 'hiring_manager') && (
+                                    {(user.id == "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858") && (
                                         <Link to="/admin">
                                             <Button variant="ghost">Admin Panel</Button>
                                         </Link>
@@ -118,6 +118,16 @@ const Index = () => {
                         digital age.
                     </p>
                 </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <Link to="/jobs">
+                        <Button size="lg"
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                            If you are looking for IT Career at Justera Group AB
+                        </Button>
+                    </Link>
+                </div>
+                
             </section>
 
             {/* About Section */}

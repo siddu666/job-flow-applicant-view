@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Upload, Plus, X, User, FileText, Briefcase, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import {Link} from "react-router-dom";
 
 const CandidateProfile = () => {
   const { user } = useAuth();
@@ -153,6 +154,11 @@ const CandidateProfile = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
+        {user.id != "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858" && (
+            <Link to="/jobs">
+              <Button>Career At Justera Group</Button>
+            </Link>
+        )}
         <h1 className="text-3xl font-bold">My Profile</h1>
         <Button
           onClick={() => isEditing ? handleSave() : setIsEditing(true)}

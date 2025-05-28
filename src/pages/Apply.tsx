@@ -19,23 +19,28 @@ const Apply = () => {
   const { jobId } = useParams();
   const { toast } = useToast();
   const { user } = useAuth();
-  const { data: profile } = useProfile();
   const [cvFile, setCvFile] = useState<File | null>(null);
+  
+  console.log(user)
+
+  const { data: profile } = useProfile(user.id);
+  console.log(profile)
+
 
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    location: "",
-    experience: "",
-    expectedSalary: "",
-    availability: "",
-    coverLetter: "",
-    skills: [] as string[],
-    portfolioUrl: "",
-    linkedinUrl: "",
-    githubUrl: "",
+    firstName: profile.first_name,
+    lastName: profile.last_name,
+    email: profile.email,
+    phone: profile.phone,
+    location: profile.current_location,
+    experience: profile.experience_years,
+    expectedSalary: profile.expected_salary_sek,
+    availability: profile.availability,
+    coverLetter: profile.cv_url,
+    skills: profile.skills,
+    portfolioUrl: profile.portfolio_url,
+    linkedinUrl: profile.linkedin_url,
+    githubUrl: profile.github_url,
   });
 
   // Pre-populate form with profile data
