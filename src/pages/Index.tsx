@@ -71,7 +71,7 @@ const Index = () => {
                                 <div className="flex items-center space-x-4">
                                     <div className="flex items-center space-x-4">
                                         <Link to="/jobs">
-                                            <Button>Looking for a Job</Button>
+                                            <Button>Career At Justera Group</Button>
                                         </Link>
                                     </div>
                                     <span className="text-sm text-white-600">
@@ -94,7 +94,7 @@ const Index = () => {
                             ) : (
                                 <div className="flex items-center space-x-4">
                                     <Link to="/jobs">
-                                        <Button>Looking for a Job</Button>
+                                        <Button>Career At Justera Group</Button>
                                     </Link>
                                 </div>
                             )}

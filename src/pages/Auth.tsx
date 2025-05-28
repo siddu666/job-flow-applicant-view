@@ -137,9 +137,6 @@ const Auth = () => {
               <Briefcase className="h-8 w-8 text-blue-600" />
               <span className="text-xl font-bold text-gray-900">Justera Group Careers</span>
             </Link>
-            <Link to="/jobs">
-              <Button variant="ghost">Browse Jobs</Button>
-            </Link>
           </div>
         </div>
       </nav>

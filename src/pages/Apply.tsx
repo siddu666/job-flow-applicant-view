@@ -19,13 +19,14 @@ const Apply = () => {
   const { toast } = useToast();
   const auth = useAuth();
   const applicantId = auth?.user?.id;
+  const user = auth?.user;
 
   const [formData, setFormData] = useState({
-    firstName: "",
+    firstName: user?.fullName,
     lastName: "",
-    email: "",
-    phone: "",
-    location: "",
+    email: auth.user.email,
+    phone: auth.user.phone,
+    location: auth.user.location,
     experience: "",
     expectedSalary: "",
     availability: "",
@@ -191,7 +192,7 @@ const Apply = () => {
                   <Label htmlFor="firstName">First Name *</Label>
                   <Input
                     id="firstName"
-                    value={formData.firstName}
+                    value={user.firstName}
                     onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                     required
                   />
