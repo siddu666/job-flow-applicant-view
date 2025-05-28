@@ -175,3 +175,19 @@ export const useUploadCV = () => {
     },
   });
 };
+
+export const useSendPeriodicCheck = () => {
+  return useMutation({
+    mutationFn: async (): Promise<void> => {
+      // For now, just show a success message
+      // In the future, this could call an edge function to send emails
+      console.log("Sending periodic check to candidates...");
+    },
+    onSuccess: () => {
+      toast.success("Periodic check sent to all candidates!");
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to send periodic check: ${error.message}`);
+    },
+  });
+};

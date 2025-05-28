@@ -204,7 +204,6 @@ const AdminCandidates = () => {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Avatar>
-                          <AvatarImage src={candidate.avatar_url || undefined} />
                           <AvatarFallback>
                             {candidate.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'C'}
                           </AvatarFallback>
@@ -212,7 +211,7 @@ const AdminCandidates = () => {
                         <div>
                           <div className="font-medium">{candidate.full_name || 'No name'}</div>
                           <div className="text-sm text-gray-600">
-                            {candidate.current_position} {candidate.current_company && `at ${candidate.current_company}`}
+                            {candidate.bio ? candidate.bio.substring(0, 50) + '...' : 'No bio available'}
                           </div>
                         </div>
                       </div>
@@ -234,7 +233,7 @@ const AdminCandidates = () => {
                     <TableCell>
                       <div className="flex items-center gap-1 text-sm">
                         <MapPin className="h-3 w-3" />
-                        {candidate.location || 'Not specified'}
+                        {candidate.current_location || 'Not specified'}
                       </div>
                     </TableCell>
                     <TableCell>

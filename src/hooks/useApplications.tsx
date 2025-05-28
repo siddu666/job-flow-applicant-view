@@ -31,7 +31,6 @@ export const useApplications = (filters?: {
               email
             )
           `)
-          .eq("anonymized", false)
           .order("created_at", { ascending: false });
 
         if (filters?.jobId) {
@@ -70,14 +69,9 @@ export const useCreateApplication = () => {
   return useMutation({
     mutationFn: async (application: ApplicationInsert): Promise<Application> => {
       try {
-        // Ensure GDPR compliance
         const applicationData: ApplicationInsert = {
           ...application,
-          gdpr_consent: true,
-          gdpr_consent_date: new Date().toISOString(),
-          data_retention_date: new Date(Date.now() + 7 * 365 * 24 * 60 * 60 * 1000).toISOString(), // 7 years
           status: 'pending',
-          anonymized: false,
         };
 
         const { data, error } = await supabase
@@ -90,18 +84,6 @@ export const useCreateApplication = () => {
           console.error("Error creating application:", error);
           throw new Error(`Failed to create application: ${error.message}`);
         }
-
-        // Log the action for audit trail
-        await supabase
-          .from("audit_logs")
-          .insert({
-            user_id: application.applicant_id,
-            action: "application_created",
-            resource_type: "application",
-            resource_id: data.id,
-            gdpr_related: true,
-            metadata: { job_id: application.job_id }
-          });
 
         return data;
       } catch (error) {
@@ -133,14 +115,9 @@ export const useUpdateApplication = () => {
       updatedBy: string;
     }): Promise<Application> => {
       try {
-        const updateData: ApplicationUpdate = {
-          ...updates,
-          updated_at: new Date().toISOString(),
-        };
-
         const { data, error } = await supabase
           .from("applications")
-          .update(updateData)
+          .update(updates)
           .eq("id", id)
           .select()
           .single();
@@ -149,18 +126,6 @@ export const useUpdateApplication = () => {
           console.error("Error updating application:", error);
           throw new Error(`Failed to update application: ${error.message}`);
         }
-
-        // Log the action for audit trail
-        await supabase
-          .from("audit_logs")
-          .insert({
-            user_id: updatedBy,
-            action: "application_updated",
-            resource_type: "application",
-            resource_id: id,
-            gdpr_related: false,
-            metadata: { updates: Object.keys(updates) }
-          });
 
         return data;
       } catch (error) {
@@ -192,36 +157,15 @@ export const useDeleteApplication = () => {
       reason?: string;
     }): Promise<void> => {
       try {
-        // For GDPR compliance, we anonymize instead of hard delete
         const { error } = await supabase
           .from("applications")
-          .update({
-            anonymized: true,
-            full_name: "ANONYMIZED",
-            email: "anonymized@deleted.user",
-            phone: null,
-            cv_url: null,
-            cover_letter: null,
-            updated_at: new Date().toISOString(),
-          })
+          .delete()
           .eq("id", id);
 
         if (error) {
-          console.error("Error anonymizing application:", error);
+          console.error("Error deleting application:", error);
           throw new Error(`Failed to delete application: ${error.message}`);
         }
-
-        // Log the action for audit trail
-        await supabase
-          .from("audit_logs")
-          .insert({
-            user_id: deletedBy,
-            action: "application_anonymized",
-            resource_type: "application",
-            resource_id: id,
-            gdpr_related: true,
-            metadata: { reason: reason || "User request" }
-          });
       } catch (error) {
         console.error("Unexpected error deleting application:", error);
         throw error;
@@ -262,7 +206,6 @@ export const useApplicationById = (id: string) => {
             )
           `)
           .eq("id", id)
-          .eq("anonymized", false)
           .single();
 
         if (error) {
@@ -291,8 +234,7 @@ export const useApplicationStats = () => {
       try {
         const { data, error } = await supabase
           .from("applications")
-          .select("status")
-          .eq("anonymized", false);
+          .select("status");
 
         if (error) {
           console.error("Error fetching application stats:", error);
