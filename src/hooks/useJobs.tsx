@@ -64,7 +64,7 @@ interface PublishedJobFilters {
   search?: string;
 }
 
-const fetchJobs = async (filters?: JobFilters) => {
+const fetchJobs = async (filters?: JobFilters): Promise<Job[]> => {
   try {
     let query = supabase
       .from("jobs")
@@ -102,7 +102,7 @@ const fetchJobs = async (filters?: JobFilters) => {
 };
 
 export const useJobs = (filters?: JobFilters) => {
-  return useQuery({
+  return useQuery<Job[], Error>({
     queryKey: ['jobs', filters] as const,
     queryFn: () => fetchJobs(filters),
     staleTime: 5 * 60 * 1000,
@@ -110,7 +110,7 @@ export const useJobs = (filters?: JobFilters) => {
   });
 };
 
-const fetchPublishedJobs = async (filters?: PublishedJobFilters) => {
+const fetchPublishedJobs = async (filters?: PublishedJobFilters): Promise<Job[]> => {
   try {
     let query = supabase
       .from("jobs")
@@ -148,7 +148,7 @@ const fetchPublishedJobs = async (filters?: PublishedJobFilters) => {
 };
 
 export const usePublishedJobs = (filters?: PublishedJobFilters) => {
-  return useQuery({
+  return useQuery<Job[], Error>({
     queryKey: ['published-jobs', filters] as const,
     queryFn: () => fetchPublishedJobs(filters),
     staleTime: 5 * 60 * 1000,
@@ -158,7 +158,7 @@ export const usePublishedJobs = (filters?: PublishedJobFilters) => {
 export const useCreateJob = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<Job, Error, JobInsert>({
     mutationFn: async (job: JobInsert) => {
       try {
         const { data, error } = await supabase
@@ -191,7 +191,7 @@ export const useCreateJob = () => {
 export const useUpdateJob = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<Job, Error, { id: string; updates: JobUpdate }>({
     mutationFn: async ({ id, updates }: { id: string; updates: JobUpdate }) => {
       try {
         const updateData = {
@@ -230,7 +230,7 @@ export const useUpdateJob = () => {
 export const useDeleteJob = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<void, Error, string>({
     mutationFn: async (id: string) => {
       try {
         const { error } = await supabase
@@ -257,7 +257,7 @@ export const useDeleteJob = () => {
   });
 };
 
-const fetchJobById = async (id: string) => {
+const fetchJobById = async (id: string): Promise<Job | null> => {
   try {
     const { data, error } = await supabase
       .from("jobs")
@@ -281,7 +281,7 @@ const fetchJobById = async (id: string) => {
 };
 
 export const useJobById = (id: string) => {
-  return useQuery({
+  return useQuery<Job | null, Error>({
     queryKey: ['job', id] as const,
     queryFn: () => fetchJobById(id),
     enabled: !!id,
@@ -289,29 +289,31 @@ export const useJobById = (id: string) => {
   });
 };
 
+const fetchJobStats = async (): Promise<{ total: number; published: number }> => {
+  try {
+    const { data, error } = await supabase
+      .from("jobs")
+      .select("id");
+
+    if (error) {
+      console.error("Error fetching job stats:", error);
+      throw new Error(`Failed to fetch job stats: ${error.message}`);
+    }
+
+    return {
+      total: data.length,
+      published: data.length,
+    };
+  } catch (error) {
+    console.error("Unexpected error fetching job stats:", error);
+    throw error;
+  }
+};
+
 export const useJobStats = () => {
-  return useQuery({
+  return useQuery<{ total: number; published: number }, Error>({
     queryKey: ['job-stats'] as const,
-    queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-          .from("jobs")
-          .select("id");
-
-        if (error) {
-          console.error("Error fetching job stats:", error);
-          throw new Error(`Failed to fetch job stats: ${error.message}`);
-        }
-
-        return {
-          total: data.length,
-          published: data.length,
-        };
-      } catch (error) {
-        console.error("Unexpected error fetching job stats:", error);
-        throw error;
-      }
-    },
+    queryFn: fetchJobStats,
     staleTime: 2 * 60 * 1000,
   });
 };
