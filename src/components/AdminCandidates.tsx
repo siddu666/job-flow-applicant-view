@@ -1,301 +1,221 @@
-
-import { useState } from "react";
-import { useAllCandidates, useSendPeriodicCheck } from "@/hooks/useProfile";
+import React, { useState } from "react";
+import { useAllCandidates } from "@/hooks/useProfile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Users, Search, Filter, Mail, Phone, MapPin, Briefcase, Calendar, ExternalLink } from "lucide-react";
-import { Profile } from "@/hooks/useProfile";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink } from "lucide-react";
+import { toast } from "sonner";
+
+interface CandidateFilters {
+  skills?: string[];
+  experience_years?: number;
+  location?: string;
+  job_seeking_status?: 'actively_looking' | 'open_to_opportunities' | 'not_looking';
+  search?: string;
+}
 
 const AdminCandidates = () => {
-  const [filters, setFilters] = useState({
-    search: "",
-    location: "",
-    job_seeking_status: "",
-    experience_years: "",
-  });
+  const [filters, setFilters] = useState<CandidateFilters>({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
-  const { data: candidates, isLoading } = useAllCandidates({
-    search: filters.search || undefined,
-    location: filters.location || undefined,
-    job_seeking_status: filters.job_seeking_status as any || undefined,
-    experience_years: filters.experience_years ? parseInt(filters.experience_years) : undefined,
-  });
+  const { data: candidates, isLoading, error } = useAllCandidates(filters);
 
-  const sendPeriodicCheck = useSendPeriodicCheck();
-
-  const getStatusColor = (status: Profile['job_seeking_status']) => {
-    switch (status) {
-      case 'actively_looking':
-        return 'bg-green-100 text-green-800';
-      case 'open_to_offers':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'not_looking':
-        return 'bg-gray-100 text-gray-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+  const handleSearch = () => {
+    setFilters(prev => ({ ...prev, search: searchTerm }));
   };
 
-  const getStatusText = (status: Profile['job_seeking_status']) => {
-    switch (status) {
-      case 'actively_looking':
-        return 'Actively Looking';
-      case 'open_to_offers':
-        return 'Open to Offers';
-      case 'not_looking':
-        return 'Not Looking';
-      default:
-        return 'Unknown';
-    }
+  const handleSkillSelect = (skill: string) => {
+    setSelectedSkills(prev => {
+      if (prev.includes(skill)) {
+        return prev.filter(s => s !== skill);
+      } else {
+        return [...prev, skill];
+      }
+    });
+    setFilters(prev => ({ ...prev, skills: selectedSkills }));
+  };
+
+  const handleExperienceChange = (years: string) => {
+    const experience = years ? parseInt(years) : undefined;
+    setFilters(prev => ({ ...prev, experience_years: experience }));
+  };
+
+  const handleLocationChange = (location: string) => {
+    setFilters(prev => ({ ...prev, location: location }));
+  };
+
+  const handleJobSeekingStatusChange = (status: 'actively_looking' | 'open_to_opportunities' | 'not_looking') => {
+    setFilters(prev => ({ ...prev, job_seeking_status: status }));
   };
 
   if (isLoading) {
-    return <div className="flex items-center justify-center p-8">Loading candidates...</div>;
+    return <div>Loading candidates...</div>;
   }
 
-  return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Users className="h-8 w-8" />
-            Candidate Management
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Manage and review all registered candidates
-          </p>
-        </div>
-        <Button
-          onClick={() => sendPeriodicCheck.mutate()}
-          disabled={sendPeriodicCheck.isPending}
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          <Mail className="h-4 w-4 mr-2" />
-          Send Periodic Check
-        </Button>
-      </div>
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
-      {/* Filters */}
-      <Card>
+  const skillsList = [
+    "JavaScript",
+    "React",
+    "Node.js",
+    "Python",
+    "SQL",
+    "TypeScript",
+    "AWS",
+    "Docker",
+    "Kubernetes",
+    "CI/CD"
+  ];
+
+  return (
+    <div className="container mx-auto p-4">
+      <Card className="mb-4">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Filters
-          </CardTitle>
+          <CardTitle>Filter Candidates</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <CardContent className="grid gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <Input
-                placeholder="Search candidates..."
-                value={filters.search}
-                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                className="w-full"
+                type="text"
+                placeholder="Search by name or bio..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
+              <Button className="mt-2 w-full" onClick={handleSearch}>
+                <Search className="mr-2 h-4 w-4" />
+                Search
+              </Button>
             </div>
+
             <div>
-              <Input
-                placeholder="Filter by location..."
-                value={filters.location}
-                onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Select
-                value={filters.job_seeking_status}
-                onValueChange={(value) => setFilters(prev => ({ ...prev, job_seeking_status: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Job seeking status" />
+              <Select onValueChange={handleExperienceChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Experience (Years)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Statuses</SelectItem>
-                  <SelectItem value="actively_looking">Actively Looking</SelectItem>
-                  <SelectItem value="open_to_offers">Open to Offers</SelectItem>
-                  <SelectItem value="not_looking">Not Looking</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Select
-                value={filters.experience_years}
-                onValueChange={(value) => setFilters(prev => ({ ...prev, experience_years: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Min experience" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Any Experience</SelectItem>
-                  <SelectItem value="0">Entry Level</SelectItem>
-                  <SelectItem value="2">2+ Years</SelectItem>
+                  <SelectItem value="">Any</SelectItem>
+                  <SelectItem value="1">1+ Years</SelectItem>
+                  <SelectItem value="3">3+ Years</SelectItem>
                   <SelectItem value="5">5+ Years</SelectItem>
+                  <SelectItem value="7">7+ Years</SelectItem>
                   <SelectItem value="10">10+ Years</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+
+            <div>
+              <Input
+                type="text"
+                placeholder="Location..."
+                onChange={(e) => handleLocationChange(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <Select onValueChange={handleJobSeekingStatusChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Job Seeking Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Any</SelectItem>
+                  <SelectItem value="actively_looking">Actively Looking</SelectItem>
+                  <SelectItem value="open_to_opportunities">Open to Opportunities</SelectItem>
+                  <SelectItem value="not_looking">Not Looking</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-sm font-medium">Skills:</p>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {skillsList.map((skill) => (
+                <Badge
+                  key={skill}
+                  variant={selectedSkills.includes(skill) ? "secondary" : "outline"}
+                  onClick={() => handleSkillSelect(skill)}
+                  className="cursor-pointer"
+                >
+                  {skill}
+                </Badge>
+              ))}
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="text-2xl font-bold text-blue-600">
-              {candidates?.length || 0}
-            </div>
-            <p className="text-sm text-gray-600">Total Candidates</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="text-2xl font-bold text-green-600">
-              {candidates?.filter(c => c.job_seeking_status === 'actively_looking').length || 0}
-            </div>
-            <p className="text-sm text-gray-600">Actively Looking</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="text-2xl font-bold text-yellow-600">
-              {candidates?.filter(c => c.job_seeking_status === 'open_to_offers').length || 0}
-            </div>
-            <p className="text-sm text-gray-600">Open to Offers</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="text-2xl font-bold text-purple-600">
-              {candidates?.filter(c => c.experience_years && c.experience_years >= 5).length || 0}
-            </div>
-            <p className="text-sm text-gray-600">Senior (5+ Years)</p>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {candidates?.map((candidate) => (
+          <Card key={candidate.id}>
+            <CardHeader>
+              <div className="flex items-center space-x-4">
+                <Avatar>
+                  <AvatarImage src={`https://avatar.vercel.sh/${candidate.email}.png`} />
+                  <AvatarFallback>{candidate.full_name?.substring(0, 2)}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <CardTitle>{candidate.full_name}</CardTitle>
+                  <p className="text-sm text-gray-500">{candidate.email}</p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-sm text-gray-600">
+                {candidate.bio?.substring(0, 100)}...
+              </div>
+              <div className="mt-4">
+                <p className="text-sm font-medium">Skills:</p>
+                <div className="flex flex-wrap gap-1">
+                  {candidate.skills?.map((skill, index) => (
+                    <Badge key={index} variant="secondary">{skill}</Badge>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-4 space-y-2">
+                <p className="flex items-center text-sm">
+                  <MapPin className="mr-2 h-4 w-4" />
+                  {candidate.current_location || "No location specified"}
+                </p>
+                <p className="flex items-center text-sm">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  {candidate.experience_years || 0} Years Experience
+                </p>
+                <p className="flex items-center text-sm">
+                  <DollarSign className="mr-2 h-4 w-4" />
+                  {candidate.expected_salary_sek || 0} SEK
+                </p>
+                <p className="flex items-center text-sm">
+                  <Mail className="mr-2 h-4 w-4" />
+                  {candidate.email}
+                </p>
+                <p className="flex items-center text-sm">
+                  <Phone className="mr-2 h-4 w-4" />
+                  {candidate.phone || "No phone specified"}
+                </p>
+                {candidate.linkedin_url && (
+                  <a href={candidate.linkedin_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline">
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    LinkedIn
+                  </a>
+                )}
+                {candidate.portfolio_url && (
+                  <a href={candidate.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline">
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    Portfolio
+                  </a>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
-
-      {/* Candidates Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Candidates ({candidates?.length || 0})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Candidate</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Experience</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Skills</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {candidates?.map((candidate) => (
-                  <TableRow key={candidate.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarFallback>
-                            {candidate.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'C'}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-medium">{candidate.full_name || 'No name'}</div>
-                          <div className="text-sm text-gray-600">
-                            {candidate.bio ? candidate.bio.substring(0, 50) + '...' : 'No bio available'}
-                          </div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-1 text-sm">
-                          <Mail className="h-3 w-3" />
-                          {candidate.email}
-                        </div>
-                        {candidate.phone && (
-                          <div className="flex items-center gap-1 text-sm text-gray-600">
-                            <Phone className="h-3 w-3" />
-                            {candidate.phone}
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 text-sm">
-                        <MapPin className="h-3 w-3" />
-                        {candidate.current_location || 'Not specified'}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 text-sm">
-                        <Briefcase className="h-3 w-3" />
-                        {candidate.experience_years ? `${candidate.experience_years} years` : 'Not specified'}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(candidate.job_seeking_status)}>
-                        {getStatusText(candidate.job_seeking_status)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1 max-w-xs">
-                        {candidate.skills?.slice(0, 3).map((skill, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {skill}
-                          </Badge>
-                        ))}
-                        {candidate.skills && candidate.skills.length > 3 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{candidate.skills.length - 3}
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        {candidate.cv_url && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => window.open(candidate.cv_url!, '_blank')}
-                          >
-                            <ExternalLink className="h-3 w-3" />
-                          </Button>
-                        )}
-                        {candidate.linkedin_url && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => window.open(candidate.linkedin_url!, '_blank')}
-                          >
-                            LinkedIn
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          {!candidates?.length && (
-            <div className="text-center py-8 text-gray-500">
-              No candidates found matching your filters.
-            </div>
-          )}
-        </CardContent>
-      </Card>
     </div>
   );
 };
