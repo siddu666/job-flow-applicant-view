@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useAllCandidates } from "@/hooks/useProfile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink } from "lucide-react";
-import { toast } from "sonner";
 
 interface CandidateFilters {
   skills?: string[];

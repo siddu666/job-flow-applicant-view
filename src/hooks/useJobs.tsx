@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
@@ -108,7 +109,7 @@ export const useCreateJob = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (job: any): Promise<Job> => {
+    mutationFn: async (job: JobInsert): Promise<Job> => {
       try {
         const { data, error } = await supabase
           .from("jobs")
@@ -143,12 +144,10 @@ export const useUpdateJob = () => {
   return useMutation({
     mutationFn: async ({ 
       id, 
-      updates,
-      updatedBy 
+      updates 
     }: { 
       id: string; 
       updates: JobUpdate;
-      updatedBy: string;
     }): Promise<Job> => {
       try {
         const updateData: JobUpdate = {
@@ -167,18 +166,6 @@ export const useUpdateJob = () => {
           console.error("Error updating job:", error);
           throw new Error(`Failed to update job: ${error.message}`);
         }
-
-        // Log the action for audit trail
-        await supabase
-          .from("audit_logs")
-          .insert({
-            user_id: updatedBy,
-            action: "job_updated",
-            resource_type: "job",
-            resource_id: id,
-            gdpr_related: false,
-            metadata: { updates: Object.keys(updates) }
-          });
 
         return data;
       } catch (error) {
@@ -200,13 +187,7 @@ export const useDeleteJob = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ 
-      id, 
-      deletedBy 
-    }: { 
-      id: string; 
-      deletedBy: string;
-    }): Promise<void> => {
+    mutationFn: async (id: string): Promise<void> => {
       try {
         const { error } = await supabase
           .from("jobs")
@@ -217,18 +198,6 @@ export const useDeleteJob = () => {
           console.error("Error deleting job:", error);
           throw new Error(`Failed to delete job: ${error.message}`);
         }
-
-        // Log the action for audit trail
-        await supabase
-          .from("audit_logs")
-          .insert({
-            user_id: deletedBy,
-            action: "job_deleted",
-            resource_type: "job",
-            resource_id: id,
-            gdpr_related: false,
-            metadata: {}
-          });
       } catch (error) {
         console.error("Unexpected error deleting job:", error);
         throw error;

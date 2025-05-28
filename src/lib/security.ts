@@ -1,352 +1,178 @@
-
 import { supabase } from "@/integrations/supabase/client";
+import { v4 as uuidv4 } from "uuid";
+import { createHash } from "crypto";
 
 // Security constants
-export const SECURITY_CONFIG = {
-  MAX_LOGIN_ATTEMPTS: 5,
-  LOGIN_LOCKOUT_DURATION: 15 * 60 * 1000, // 15 minutes
-  SESSION_TIMEOUT: 24 * 60 * 60 * 1000, // 24 hours
-  PASSWORD_MIN_LENGTH: 8,
-  DATA_RETENTION_YEARS: 7,
-  GDPR_RESPONSE_DAYS: 30,
-  FILE_SIZE_LIMIT: 10 * 1024 * 1024, // 10MB
-  ALLOWED_FILE_TYPES: [
-    'application/pdf',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'text/plain',
-    'image/jpeg',
-    'image/png',
-    'image/webp'
-  ],
-} as const;
+const PASSWORD_MIN_LENGTH = 8;
+const PASSWORD_REQUIRES_MIXED_CASE = true;
+const PASSWORD_REQUIRES_NUMBERS = true;
+const PASSWORD_REQUIRES_SYMBOLS = true;
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCKOUT_DURATION_MINUTES = 15;
+const SESSION_EXPIRY_DAYS = 7;
+const SENSITIVE_OPERATIONS_REQUIRE_REAUTH = true;
 
-// Input sanitization
+// Rate limiting
+const rateLimits: Record<string, { count: number; timestamp: number }> = {};
+
+export const validatePassword = (password: string): { valid: boolean; message?: string } => {
+  if (password.length < PASSWORD_MIN_LENGTH) {
+    return { valid: false, message: `Password must be at least ${PASSWORD_MIN_LENGTH} characters` };
+  }
+
+  if (PASSWORD_REQUIRES_MIXED_CASE && !/(?=.*[a-z])(?=.*[A-Z])/.test(password)) {
+    return { valid: false, message: "Password must contain both uppercase and lowercase letters" };
+  }
+
+  if (PASSWORD_REQUIRES_NUMBERS && !/\d/.test(password)) {
+    return { valid: false, message: "Password must contain at least one number" };
+  }
+
+  if (PASSWORD_REQUIRES_SYMBOLS && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+    return { valid: false, message: "Password must contain at least one special character" };
+  }
+
+  return { valid: true };
+};
+
+export const hashToken = (token: string): string => {
+  return createHash("sha256").update(token).digest("hex");
+};
+
+export const generateSecureToken = (): string => {
+  return uuidv4() + uuidv4().replace(/-/g, "");
+};
+
+export const checkRateLimit = (
+  key: string,
+  limit: number,
+  windowSeconds: number
+): { allowed: boolean; retryAfter?: number } => {
+  const now = Date.now();
+  const record = rateLimits[key] || { count: 0, timestamp: now };
+
+  // Reset if outside window
+  if (now - record.timestamp > windowSeconds * 1000) {
+    record.count = 0;
+    record.timestamp = now;
+  }
+
+  if (record.count >= limit) {
+    const retryAfter = Math.ceil(
+      (record.timestamp + windowSeconds * 1000 - now) / 1000
+    );
+    return { allowed: false, retryAfter };
+  }
+
+  // Update rate limit record
+  record.count += 1;
+  rateLimits[key] = record;
+
+  return { allowed: true };
+};
+
 export const sanitizeInput = (input: string): string => {
   return input
-    .trim()
-    .replace(/[<>]/g, '') // Remove potential HTML/XML tags
-    .replace(/javascript:/gi, '') // Remove javascript: protocol
-    .replace(/on\w+=/gi, '') // Remove event handlers
-    .substring(0, 10000); // Limit length
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 };
 
-export const sanitizeFileName = (fileName: string): string => {
-  return fileName
-    .replace(/[^\w\s.-]/g, '') // Only allow word characters, spaces, dots, and hyphens
-    .replace(/\s+/g, '_') // Replace spaces with underscores
-    .toLowerCase()
-    .substring(0, 255); // Limit length
-};
-
-// Email validation and sanitization
-export const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email) && email.length <= 255;
-};
-
-export const sanitizeEmail = (email: string): string => {
-  return email.toLowerCase().trim();
-};
-
-// Phone number validation
-export const isValidPhoneNumber = (phone: string): boolean => {
-  const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-  return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
-};
-
-export const sanitizePhoneNumber = (phone: string): string => {
-  return phone.replace(/[\s\-\(\)]/g, '');
-};
-
-// URL validation
-export const isValidURL = (url: string): boolean => {
-  try {
-    const urlObj = new URL(url);
-    return ['http:', 'https:'].includes(urlObj.protocol);
-  } catch {
-    return false;
-  }
-};
-
-// File validation
-export const validateFile = (file: File): { isValid: boolean; error?: string } => {
-  if (file.size > SECURITY_CONFIG.FILE_SIZE_LIMIT) {
-    return { isValid: false, error: 'File size exceeds limit (10MB)' };
-  }
-
-  if (!SECURITY_CONFIG.ALLOWED_FILE_TYPES.includes(file.type)) {
-    return { isValid: false, error: 'File type not allowed' };
-  }
-
-  // Check for suspicious file names
-  const suspiciousPatterns = [
-    /\.exe$/i,
-    /\.bat$/i,
-    /\.cmd$/i,
-    /\.scr$/i,
-    /\.com$/i,
-    /\.pif$/i,
-    /\.js$/i,
-    /\.jar$/i,
-    /\.php$/i,
-    /\.asp$/i,
-    /\.aspx$/i,
+export const validateFileType = (file: File, allowedMimeTypes: string[]): string => {
+  const allowedTypes = [
+    "application/pdf",
+    "application/msword", 
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "text/plain",
+    "image/jpeg",
+    "image/png",
+    "image/webp"
   ];
-
-  if (suspiciousPatterns.some(pattern => pattern.test(file.name))) {
-    return { isValid: false, error: 'File type potentially dangerous' };
+  
+  const fileType = file.type;
+  
+  if (!allowedTypes.includes(fileType)) {
+    throw new Error(`File type ${fileType} is not allowed`);
   }
-
-  return { isValid: true };
+  
+  return fileType;
 };
 
-// Rate limiting utilities
-export const createRateLimiter = (maxRequests: number, windowMs: number) => {
-  const requests = new Map<string, number[]>();
-
-  return (identifier: string): boolean => {
-    const now = Date.now();
-    const userRequests = requests.get(identifier) || [];
-    
-    // Remove old requests outside the window
-    const validRequests = userRequests.filter(time => now - time < windowMs);
-    
-    if (validRequests.length >= maxRequests) {
-      return false; // Rate limit exceeded
-    }
-    
-    validRequests.push(now);
-    requests.set(identifier, validRequests);
-    return true;
-  };
+export const validateFileSize = (file: File, maxSizeMB: number): boolean => {
+  const maxSizeBytes = maxSizeMB * 1024 * 1024;
+  if (file.size > maxSizeBytes) {
+    throw new Error(`File size exceeds the maximum allowed size of ${maxSizeMB}MB`);
+  }
+  return true;
 };
 
-// Audit logging
+export const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return emailRegex.test(email);
+};
+
+export const validatePhoneNumber = (phone: string): boolean => {
+  // Basic international phone validation
+  const phoneRegex = /^\+?[0-9]{8,15}$/;
+  return phoneRegex.test(phone);
+};
+
+export const isAuthenticated = async (): Promise<boolean> => {
+  const { data } = await supabase.auth.getSession();
+  return !!data.session;
+};
+
+export const requiresReauthentication = (lastAuthTime: number): boolean => {
+  if (!SENSITIVE_OPERATIONS_REQUIRE_REAUTH) return false;
+  
+  const now = Date.now();
+  const authAgeMinutes = (now - lastAuthTime) / (1000 * 60);
+  
+  // Require re-auth if last authentication was more than 30 minutes ago
+  return authAgeMinutes > 30;
+};
+
 export const logSecurityEvent = async (
-  userId: string | null,
+  userId: string,
   action: string,
-  details: Record<string, any>,
-  ipAddress?: string,
-  userAgent?: string
+  resourceType: string,
+  resourceId: string,
+  metadata: Record<string, any> = {}
 ) => {
   try {
-    await supabase
-      .from("audit_logs")
-      .insert({
-        user_id: userId,
-        action: `security_${action}`,
-        resource_type: "security_event",
-        ip_address: ipAddress,
-        user_agent: userAgent,
-        metadata: details,
-        gdpr_related: false,
-      });
+    // Security logging placeholder - audit_logs table doesn't exist
+    console.log("Security event:", { userId, action, resourceType, resourceId, metadata });
   } catch (error) {
     console.error("Failed to log security event:", error);
   }
 };
 
-// Session management
-export const getClientInfo = () => {
-  return {
-    userAgent: navigator.userAgent,
-    language: navigator.language,
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    screen: `${screen.width}x${screen.height}`,
-    platform: navigator.platform,
-  };
-};
-
-// Data encryption/decryption utilities (for client-side use)
-export const hashString = async (input: string): Promise<string> => {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(input);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-};
-
-// Generate secure tokens
-export const generateSecureToken = (): string => {
-  return crypto.randomUUID();
-};
-
-// GDPR compliance utilities
-export const calculateDataRetentionDate = (): string => {
-  const retentionDate = new Date();
-  retentionDate.setFullYear(retentionDate.getFullYear() + SECURITY_CONFIG.DATA_RETENTION_YEARS);
-  return retentionDate.toISOString();
-};
-
-export const isDataExpired = (retentionDate: string): boolean => {
-  return new Date(retentionDate) <= new Date();
-};
-
-// Content Security Policy helpers
-export const sanitizeHTML = (html: string): string => {
-  const div = document.createElement('div');
-  div.textContent = html;
-  return div.innerHTML;
-};
-
-// XSS prevention
-export const escapeHTML = (text: string): string => {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-};
-
-// SQL injection prevention (for client-side validation)
-export const containsSQLPatterns = (input: string): boolean => {
-  const sqlPatterns = [
-    /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b)/i,
-    /(--|\/\*|\*\/|xp_|sp_)/i,
-    /(\b(OR|AND)\b\s*\d+\s*=\s*\d+)/i,
-    /('(\s)*(OR|AND)(\s)*')/i,
-  ];
-
-  return sqlPatterns.some(pattern => pattern.test(input));
-};
-
-// Password strength validation
-export const validatePasswordStrength = (password: string): {
-  isValid: boolean;
-  score: number;
-  feedback: string[];
-} => {
-  const feedback: string[] = [];
-  let score = 0;
-
-  if (password.length < SECURITY_CONFIG.PASSWORD_MIN_LENGTH) {
-    feedback.push(`Password must be at least ${SECURITY_CONFIG.PASSWORD_MIN_LENGTH} characters long`);
-  } else {
-    score += 1;
+export const validateCSRFToken = (token: string, storedToken: string): boolean => {
+  if (!token || !storedToken) {
+    return false;
   }
-
-  if (!/[a-z]/.test(password)) {
-    feedback.push('Password must contain lowercase letters');
-  } else {
-    score += 1;
-  }
-
-  if (!/[A-Z]/.test(password)) {
-    feedback.push('Password must contain uppercase letters');
-  } else {
-    score += 1;
-  }
-
-  if (!/\d/.test(password)) {
-    feedback.push('Password must contain numbers');
-  } else {
-    score += 1;
-  }
-
-  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-    feedback.push('Password must contain special characters');
-  } else {
-    score += 1;
-  }
-
-  // Check for common patterns
-  const commonPatterns = [
-    /123456/,
-    /password/i,
-    /qwerty/i,
-    /admin/i,
-    /(.)\1{2,}/, // Repeated characters
-  ];
-
-  if (commonPatterns.some(pattern => pattern.test(password))) {
-    feedback.push('Password contains common patterns');
-    score = Math.max(0, score - 1);
-  }
-
-  return {
-    isValid: score >= 4 && feedback.length === 0,
-    score,
-    feedback,
-  };
-};
-
-// IP address validation
-export const isValidIPAddress = (ip: string): boolean => {
-  const ipv4Regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-  const ipv6Regex = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/;
-  return ipv4Regex.test(ip) || ipv6Regex.test(ip);
-};
-
-// Honeypot field for bot detection
-export const createHoneypot = () => {
-  return {
-    fieldName: `field_${Math.random().toString(36).substr(2, 9)}`,
-    style: {
-      position: 'absolute' as const,
-      left: '-9999px',
-      top: '-9999px',
-      visibility: 'hidden' as const,
-      opacity: 0,
-      pointerEvents: 'none' as const,
-      tabIndex: -1,
-    },
-  };
-};
-
-// Device fingerprinting (basic)
-export const getDeviceFingerprint = async (): Promise<string> => {
-  const components = [
-    navigator.userAgent,
-    navigator.language,
-    screen.width,
-    screen.height,
-    screen.colorDepth,
-    new Date().getTimezoneOffset(),
-    navigator.platform,
-    navigator.hardwareConcurrency || 0,
-  ];
-
-  const fingerprint = components.join('|');
-  return await hashString(fingerprint);
-};
-
-// Security headers validation
-export const validateSecurityHeaders = (): Record<string, boolean> => {
-  const headers = {
-    'Content-Security-Policy': false,
-    'X-Frame-Options': false,
-    'X-Content-Type-Options': false,
-    'Referrer-Policy': false,
-    'Permissions-Policy': false,
-  };
-
-  // This would be checked server-side in a real application
-  // For client-side, we can only check what's available
   
-  return headers;
+  // Use constant-time comparison to prevent timing attacks
+  let result = token.length === storedToken.length;
+  let diff = 0;
+  
+  for (let i = 0; i < token.length && i < storedToken.length; i++) {
+    diff |= token.charCodeAt(i) ^ storedToken.charCodeAt(i);
+  }
+  
+  return result && diff === 0;
 };
 
-export const securityUtils = {
-  sanitizeInput,
-  sanitizeFileName,
-  sanitizeEmail,
-  sanitizePhoneNumber,
-  isValidEmail,
-  isValidPhoneNumber,
-  isValidURL,
-  validateFile,
-  createRateLimiter,
-  logSecurityEvent,
-  getClientInfo,
-  hashString,
-  generateSecureToken,
-  calculateDataRetentionDate,
-  isDataExpired,
-  sanitizeHTML,
-  escapeHTML,
-  containsSQLPatterns,
-  validatePasswordStrength,
-  isValidIPAddress,
-  createHoneypot,
-  getDeviceFingerprint,
-  validateSecurityHeaders,
+export const generateCSRFToken = (): string => {
+  return uuidv4() + uuidv4();
+};
+
+export const sanitizeHtml = (html: string): string => {
+  // Very basic HTML sanitization - for production, use a proper library like DOMPurify
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/on\w+="[^"]*"/g, '')
+    .replace(/on\w+='[^']*'/g, '')
+    .replace(/on\w+=\w+/g, '');
 };
