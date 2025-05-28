@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-// Explicit type definitions to avoid TypeScript recursion issues
+// Simple, explicit type definitions to avoid TypeScript recursion issues
 export interface Job {
   id: string;
   title: string;
@@ -57,45 +57,47 @@ interface JobFilters {
   posted_by?: string;
 }
 
+const fetchJobs = async (filters?: JobFilters): Promise<Job[]> => {
+  try {
+    let query = supabase
+      .from("jobs")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (filters?.status) {
+      query = query.eq("status", filters.status);
+    }
+
+    if (filters?.location) {
+      query = query.ilike("location", `%${filters.location}%`);
+    }
+
+    if (filters?.type) {
+      query = query.eq("type", filters.type);
+    }
+
+    if (filters?.posted_by) {
+      query = query.eq("posted_by", filters.posted_by);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Error fetching jobs:", error);
+      throw new Error(`Failed to fetch jobs: ${error.message}`);
+    }
+
+    return (data || []) as Job[];
+  } catch (error) {
+    console.error("Unexpected error fetching jobs:", error);
+    throw error;
+  }
+};
+
 export const useJobs = (filters?: JobFilters) => {
-  return useQuery({
+  return useQuery<Job[], Error>({
     queryKey: ['jobs', filters],
-    queryFn: async (): Promise<Job[]> => {
-      try {
-        let query = supabase
-          .from("jobs")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (filters?.status) {
-          query = query.eq("status", filters.status);
-        }
-
-        if (filters?.location) {
-          query = query.ilike("location", `%${filters.location}%`);
-        }
-
-        if (filters?.type) {
-          query = query.eq("type", filters.type);
-        }
-
-        if (filters?.posted_by) {
-          query = query.eq("posted_by", filters.posted_by);
-        }
-
-        const { data, error } = await query;
-
-        if (error) {
-          console.error("Error fetching jobs:", error);
-          throw new Error(`Failed to fetch jobs: ${error.message}`);
-        }
-
-        return (data || []) as Job[];
-      } catch (error) {
-        console.error("Unexpected error fetching jobs:", error);
-        throw error;
-      }
-    },
+    queryFn: () => fetchJobs(filters),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });
@@ -108,45 +110,47 @@ interface PublishedJobFilters {
   search?: string;
 }
 
+const fetchPublishedJobs = async (filters?: PublishedJobFilters): Promise<Job[]> => {
+  try {
+    let query = supabase
+      .from("jobs")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (filters?.location) {
+      query = query.ilike("location", `%${filters.location}%`);
+    }
+
+    if (filters?.type) {
+      query = query.eq("type", filters.type);
+    }
+
+    if (filters?.experience) {
+      query = query.eq("experience_level", filters.experience);
+    }
+
+    if (filters?.search) {
+      query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Error fetching published jobs:", error);
+      throw new Error(`Failed to fetch published jobs: ${error.message}`);
+    }
+
+    return (data || []) as Job[];
+  } catch (error) {
+    console.error("Unexpected error fetching published jobs:", error);
+    throw error;
+  }
+};
+
 export const usePublishedJobs = (filters?: PublishedJobFilters) => {
-  return useQuery({
+  return useQuery<Job[], Error>({
     queryKey: ['published-jobs', filters],
-    queryFn: async (): Promise<Job[]> => {
-      try {
-        let query = supabase
-          .from("jobs")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (filters?.location) {
-          query = query.ilike("location", `%${filters.location}%`);
-        }
-
-        if (filters?.type) {
-          query = query.eq("type", filters.type);
-        }
-
-        if (filters?.experience) {
-          query = query.eq("experience_level", filters.experience);
-        }
-
-        if (filters?.search) {
-          query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
-        }
-
-        const { data, error } = await query;
-
-        if (error) {
-          console.error("Error fetching published jobs:", error);
-          throw new Error(`Failed to fetch published jobs: ${error.message}`);
-        }
-
-        return (data || []) as Job[];
-      } catch (error) {
-        console.error("Unexpected error fetching published jobs:", error);
-        throw error;
-      }
-    },
+    queryFn: () => fetchPublishedJobs(filters),
     staleTime: 5 * 60 * 1000,
   });
 };
@@ -154,7 +158,7 @@ export const usePublishedJobs = (filters?: PublishedJobFilters) => {
 export const useCreateJob = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<Job, Error, JobInsert>({
     mutationFn: async (job: JobInsert): Promise<Job> => {
       try {
         const { data, error } = await supabase
@@ -187,7 +191,7 @@ export const useCreateJob = () => {
 export const useUpdateJob = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<Job, Error, { id: string; updates: JobUpdate }>({
     mutationFn: async ({ 
       id, 
       updates 
@@ -232,7 +236,7 @@ export const useUpdateJob = () => {
 export const useDeleteJob = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<void, Error, string>({
     mutationFn: async (id: string): Promise<void> => {
       try {
         const { error } = await supabase
@@ -259,31 +263,33 @@ export const useDeleteJob = () => {
   });
 };
 
-export const useJobById = (id: string) => {
-  return useQuery({
-    queryKey: ['job', id],
-    queryFn: async (): Promise<Job | null> => {
-      try {
-        const { data, error } = await supabase
-          .from("jobs")
-          .select("*")
-          .eq("id", id)
-          .single();
+const fetchJobById = async (id: string): Promise<Job | null> => {
+  try {
+    const { data, error } = await supabase
+      .from("jobs")
+      .select("*")
+      .eq("id", id)
+      .single();
 
-        if (error) {
-          if (error.code === 'PGRST116') {
-            return null;
-          }
-          console.error("Error fetching job:", error);
-          throw new Error(`Failed to fetch job: ${error.message}`);
-        }
-
-        return data as Job;
-      } catch (error) {
-        console.error("Unexpected error fetching job:", error);
-        throw error;
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null;
       }
-    },
+      console.error("Error fetching job:", error);
+      throw new Error(`Failed to fetch job: ${error.message}`);
+    }
+
+    return data as Job;
+  } catch (error) {
+    console.error("Unexpected error fetching job:", error);
+    throw error;
+  }
+};
+
+export const useJobById = (id: string) => {
+  return useQuery<Job | null, Error>({
+    queryKey: ['job', id],
+    queryFn: () => fetchJobById(id),
     enabled: !!id,
     staleTime: 5 * 60 * 1000,
   });
