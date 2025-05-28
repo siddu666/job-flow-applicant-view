@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-// Simple, explicit type definitions to avoid TypeScript recursion issues
+// Simple, explicit type definitions
 export interface Job {
   id: string;
   title: string;
@@ -57,7 +57,14 @@ interface JobFilters {
   posted_by?: string;
 }
 
-const fetchJobs = async (filters?: JobFilters): Promise<Job[]> => {
+interface PublishedJobFilters {
+  location?: string;
+  type?: string;
+  experience?: string;
+  search?: string;
+}
+
+const fetchJobs = async (filters?: JobFilters) => {
   try {
     let query = supabase
       .from("jobs")
@@ -95,7 +102,7 @@ const fetchJobs = async (filters?: JobFilters): Promise<Job[]> => {
 };
 
 export const useJobs = (filters?: JobFilters) => {
-  return useQuery<Job[], Error>({
+  return useQuery({
     queryKey: ['jobs', filters],
     queryFn: () => fetchJobs(filters),
     staleTime: 5 * 60 * 1000,
@@ -103,14 +110,7 @@ export const useJobs = (filters?: JobFilters) => {
   });
 };
 
-interface PublishedJobFilters {
-  location?: string;
-  type?: string;
-  experience?: string;
-  search?: string;
-}
-
-const fetchPublishedJobs = async (filters?: PublishedJobFilters): Promise<Job[]> => {
+const fetchPublishedJobs = async (filters?: PublishedJobFilters) => {
   try {
     let query = supabase
       .from("jobs")
@@ -148,7 +148,7 @@ const fetchPublishedJobs = async (filters?: PublishedJobFilters): Promise<Job[]>
 };
 
 export const usePublishedJobs = (filters?: PublishedJobFilters) => {
-  return useQuery<Job[], Error>({
+  return useQuery({
     queryKey: ['published-jobs', filters],
     queryFn: () => fetchPublishedJobs(filters),
     staleTime: 5 * 60 * 1000,
@@ -158,8 +158,8 @@ export const usePublishedJobs = (filters?: PublishedJobFilters) => {
 export const useCreateJob = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<Job, Error, JobInsert>({
-    mutationFn: async (job: JobInsert): Promise<Job> => {
+  return useMutation({
+    mutationFn: async (job: JobInsert) => {
       try {
         const { data, error } = await supabase
           .from("jobs")
@@ -191,14 +191,8 @@ export const useCreateJob = () => {
 export const useUpdateJob = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<Job, Error, { id: string; updates: JobUpdate }>({
-    mutationFn: async ({ 
-      id, 
-      updates 
-    }: { 
-      id: string; 
-      updates: JobUpdate;
-    }): Promise<Job> => {
+  return useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: JobUpdate }) => {
       try {
         const updateData = {
           ...updates,
@@ -236,8 +230,8 @@ export const useUpdateJob = () => {
 export const useDeleteJob = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<void, Error, string>({
-    mutationFn: async (id: string): Promise<void> => {
+  return useMutation({
+    mutationFn: async (id: string) => {
       try {
         const { error } = await supabase
           .from("jobs")
@@ -263,7 +257,7 @@ export const useDeleteJob = () => {
   });
 };
 
-const fetchJobById = async (id: string): Promise<Job | null> => {
+const fetchJobById = async (id: string) => {
   try {
     const { data, error } = await supabase
       .from("jobs")
@@ -287,7 +281,7 @@ const fetchJobById = async (id: string): Promise<Job | null> => {
 };
 
 export const useJobById = (id: string) => {
-  return useQuery<Job | null, Error>({
+  return useQuery({
     queryKey: ['job', id],
     queryFn: () => fetchJobById(id),
     enabled: !!id,
