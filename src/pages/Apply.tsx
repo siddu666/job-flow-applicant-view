@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -26,21 +25,21 @@ const Apply = () => {
   const { data: profile } = useProfile(user.id);
   console.log(profile)
 
-
+  // Updated formData to use strings for form inputs
   const [formData, setFormData] = useState({
-    firstName: profile.first_name,
-    lastName: profile.last_name,
-    email: profile.email,
-    phone: profile.phone,
-    location: profile.current_location,
-    experience: profile.experience_years,
-    expectedSalary: profile.expected_salary_sek,
-    availability: profile.availability,
-    coverLetter: profile.cv_url,
-    skills: profile.skills,
-    portfolioUrl: profile.portfolio_url,
-    linkedinUrl: profile.linkedin_url,
-    githubUrl: profile.github_url,
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    location: "",
+    experience: "", // Changed to string
+    expectedSalary: "", // Changed to string
+    availability: "",
+    coverLetter: "",
+    skills: [] as string[],
+    portfolioUrl: "",
+    linkedinUrl: "",
+    githubUrl: "",
   });
 
   // Pre-populate form with profile data
