@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import {Profile, useAllCandidates} from "@/hooks/useProfile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, ChevronLeft, ChevronRight, FileText } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 
 interface CandidateFilters {
@@ -164,19 +165,55 @@ const AdminCandidates = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {candidates?.map((candidate) => (
-              <Card key={candidate.id} onClick={() => openCandidateModal(candidate)} className="cursor-pointer">
+              <Card key={candidate.id} onClick={() => openCandidateModal(candidate)} className="cursor-pointer hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex items-center space-x-4">
                     <Avatar>
                       <AvatarImage src={`https://avatar.vercel.sh/${candidate.email}.png`} />
                       <AvatarFallback>{candidate.full_name?.substring(0, 2)}</AvatarFallback>
                     </Avatar>
-                    <div>
-                      <CardTitle>{candidate.full_name}</CardTitle>
+                    <div className="flex-1">
+                      <CardTitle className="text-lg">{candidate.full_name}</CardTitle>
                       <p className="text-sm text-gray-500">{candidate.email}</p>
+                      {candidate.cv_url && (
+                        <div className="flex items-center gap-1 mt-1">
+                          <FileText className="h-3 w-3 text-green-600" />
+                          <span className="text-xs text-green-600">CV Available</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {candidate.current_location && (
+                      <p className="flex items-center text-sm text-gray-600">
+                        <MapPin className="mr-1 h-3 w-3" />
+                        {candidate.current_location}
+                      </p>
+                    )}
+                    {candidate.experience_years && (
+                      <p className="flex items-center text-sm text-gray-600">
+                        <Calendar className="mr-1 h-3 w-3" />
+                        {candidate.experience_years} years experience
+                      </p>
+                    )}
+                    {candidate.skills && candidate.skills.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {candidate.skills.slice(0, 2).map((skill, index) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            {skill}
+                          </Badge>
+                        ))}
+                        {candidate.skills.length > 2 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{candidate.skills.length - 2}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
               </Card>
           ))}
         </div>
@@ -203,63 +240,112 @@ const AdminCandidates = () => {
 
         <Modal isOpen={isModalOpen} onClose={closeCandidateModal}>
           {selectedCandidate && (
-              <div>
-                <h2 className="text-xl font-bold">{selectedCandidate.full_name}</h2>
-                <p className="text-sm text-gray-500">{selectedCandidate.email}</p>
-                <div className="mt-4">
-                  <p className="text-sm font-medium">Bio:</p>
-                  <p>{selectedCandidate.bio}</p>
-                </div>
-                <div className="mt-4">
-                  <p className="text-sm font-medium">Skills:</p>
-                  <div className="flex flex-wrap gap-1">
-                    {selectedCandidate.skills?.map((skill, index) => (
-                        <Badge key={index} variant="secondary">{skill}</Badge>
-                    ))}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <Avatar className="h-16 w-16">
+                    <AvatarImage src={`https://avatar.vercel.sh/${selectedCandidate.email}.png`} />
+                    <AvatarFallback className="text-lg">
+                      {selectedCandidate.full_name?.substring(0, 2)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h2 className="text-xl font-bold">{selectedCandidate.full_name}</h2>
+                    <p className="text-sm text-gray-500">{selectedCandidate.email}</p>
                   </div>
                 </div>
-                <div className="mt-4">
-                  <p className="text-sm font-medium">CV:</p>
-                  {selectedCandidate.cv_url && (
-                      <a href={selectedCandidate.cv_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                        View CV
-                      </a>
-                  )}
+
+                {selectedCandidate.bio && (
+                  <div>
+                    <p className="text-sm font-medium">Bio:</p>
+                    <p className="text-sm text-gray-700">{selectedCandidate.bio}</p>
+                  </div>
+                )}
+
+                {selectedCandidate.skills && selectedCandidate.skills.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium">Skills:</p>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {selectedCandidate.skills.map((skill, index) => (
+                          <Badge key={index} variant="secondary">{skill}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {selectedCandidate.cv_url && (
+                  <div>
+                    <p className="text-sm font-medium">CV/Resume:</p>
+                    <a 
+                      href={selectedCandidate.cv_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="inline-flex items-center gap-2 text-blue-600 hover:underline text-sm"
+                    >
+                      <FileText className="h-4 w-4" />
+                      View CV/Resume
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div className="space-y-2">
+                    <p className="flex items-center text-sm">
+                      <MapPin className="mr-2 h-4 w-4" />
+                      {selectedCandidate.current_location || "No location specified"}
+                    </p>
+                    <p className="flex items-center text-sm">
+                      <Calendar className="mr-2 h-4 w-4" />
+                      {selectedCandidate.experience_years || 0} Years Experience
+                    </p>
+                    <p className="flex items-center text-sm">
+                      <DollarSign className="mr-2 h-4 w-4" />
+                      {selectedCandidate.expected_salary_sek || 0} SEK
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <p className="flex items-center text-sm">
+                      <Mail className="mr-2 h-4 w-4" />
+                      {selectedCandidate.email}
+                    </p>
+                    <p className="flex items-center text-sm">
+                      <Phone className="mr-2 h-4 w-4" />
+                      {selectedCandidate.phone || "No phone specified"}
+                    </p>
+                    {selectedCandidate.availability && (
+                      <p className="text-sm">
+                        <span className="font-medium">Availability:</span> {selectedCandidate.availability}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div className="mt-4 space-y-2">
-                  <p className="flex items-center text-sm">
-                    <MapPin className="mr-2 h-4 w-4" />
-                    {selectedCandidate.current_location || "No location specified"}
-                  </p>
-                  <p className="flex items-center text-sm">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    {selectedCandidate.experience_years || 0} Years Experience
-                  </p>
-                  <p className="flex items-center text-sm">
-                    <DollarSign className="mr-2 h-4 w-4" />
-                    {selectedCandidate.expected_salary_sek || 0} SEK
-                  </p>
-                  <p className="flex items-center text-sm">
-                    <Mail className="mr-2 h-4 w-4" />
-                    {selectedCandidate.email}
-                  </p>
-                  <p className="flex items-center text-sm">
-                    <Phone className="mr-2 h-4 w-4" />
-                    {selectedCandidate.phone || "No phone specified"}
-                  </p>
-                  {selectedCandidate.linkedin_url && (
-                      <a href={selectedCandidate.linkedin_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline">
-                        <ExternalLink className="mr-2 h-4 w-4" />
-                        LinkedIn
-                      </a>
-                  )}
-                  {selectedCandidate.portfolio_url && (
-                      <a href={selectedCandidate.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline">
-                        <ExternalLink className="mr-2 h-4 w-4" />
-                        Portfolio
-                      </a>
-                  )}
-                </div>
+
+                {(selectedCandidate.linkedin_url || selectedCandidate.portfolio_url || selectedCandidate.github_url) && (
+                  <div>
+                    <p className="text-sm font-medium mb-2">Links:</p>
+                    <div className="space-y-1">
+                      {selectedCandidate.linkedin_url && (
+                          <a href={selectedCandidate.linkedin_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+                            <ExternalLink className="mr-2 h-3 w-3" />
+                            LinkedIn
+                          </a>
+                      )}
+                      {selectedCandidate.portfolio_url && (
+                          <a href={selectedCandidate.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+                            <ExternalLink className="mr-2 h-3 w-3" />
+                            Portfolio
+                          </a>
+                      )}
+                      {selectedCandidate.github_url && (
+                          <a href={selectedCandidate.github_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+                            <ExternalLink className="mr-2 h-3 w-3" />
+                            GitHub
+                          </a>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
           )}
         </Modal>

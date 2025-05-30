@@ -19,6 +19,7 @@ const Apply = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const [cvFile, setCvFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   
   console.log(user)
 
@@ -94,12 +95,54 @@ const Apply = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type
+      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!allowedTypes.includes(file.type)) {
+        toast({
+          title: "Invalid File Type",
+          description: "Please upload a PDF, DOC, or DOCX file.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate file size (10MB max)
+      if (file.size > 10 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Please upload a file smaller than 10MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       setCvFile(file);
     }
   };
 
+  const uploadCV = async (file: File): Promise<string> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${user?.id}/cv-${Date.now()}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('documents')
+      .upload(fileName, file);
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      throw new Error(`Failed to upload CV: ${uploadError.message}`);
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('documents')
+      .getPublicUrl(fileName);
+
+    return publicUrl;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsUploading(true);
 
     if (!formData.firstName || !formData.lastName || !formData.email) {
       toast({
@@ -107,6 +150,18 @@ const Apply = () => {
         description: "Please fill in all required fields.",
         variant: "destructive",
       });
+      setIsUploading(false);
+      return;
+    }
+
+    // Check if CV is required (either from profile or newly uploaded)
+    if (!profile?.cv_url && !cvFile) {
+      toast({
+        title: "CV Required",
+        description: "Please upload your CV to continue.",
+        variant: "destructive",
+      });
+      setIsUploading(false);
       return;
     }
 
@@ -116,20 +171,18 @@ const Apply = () => {
       
       if (cvFile) {
         // Upload new CV file
-        const fileExt = cvFile.name.split('.').pop();
-        const fileName = `${user?.id}/cv-${Date.now()}.${fileExt}`;
+        cvUrl = await uploadCV(cvFile);
 
-        const { error: uploadError } = await supabase.storage
-          .from('documents')
-          .upload(fileName, cvFile);
+        // Update user profile with new CV URL
+        const { error: profileUpdateError } = await supabase
+          .from('profiles')
+          .update({ cv_url: cvUrl })
+          .eq('id', user?.id);
 
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('documents')
-          .getPublicUrl(fileName);
-
-        cvUrl = publicUrl;
+        if (profileUpdateError) {
+          console.error('Profile update error:', profileUpdateError);
+          // Don't throw here - we can still submit the application
+        }
       }
 
       const applicationData = {
@@ -167,6 +220,8 @@ const Apply = () => {
         description: "There was an error submitting your application. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -391,11 +446,14 @@ const Apply = () => {
 
               {/* CV Upload */}
               <div>
-                <Label htmlFor="cv">CV/Resume {profile?.cv_url ? "" : "*"}</Label>
+                <Label htmlFor="cv">CV/Resume *</Label>
                 {profile?.cv_url && (
-                  <p className="text-sm text-green-600 mb-2">
-                    ✓ We'll use your CV from your profile. Upload a new one to replace it.
-                  </p>
+                  <div className="mb-2">
+                    <p className="text-sm text-green-600">
+                      ✓ Current CV: <a href={profile.cv_url} target="_blank" rel="noopener noreferrer" className="underline">View CV</a>
+                    </p>
+                    <p className="text-sm text-gray-600">Upload a new CV to replace it.</p>
+                  </div>
                 )}
                 <div className="mt-2">
                   <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
@@ -432,8 +490,12 @@ const Apply = () => {
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
-                Submit Application to Justera Group AB
+              <Button 
+                type="submit" 
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                disabled={isUploading}
+              >
+                {isUploading ? "Submitting..." : "Submit Application to Justera Group AB"}
               </Button>
             </form>
           </CardContent>
