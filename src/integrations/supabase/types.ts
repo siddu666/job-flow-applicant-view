@@ -71,7 +71,6 @@ export type Database = {
       }
       jobs: {
         Row: {
-          company: string
           created_at: string | null
           description: string
           experience_level: string | null
@@ -79,14 +78,12 @@ export type Database = {
           location: string
           posted_by: string
           requirements: string
-          salary_range: string | null
           skills: string[] | null
           title: string
           type: string
           updated_at: string | null
         }
         Insert: {
-          company: string
           created_at?: string | null
           description: string
           experience_level?: string | null
@@ -94,14 +91,12 @@ export type Database = {
           location: string
           posted_by: string
           requirements: string
-          salary_range?: string | null
           skills?: string[] | null
           title: string
           type: string
           updated_at?: string | null
         }
         Update: {
-          company?: string
           created_at?: string | null
           description?: string
           experience_level?: string | null
@@ -109,7 +104,6 @@ export type Database = {
           location?: string
           posted_by?: string
           requirements?: string
-          salary_range?: string | null
           skills?: string[] | null
           title?: string
           type?: string

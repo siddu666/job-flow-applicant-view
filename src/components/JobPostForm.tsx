@@ -22,10 +22,8 @@ const JobPostForm = ({ onClose }: JobPostFormProps) => {
   
   const [formData, setFormData] = useState({
     title: "",
-    company: "Justera Group AB",
     location: "",
     type: "",
-    salary_range: "",
     description: "",
     requirements: "",
     experience_level: "",
@@ -109,10 +107,8 @@ const JobPostForm = ({ onClose }: JobPostFormProps) => {
     try {
       await createJobMutation.mutateAsync({
         title: formData.title,
-        company: formData.company,
         location: formData.location,
         type: formData.type,
-        salary_range: formData.salary_range || null,
         description: formData.description,
         requirements: formData.requirements,
         experience_level: formData.experience_level || null,
@@ -153,17 +149,6 @@ const JobPostForm = ({ onClose }: JobPostFormProps) => {
                 onChange={(e) => handleInputChange("title", e.target.value)}
                 placeholder="e.g. Senior Software Developer"
                 required
-              />
-            </div>
-
-            {/* Company */}
-            <div className="space-y-2">
-              <Label htmlFor="company">Company</Label>
-              <Input
-                id="company"
-                value={formData.company}
-                onChange={(e) => handleInputChange("company", e.target.value)}
-                placeholder="Company name"
               />
             </div>
 
@@ -210,17 +195,6 @@ const JobPostForm = ({ onClose }: JobPostFormProps) => {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-
-            {/* Salary Range */}
-            <div className="space-y-2">
-              <Label htmlFor="salary_range">Salary Range (SEK)</Label>
-              <Input
-                id="salary_range"
-                value={formData.salary_range}
-                onChange={(e) => handleInputChange("salary_range", e.target.value)}
-                placeholder="e.g. 45,000 - 65,000 per month"
-              />
             </div>
           </div>
 

@@ -21,10 +21,8 @@ export interface Job {
 
 export interface JobInsert {
   title: string;
-  company: string;
   location: string;
   type: string;
-  salary_range?: string | null;
   description: string;
   requirements: string;
   experience_level?: string | null;
