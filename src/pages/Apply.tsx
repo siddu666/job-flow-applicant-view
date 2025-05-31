@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,12 +12,33 @@ import { Badge } from "@/components/ui/badge";
 import { Briefcase, Upload, MapPin, Clock, DollarSign, PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth-context";
 import { useProfile } from "@/hooks/useProfile";
 import { useJobById } from "@/hooks/useJobs";
 
+interface Skill {
+  name: string;
+  proficiency: string;
+}
+
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  experience: string;
+  expectedSalary: string;
+  availability: string;
+  coverLetter: string;
+  skills: Skill[];
+  portfolioUrl: string;
+  linkedinUrl: string;
+  githubUrl: string;
+}
+
 const Apply = () => {
-  const { jobId } = useParams<{ jobId: string }>();
+  const router = useRouter();
+  const { jobId } = router.query;
   const { toast } = useToast();
   const { user } = useAuth();
   const [cvFile, setCvFile] = useState<File | null>(null);
@@ -25,19 +47,18 @@ const Apply = () => {
   const [customLocation, setCustomLocation] = useState("");
 
   const { data: profile, isLoading: isProfileLoading, error: profileError } = useProfile(user?.id);
-  const { data: job, isLoading: isJobLoading, error: jobError } = useJobById(jobId || '');
+  const { data: job, isLoading: isJobLoading, error: jobError } = useJobById(jobId as string);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
-    //locations: [] as string[],
     experience: "",
     expectedSalary: "",
     availability: "",
     coverLetter: "",
-    skills: [] as { name: string; proficiency: string }[],
+    skills: [],
     portfolioUrl: "",
     linkedinUrl: "",
     githubUrl: "",
@@ -73,7 +94,6 @@ const Apply = () => {
     { name: "GraphQL", proficiency: "" },
   ];
 
-
   useEffect(() => {
     if (profile && user) {
       setFormData({
@@ -81,7 +101,6 @@ const Apply = () => {
         lastName: profile.last_name || "",
         email: user.email || "",
         phone: profile.phone || "",
-        //locations: Array.isArray(profile.current_location) ? profile.current_location : [profile.current_location].filter(Boolean),
         experience: profile.experience_years?.toString() || "",
         expectedSalary: profile.expected_salary_sek?.toString() || "",
         availability: profile.availability || "",
@@ -94,7 +113,7 @@ const Apply = () => {
     }
   }, [profile, user]);
 
-  const handleSkillToggle = (skill: { name: string; proficiency: string }) => {
+  const handleSkillToggle = (skill: Skill) => {
     setFormData(prev => ({
       ...prev,
       skills: prev.skills.some(s => s.name === skill.name)
@@ -113,17 +132,7 @@ const Apply = () => {
     }
   };
 
-  /*const handleAddLocation = () => {
-    if (customLocation.trim() !== "") {
-      setFormData(prev => ({
-        ...prev,
-        locations: [...prev.locations, customLocation]
-      }));
-      setCustomLocation("");
-    }
-  };*/
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
@@ -163,19 +172,21 @@ const Apply = () => {
     }
 
     const twoYearsInSeconds = 2 * 365 * 24 * 60 * 60;
-    const { data: { signedUrl }, error: signedUrlError } = await supabase.storage
+    const { data, error: signedUrlError } = await supabase.storage
         .from('documents')
-        .createSignedUrl(fileName, twoYearsInSeconds)
+        .createSignedUrl(fileName, twoYearsInSeconds);
 
-    if (signedUrlError) {
+    if (signedUrlError || !data) {
       console.error('Error generating signed URL:', signedUrlError);
-      throw new Error(`Failed to generate signed URL: ${signedUrlError.message}`);
+      throw new Error(`Failed to generate signed URL: ${signedUrlError?.message}`);
     }
 
+    // Use optional chaining to safely access signedUrl
+    const signedUrl = data.signedUrl;
     return signedUrl;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
 
@@ -217,11 +228,10 @@ const Apply = () => {
 
       const applicationData = {
         applicant_id: user?.id || '',
-        job_id: jobId || '',
+        job_id: Array.isArray(jobId) ? jobId[0] : jobId || '', // Ensure job_id is a string
         full_name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email || '',
         phone: formData.phone || null,
-        //locations: formData.locations || [],
         availability: formData.availability || null,
         cover_letter: formData.coverLetter || null,
         skills: formData.skills.map(skill => skill.name),
@@ -231,7 +241,7 @@ const Apply = () => {
 
       const { error } = await supabase
           .from("applications")
-          .insert(applicationData);
+          .insert([applicationData]); // Ensure the data is passed as an array
 
       if (error) throw error;
 
@@ -272,15 +282,15 @@ const Apply = () => {
         <nav className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <Link to="/" className="flex items-center space-x-2">
+              <Link href="/" className="flex items-center space-x-2">
                 <Briefcase className="h-8 w-8 text-blue-600" />
                 <span className="text-xl font-bold text-gray-900">Justera Group AB</span>
               </Link>
               <div className="flex gap-2">
-                <Link to="/profile">
+                <Link href="/profile">
                   <Button variant="outline">My Profile</Button>
                 </Link>
-                <Link to="/jobs">
+                <Link href="/jobs">
                   <Button variant="outline">Back to Jobs</Button>
                 </Link>
               </div>
@@ -403,39 +413,6 @@ const Apply = () => {
                     />
                   </div>
                 </div>
-
-                {/*<div>
-                  <Label>Preferred Locations</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {availableLocations.map((location) => (
-                        <div key={location} className="flex items-center space-x-2">
-                          <Checkbox
-                              id={location}
-                              checked={formData.locations.includes(location)}
-                              onCheckedChange={() => {
-                                setFormData(prev => ({
-                                  ...prev,
-                                  locations: prev.locations.includes(location)
-                                      ? prev.locations.filter(l => l !== location)
-                                      : [...prev.locations, location]
-                                }));
-                              }}
-                          />
-                          <Label htmlFor={location}>{location}</Label>
-                        </div>
-                    ))}
-                    <div className="flex items-center space-x-2">
-                      <Input
-                          value={customLocation}
-                          onChange={(e) => setCustomLocation(e.target.value)}
-                          placeholder="Add custom location"
-                      />
-                      <Button type="button" onClick={handleAddLocation}>
-                        <PlusCircle className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>*/}
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>

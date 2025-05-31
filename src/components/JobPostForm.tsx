@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { X, Plus } from "lucide-react";
 import { useCreateJob } from "@/hooks/useJobs";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
 
 interface JobPostFormProps {

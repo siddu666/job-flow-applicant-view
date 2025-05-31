@@ -1,6 +1,6 @@
 import { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import { useProfile, useUpdateProfile, useUploadCV } from "@/hooks/useProfile";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

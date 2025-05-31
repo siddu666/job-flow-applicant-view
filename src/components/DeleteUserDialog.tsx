@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Trash2 } from 'lucide-react';
 import { useDeleteUserData } from '@/hooks/useProfile';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth-context';
 import { useRouter } from 'next/navigation';
 
 interface DeleteUserDialogProps {

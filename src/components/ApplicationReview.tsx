@@ -19,7 +19,7 @@ import {
   FileText,
   ExternalLink
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth-context";
 import type { Application } from "@/hooks/useApplications";
 
 const ApplicationReview = () => {
@@ -37,8 +37,7 @@ const ApplicationReview = () => {
     try {
       await updateApplication.mutateAsync({
         id: applicationId,
-        updates: { status: newStatus },
-        updatedBy: user?.id || ""
+        updates: { status: newStatus } // Only include properties that are part of ApplicationUpdate
       });
     } catch (error) {
       console.error("Error updating application status:", error);
