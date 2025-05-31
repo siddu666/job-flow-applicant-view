@@ -193,6 +193,7 @@ const CandidateProfile = () => {
 
   const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    if (!user?.id || !file) return;
     if (file) {
       if (file.size > 10 * 1024 * 1024) {
         toast.error("File size must be less than 10MB");
@@ -281,7 +282,7 @@ const CandidateProfile = () => {
   return (
       <div className="max-w-4xl mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
-          {user.id !== "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858" && (
+          {user && user.id !== "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858" && (
               <Link href="/jobs">
                 <Button>Career At Justera Group</Button>
               </Link>
