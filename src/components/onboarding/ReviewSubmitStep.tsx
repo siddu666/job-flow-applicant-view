@@ -42,7 +42,8 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({ data, onPrev, goToS
       const { error: signUpError, data: authData } = await signUp(
         data.email,
         data.password,
-        `${data.firstName} ${data.lastName}`
+        data.firstName, 
+        data.lastName
       );
 
       if (signUpError) {
