@@ -53,8 +53,11 @@ const AdminCandidates = () => {
     setFilters(prev => ({ ...prev, location: location }));
   };
 
-  const handleJobSeekingStatusChange = (status: 'actively_looking' | 'open_to_opportunities' | 'not_looking' | null) => {
-    setFilters(prev => ({ ...prev, job_seeking_status: status || undefined }));
+  const handleJobSeekingStatusChange = (value: string) => {
+    const status: 'actively_looking' | 'open_to_opportunities' | 'not_looking' | undefined =
+        value === "any" ? undefined : (value as 'actively_looking' | 'open_to_opportunities' | 'not_looking');
+
+    setFilters(prev => ({ ...prev, job_seeking_status: status }));
   };
 
   const openCandidateModal = (candidate: Profile) => {
@@ -112,7 +115,7 @@ const AdminCandidates = () => {
                     <SelectValue placeholder="Experience (Years)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={null}>Any</SelectItem>
+                    <SelectItem value="any">Any</SelectItem>
                     <SelectItem value="1">1+ Years</SelectItem>
                     <SelectItem value="3">3+ Years</SelectItem>
                     <SelectItem value="5">5+ Years</SelectItem>
