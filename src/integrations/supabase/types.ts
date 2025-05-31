@@ -127,11 +127,10 @@ export type Database = {
           created_at: string | null
           current_location: string | null
           cv_url: string | null
-          email: string
+          email: string | null
           expected_salary_sek: number | null
           experience_years: number | null
           first_name: string | null
-          full_name: string | null
           github_url: string | null
           id: string
           job_seeking_status: string | null
@@ -152,11 +151,10 @@ export type Database = {
           created_at?: string | null
           current_location?: string | null
           cv_url?: string | null
-          email: string
+          email?: string | null
           expected_salary_sek?: number | null
           experience_years?: number | null
           first_name?: string | null
-          full_name?: string | null
           github_url?: string | null
           id: string
           job_seeking_status?: string | null
@@ -177,11 +175,10 @@ export type Database = {
           created_at?: string | null
           current_location?: string | null
           cv_url?: string | null
-          email?: string
+          email?: string | null
           expected_salary_sek?: number | null
           experience_years?: number | null
           first_name?: string | null
-          full_name?: string | null
           github_url?: string | null
           id?: string
           job_seeking_status?: string | null

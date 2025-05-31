@@ -1,57 +1,58 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "./contexts/AuthContext";
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
 import Jobs from "./pages/Jobs";
-import Apply from "./pages/Apply";
 import Auth from "./pages/Auth";
-import Admin from "./pages/Admin";
+import Apply from "./pages/Apply";
 import Profile from "./pages/Profile";
-import AccountResponse from "./pages/AccountResponse";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute";
+import AccountResponse from "./pages/AccountResponse";
+import OnboardingSteps from "./components/onboarding/OnboardingSteps";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes
-      retry: (failureCount, error: any) => {
-        if (error?.status === 404) return false;
-        return failureCount < 3;
-      },
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router>
-          <div className="min-h-screen bg-background">
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/jobs" element={<Jobs />} />
-              <Route path="/apply/:jobId" element={<Apply />} />
-              <Route path="/profile" element={
-                  <Profile />
-              } />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/admin" element={
-                <ProtectedRoute allowedRoles={['dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858']}>
-                  <Admin />
-                </ProtectedRoute>
-              } />
+              <Route path="/onboarding" element={<OnboardingSteps />} />
+              <Route path="/apply/:jobId" element={<Apply />} />
               <Route path="/account-response" element={<AccountResponse />} />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute>
+                    <Admin />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="*" element={<NotFound />} />
             </Routes>
-            <Toaster />
-            <Sonner />
-          </div>
-        </Router>
+          </BrowserRouter>
+        </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

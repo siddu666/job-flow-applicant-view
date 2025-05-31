@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
@@ -7,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import JobPostForm from "@/components/JobPostForm";
 import ApplicationReview from "@/components/ApplicationReview";
-import AdminCandidates from "@/components/AdminCandidates";
+import EnhancedCandidateSearch from "@/components/admin/EnhancedCandidateSearch";
 import { Users, Briefcase, FileText, Settings, Plus } from "lucide-react";
 import { useJobStats } from "@/hooks/useJobs";
 import { useApplicationStats } from "@/hooks/useApplications";
@@ -15,7 +16,7 @@ import { useAllCandidates } from "@/hooks/useProfile";
 
 const Admin = () => {
   const { user, loading } = useAuth();
-  const { data: profile } = useProfile();
+  const { data: profile } = useProfile(user?.id);
   const [showJobForm, setShowJobForm] = useState(false);
 
   const { data: jobStats } = useJobStats();
@@ -43,8 +44,8 @@ const Admin = () => {
           <div className="flex justify-between items-center h-16">
             <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-white-600">
-                Welcome, {profile?.full_name || user.email}
+              <span className="text-sm text-gray-600">
+                Welcome, {profile?.first_name} {profile?.last_name} ({profile?.role})
               </span>
               <Button
                 onClick={() => setShowJobForm(true)}
@@ -140,7 +141,7 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="candidates">
-            <AdminCandidates />
+            <EnhancedCandidateSearch />
           </TabsContent>
         </Tabs>
       </div>

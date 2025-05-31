@@ -11,7 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
 const Auth = () => {
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -19,12 +19,6 @@ const Auth = () => {
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
-  });
-  
-  const [signupData, setSignupData] = useState({
-    email: "",
-    password: "",
-    fullName: "",
   });
 
   // Check if user is already authenticated and redirect
@@ -65,25 +59,6 @@ const Auth = () => {
         description: "You have successfully logged in.",
       });
       navigate("/");
-    }
-  };
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const { error } = await signUp(signupData.email, signupData.password, signupData.fullName);
-    
-    if (error) {
-      toast({
-        title: "Signup Failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Account Created!",
-        description: "Please check your email to verify your account.",
-      });
     }
   };
 
@@ -189,44 +164,34 @@ const Auth = () => {
               <CardHeader>
                 <CardTitle>Join Justera Group</CardTitle>
                 <CardDescription>
-                  Create your account to explore exciting career opportunities
+                  Create your complete profile in a step-by-step process
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSignup} className="space-y-4">
-                  <div>
-                    <Label htmlFor="signup-name">Full Name</Label>
-                    <Input
-                      id="signup-name"
-                      value={signupData.fullName}
-                      onChange={(e) => setSignupData(prev => ({ ...prev, fullName: e.target.value }))}
-                      required
-                    />
+                <div className="space-y-4">
+                  <div className="bg-blue-50 p-4 rounded-lg text-center">
+                    <h3 className="font-medium text-blue-900 mb-2">Complete Profile Setup</h3>
+                    <p className="text-sm text-blue-700 mb-4">
+                      Our guided process will help you create a comprehensive profile including:
+                    </p>
+                    <ul className="text-sm text-blue-700 space-y-1 mb-4">
+                      <li>• Personal & contact information</li>
+                      <li>• Work authorization status</li>
+                      <li>• Professional skills & experience</li>
+                      <li>• CV upload & social links</li>
+                    </ul>
                   </div>
-                  <div>
-                    <Label htmlFor="signup-email">Email</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      value={signupData.email}
-                      onChange={(e) => setSignupData(prev => ({ ...prev, email: e.target.value }))}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="signup-password">Password</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      value={signupData.password}
-                      onChange={(e) => setSignupData(prev => ({ ...prev, password: e.target.value }))}
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
-                    Create Account
-                  </Button>
-                </form>
+                  
+                  <Link to="/onboarding">
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                      Start Profile Setup
+                    </Button>
+                  </Link>
+                  
+                  <p className="text-xs text-center text-gray-500">
+                    Takes 5-10 minutes • Save progress as you go
+                  </p>
+                </div>
               </CardContent>
             </TabsContent>
           </Tabs>
