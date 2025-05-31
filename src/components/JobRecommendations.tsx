@@ -60,9 +60,9 @@ const JobRecommendations = () => {
         ) : (
           <div className="space-y-4">
             {recommendations.slice(0, 3).map((rec) => (
-              <div key={rec.job.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+              <div key={rec.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold text-sm">{rec.job.title}</h3>
+                  <h3 className="font-semibold text-sm">{rec.title}</h3>
                   <Badge variant="secondary" className="text-xs">
                     {Math.round(rec.match_score)}% match
                   </Badge>
@@ -71,18 +71,18 @@ const JobRecommendations = () => {
                 <div className="space-y-2 text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <MapPin className="h-3 w-3" />
-                    {rec.job.location}
+                    {rec.location}
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {rec.job.type}
+                    {rec.type}
                   </div>
                 </div>
 
                 <Button 
                   size="sm" 
                   className="w-full mt-3"
-                  onClick={() => router.push(`/jobs/${rec.job.id}/apply`)}
+                  onClick={() => router.push(`/jobs/${rec.id}/apply`)}
                 >
                   Apply Now
                 </Button>
