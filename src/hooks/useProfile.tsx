@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
@@ -102,8 +101,6 @@ export const useUploadCV = () => {
   });
 };
 
-
-
 export const useAllCandidates = (filters?: {
   skills?: string[];
   experience_years?: number;
@@ -138,7 +135,7 @@ export const useAllCandidates = (filters?: {
         }
 
         if (filters?.search) {
-          query = query.or(`full_name.ilike.%${filters.search}%,bio.ilike.%${filters.search}%`);
+          query = query.or(`first_name.ilike.%${filters.search}%,last_name.ilike.%${filters.search}%,bio.ilike.%${filters.search}%`);
         }
 
         if (filters?.page && filters?.limit) {
@@ -163,9 +160,10 @@ export const useAllCandidates = (filters?: {
   });
 
   return {
-    ...queryResult,
     data: queryResult.data?.data || [],
     total: queryResult.data?.total || 0,
+    isLoading: queryResult.isLoading,
+    error: queryResult.error || undefined,
   };
 };
 
@@ -174,8 +172,6 @@ const getPaginationRange = (page: number, limit: number) => {
   const to = from + limit - 1;
   return { from, to };
 };
-
-
 
 export const useHandlePeriodicResponse = () => {
   return {

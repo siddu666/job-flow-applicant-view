@@ -170,10 +170,10 @@ const AdminCandidates = () => {
                   <div className="flex items-center space-x-4">
                     <Avatar>
                       <AvatarImage src={`https://avatar.vercel.sh/${candidate.email}.png`} />
-                      <AvatarFallback>{candidate.full_name?.substring(0, 2)}</AvatarFallback>
+                      <AvatarFallback>{candidate.first_name?.substring(0, 1)}{candidate.last_name?.substring(0, 1)}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                      <CardTitle className="text-lg">{candidate.full_name}</CardTitle>
+                      <CardTitle className="text-lg">{candidate.first_name} {candidate.last_name}</CardTitle>
                       <p className="text-sm text-gray-500">{candidate.email}</p>
                       {candidate.cv_url && (
                         <div className="flex items-center gap-1 mt-1">
@@ -245,11 +245,11 @@ const AdminCandidates = () => {
                   <Avatar className="h-16 w-16">
                     <AvatarImage src={`https://avatar.vercel.sh/${selectedCandidate.email}.png`} />
                     <AvatarFallback className="text-lg">
-                      {selectedCandidate.full_name?.substring(0, 2)}
+                      {selectedCandidate.first_name?.substring(0, 1)}{selectedCandidate.last_name?.substring(0, 1)}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h2 className="text-xl font-bold">{selectedCandidate.full_name}</h2>
+                    <h2 className="text-xl font-bold">{selectedCandidate.first_name} {selectedCandidate.last_name}</h2>
                     <p className="text-sm text-gray-500">{selectedCandidate.email}</p>
                   </div>
                 </div>

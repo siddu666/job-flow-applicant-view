@@ -164,7 +164,7 @@ const EnhancedCandidateSearch = () => {
   };
 
   const closeCandidateModal = () => {
-    setSelectedCandidate(false);
+    setSelectedCandidate(null);
   };
 
   const totalPages = Math.ceil(total / (filters.limit || 12));

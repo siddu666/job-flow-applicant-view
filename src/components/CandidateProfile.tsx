@@ -28,7 +28,6 @@ const CandidateProfile = () => {
   ];
 
   const [formData, setFormData] = useState({
-    full_name: "",
     first_name: "",
     last_name: "",
     phone: "",
@@ -50,7 +49,6 @@ const CandidateProfile = () => {
   useEffect(() => {
     if (profile) {
       setFormData({
-        full_name: profile.full_name || "",
         first_name: profile.first_name || "",
         last_name: profile.last_name || "",
         phone: profile.phone || "",
