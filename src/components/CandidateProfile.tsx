@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useProfile, useUpdateProfile, useUploadCV } from "@/hooks/useProfile";
+import { useProfile, useUpdateProfile, useUploadCV} from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -48,6 +48,7 @@ const CandidateProfile = () => {
 
   useEffect(() => {
     if (profile) {
+      // First set all profile data except skills
       setFormData({
         first_name: profile.first_name || "",
         last_name: profile.last_name || "",
@@ -59,16 +60,34 @@ const CandidateProfile = () => {
         github_url: profile.github_url || "",
         portfolio_url: profile.portfolio_url || "",
         bio: profile.bio || "",
-        skills: profile.skills || [],
+        skills: [],  // empty for now, will update after fetch
         certifications: profile.certifications || [],
         experience_years: profile.experience_years || 0,
         expected_salary_sek: profile.expected_salary_sek || 0,
         availability: profile.availability || "",
         job_seeking_status: profile.job_seeking_status || "actively_looking",
       });
-      
-      // If this is a new user with minimal profile, enable editing
-      if (!profile.phone && !profile.current_location && !profile.skills?.length) {
+
+      // Then fetch skills.json and update skills in formData
+      fetch('/skills.json')
+          .then(response => response.json())
+          .then(data => {
+            // Merge skills from profile and skills.json if needed
+            const skillsFromProfile = profile.skills || [];
+            const skillsFromJson = data.skills || [];
+
+            // Combine skills, avoid duplicates
+            const combinedSkills = Array.from(new Set([...skillsFromProfile, ...skillsFromJson]));
+
+            setFormData(prev => ({
+              ...prev,
+              skills: combinedSkills
+            }));
+          })
+          .catch(err => console.error('Failed to load skills:', err));
+
+      // Enable editing if minimal profile
+      if (!profile.phone && !profile.current_location && (!profile.skills || !profile.skills.length)) {
         setIsEditing(true);
       }
     }
@@ -91,14 +110,28 @@ const CandidateProfile = () => {
         toast.error("File size must be less than 10MB");
         return;
       }
-      
+
       const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
       if (!allowedTypes.includes(file.type)) {
         toast.error("Only PDF and Word documents are allowed");
         return;
       }
 
-      await uploadCV.mutateAsync(file);
+      try {
+        // Call mutateAsync with an object containing id and file
+        const url =  await uploadCV.mutateAsync({ id: user.id, file });
+
+        await updateProfile.mutateAsync({
+          id: user.id,
+          updates: {
+            ...formData,
+            cv_url: url
+          }
+        });
+      } catch (error) {
+        console.error("Error uploading CV:", error);
+        toast.error("Failed to upload CV. Please try again.");
+      }
     }
   };
 
@@ -354,40 +387,12 @@ const CandidateProfile = () => {
       </Card>
 
       {/* Skills */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Technical Skills</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-wrap gap-2">
-            {formData.skills.map((skill, index) => (
-              <Badge key={index} variant="secondary" className="px-3 py-1">
-                {skill}
-                {isEditing && (
-                  <X
-                    className="h-3 w-3 ml-2 cursor-pointer"
-                    onClick={() => removeSkill(skill)}
-                  />
-                )}
-              </Badge>
-            ))}
-          </div>
-          
-          {isEditing && (
-            <div className="flex gap-2">
-              <Input
-                value={newSkill}
-                onChange={(e) => setNewSkill(e.target.value)}
-                placeholder="Add a technical skill (e.g., React, Python, AWS)"
-                onKeyPress={(e) => e.key === 'Enter' && addSkill()}
-              />
-              <Button onClick={addSkill} size="sm">
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <SkillsCard
+          formData={formData}
+          isEditing={isEditing}
+          removeSkill={removeSkill}
+          addSkill={addSkill}
+      />
 
       {/* Certifications */}
       <Card>
@@ -513,6 +518,70 @@ const CandidateProfile = () => {
       </Card>
     </div>
   );
+
+  function SkillsCard({ formData, isEditing, removeSkill, addSkill }) {
+    const [newSkill, setNewSkill] = useState("");
+    const [searchSkill, setSearchSkill] = useState("");
+
+    // Filter skills by search term
+    const filteredSkills = formData.skills.filter(skill =>
+        skill.toLowerCase().includes(searchSkill.toLowerCase())
+    );
+
+    // Limit how many skills to show to improve performance
+    const MAX_SKILLS_DISPLAYED = 100;
+    const skillsToShow = filteredSkills.slice(0, MAX_SKILLS_DISPLAYED);
+
+    return (
+        <Card>
+          <CardHeader>
+            <CardTitle>Technical Skills</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <input
+                type="text"
+                placeholder="Search skills..."
+                value={searchSkill}
+                onChange={e => setSearchSkill(e.target.value)}
+                className="mb-2 px-2 py-1 border rounded"
+            />
+
+            <div className="flex flex-wrap gap-2 max-h-48 overflow-auto">
+              {skillsToShow.map((skill, index) => (
+                  <Badge key={index} variant="secondary" className="px-3 py-1">
+                    {skill}
+                    {isEditing && (
+                        <X
+                            className="h-3 w-3 ml-2 cursor-pointer"
+                            onClick={() => removeSkill(skill)}
+                        />
+                    )}
+                  </Badge>
+              ))}
+              {filteredSkills.length > MAX_SKILLS_DISPLAYED && (
+                  <div className="w-full text-center text-sm text-gray-500 mt-1">
+                    Showing {MAX_SKILLS_DISPLAYED} of {filteredSkills.length} skills
+                  </div>
+              )}
+            </div>
+
+            {isEditing && (
+                <div className="flex gap-2 mt-2">
+                  <Input
+                      value={newSkill}
+                      onChange={(e) => setNewSkill(e.target.value)}
+                      placeholder="Add a technical skill (e.g., React, Python, AWS)"
+                      onKeyPress={(e) => e.key === 'Enter' && addSkill()}
+                  />
+                  <Button onClick={addSkill} size="sm">
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+            )}
+          </CardContent>
+        </Card>
+    );
+  }
 };
 
 export default CandidateProfile;

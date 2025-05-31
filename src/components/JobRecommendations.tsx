@@ -58,7 +58,7 @@ const JobRecommendations: React.FC = () => {
           <div
             key={job.id}
             className="border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
-            onClick={() => navigate(`/jobs?id=${job.id}`)}
+            onClick={() => navigate(`/jobs/${job.id}/apply`)}
           >
             <div className="flex justify-between items-start mb-2">
               <div>
@@ -112,7 +112,7 @@ const JobRecommendations: React.FC = () => {
               className="w-full"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/apply?job=${job.id}`);
+                navigate(`/jobs/${job.id}/apply`);
               }}
             >
               Apply Now

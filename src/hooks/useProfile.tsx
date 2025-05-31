@@ -110,15 +110,41 @@ export const useDeleteUserData = () => {
   });
 };
 
+interface UploadCVParams {
+  id: string;
+  file: File;
+}
+
 export const useUploadCV = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (file: File): Promise<string> => {
+  return useMutation<string, Error, UploadCVParams>({
+    mutationFn: async ({ id, file }: UploadCVParams): Promise<string> => {
       try {
-        // For now, return a placeholder URL since we don't have storage configured
-        console.log("CV upload not implemented:", file.name);
-        return "placeholder-cv-url";
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${id}/cv-${Date.now()}.${fileExt}`;
+
+        // Upload the file to Supabase Storage
+        const { error: uploadError } = await supabase.storage
+            .from('documents')
+            .upload(fileName, file);
+
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          throw new Error(`Failed to upload CV: ${uploadError.message}`);
+        }
+
+        // Generate a signed URL for private access
+        const { data: { signedUrl }, error: signedUrlError } = await supabase.storage
+            .from('documents')
+            .createSignedUrl(fileName, 3600); 
+
+        if (signedUrlError) {
+          console.error('Error generating signed URL:', signedUrlError);
+          throw new Error(`Failed to generate signed URL: ${signedUrlError.message}`);
+        }
+
+        return signedUrl;
       } catch (error) {
         console.error("Unexpected error uploading CV:", error);
         throw error;

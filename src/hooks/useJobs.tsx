@@ -255,6 +255,8 @@ export const useDeleteJob = () => {
 };
 
 const fetchJobById = async (id: string): Promise<Job | null> => {
+  console.log(`Fetching job with id: ${id}`); // Log the id to ensure it's correct
+
   try {
     const { data, error } = await supabase
       .from("jobs")
@@ -279,10 +281,9 @@ const fetchJobById = async (id: string): Promise<Job | null> => {
 
 export const useJobById = (id: string) => {
   return useQuery<Job | null, Error>({
-    queryKey: ['job', id] as const,
+    queryKey: ['job', id],
     queryFn: () => fetchJobById(id),
-    enabled: !!id,
-    staleTime: 5 * 60 * 1000,
+    enabled: !!id, // Ensure the query only runs if `id` is truthy
   });
 };
 

@@ -31,7 +31,7 @@ function App() {
               <Route path="/jobs" element={<Jobs />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/onboarding" element={<OnboardingSteps />} />
-              <Route path="/apply/:jobId" element={<Apply />} />
+              <Route path="/jobs/:jobId/apply" element={<Apply />} />
               <Route path="/account-response" element={<AccountResponse />} />
               <Route
                 path="/profile"
