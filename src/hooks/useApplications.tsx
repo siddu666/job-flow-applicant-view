@@ -8,30 +8,28 @@ export type Application = Tables<'applications'>;
 export type ApplicationInsert = TablesInsert<'applications'>;
 export type ApplicationUpdate = TablesUpdate<'applications'>;
 
+export type ApplicationWithCandidate = Application & {
+  applicant: Tables<'profiles'>;
+  job: Tables<'jobs'>;
+  match_score?: number;
+};
+
 export const useApplications = (filters?: {
   jobId?: string;
-  status?: Application['status'];
+  status?: string;
   applicantId?: string;
 }) => {
   return useQuery({
     queryKey: ['applications', filters],
-    queryFn: async (): Promise<Application[]> => {
+    queryFn: async (): Promise<ApplicationWithCandidate[]> => {
       try {
         let query = supabase
           .from("applications")
           .select(`
             *,
-            job:jobs(
-              id,
-              title
-            ),
-            applicant:profiles(
-              id,
-              full_name,
-              email
-            )
-          `)
-          .order("created_at", { ascending: false });
+            applicant:profiles(*),
+            job:jobs(*)
+          `);
 
         if (filters?.jobId) {
           query = query.eq("job_id", filters.jobId);
@@ -45,21 +43,83 @@ export const useApplications = (filters?: {
           query = query.eq("applicant_id", filters.applicantId);
         }
 
-        const { data, error } = await query;
+        const { data, error } = await query.order("created_at", { ascending: false });
 
         if (error) {
           console.error("Error fetching applications:", error);
           throw new Error(`Failed to fetch applications: ${error.message}`);
         }
 
-        return data || [];
+        // Calculate match scores for each application
+        const applicationsWithScores = await Promise.all(
+          (data || []).map(async (app) => {
+            try {
+              const { data: matchScore } = await supabase.rpc(
+                'calculate_candidate_match_score',
+                {
+                  candidate_skills: app.applicant?.skills || [],
+                  candidate_experience: app.applicant?.experience_years || 0,
+                  candidate_location: app.applicant?.current_location || '',
+                  job_skills: app.job?.skills || [],
+                  job_experience_level: app.job?.experience_level || 'entry',
+                  job_location: app.job?.location || ''
+                }
+              );
+
+              return {
+                ...app,
+                match_score: matchScore || 0
+              };
+            } catch (error) {
+              console.error("Error calculating match score:", error);
+              return {
+                ...app,
+                match_score: 0
+              };
+            }
+          })
+        );
+
+        return applicationsWithScores;
       } catch (error) {
         console.error("Unexpected error fetching applications:", error);
         throw error;
       }
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 2 * 60 * 1000,
+  });
+};
+
+export const useApplicationStats = () => {
+  return useQuery({
+    queryKey: ['application-stats'],
+    queryFn: async () => {
+      try {
+        const { data, error } = await supabase
+          .from("applications")
+          .select("status");
+
+        if (error) {
+          console.error("Error fetching application stats:", error);
+          throw new Error(`Failed to fetch application stats: ${error.message}`);
+        }
+
+        const stats = {
+          total: data?.length || 0,
+          pending: data?.filter(app => app.status === 'pending').length || 0,
+          under_review: data?.filter(app => app.status === 'under_review').length || 0,
+          interview_scheduled: data?.filter(app => app.status === 'interview_scheduled').length || 0,
+          accepted: data?.filter(app => app.status === 'accepted').length || 0,
+          rejected: data?.filter(app => app.status === 'rejected').length || 0,
+        };
+
+        return stats;
+      } catch (error) {
+        console.error("Unexpected error fetching application stats:", error);
+        throw error;
+      }
+    },
+    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -69,14 +129,9 @@ export const useCreateApplication = () => {
   return useMutation({
     mutationFn: async (application: ApplicationInsert): Promise<Application> => {
       try {
-        const applicationData: ApplicationInsert = {
-          ...application,
-          status: 'pending',
-        };
-
         const { data, error } = await supabase
           .from("applications")
-          .insert(applicationData)
+          .insert(application)
           .select()
           .single();
 
@@ -107,12 +162,10 @@ export const useUpdateApplication = () => {
   return useMutation({
     mutationFn: async ({ 
       id, 
-      updates,
-      updatedBy 
+      updates 
     }: { 
       id: string; 
       updates: ApplicationUpdate;
-      updatedBy: string;
     }): Promise<Application> => {
       try {
         const { data, error } = await supabase
@@ -140,125 +193,5 @@ export const useUpdateApplication = () => {
     onError: (error: Error) => {
       toast.error(`Failed to update application: ${error.message}`);
     },
-  });
-};
-
-export const useDeleteApplication = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ 
-      id, 
-      deletedBy,
-      reason 
-    }: { 
-      id: string; 
-      deletedBy: string;
-      reason?: string;
-    }): Promise<void> => {
-      try {
-        const { error } = await supabase
-          .from("applications")
-          .delete()
-          .eq("id", id);
-
-        if (error) {
-          console.error("Error deleting application:", error);
-          throw new Error(`Failed to delete application: ${error.message}`);
-        }
-      } catch (error) {
-        console.error("Unexpected error deleting application:", error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['applications'] });
-      toast.success("Application deleted successfully!");
-    },
-    onError: (error: Error) => {
-      toast.error(`Failed to delete application: ${error.message}`);
-    },
-  });
-};
-
-export const useApplicationById = (id: string) => {
-  return useQuery({
-    queryKey: ['application', id],
-    queryFn: async (): Promise<Application | null> => {
-      try {
-        const { data, error } = await supabase
-          .from("applications")
-          .select(`
-            *,
-            job:jobs(
-              id,
-              title,
-              description,
-              location
-            ),
-            applicant:profiles(
-              id,
-              full_name,
-              email,
-              phone,
-              linkedin_url,
-              portfolio_url
-            )
-          `)
-          .eq("id", id)
-          .single();
-
-        if (error) {
-          if (error.code === 'PGRST116') {
-            return null; // Not found
-          }
-          console.error("Error fetching application:", error);
-          throw new Error(`Failed to fetch application: ${error.message}`);
-        }
-
-        return data;
-      } catch (error) {
-        console.error("Unexpected error fetching application:", error);
-        throw error;
-      }
-    },
-    enabled: !!id,
-    staleTime: 5 * 60 * 1000,
-  });
-};
-
-export const useApplicationStats = () => {
-  return useQuery({
-    queryKey: ['application-stats'],
-    queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-          .from("applications")
-          .select("status");
-
-        if (error) {
-          console.error("Error fetching application stats:", error);
-          throw new Error(`Failed to fetch application stats: ${error.message}`);
-        }
-
-        const stats = data.reduce((acc, app) => {
-          acc[app.status] = (acc[app.status] || 0) + 1;
-          return acc;
-        }, {} as Record<string, number>);
-
-        return {
-          total: data.length,
-          pending: stats.pending || 0,
-          under_review: stats.under_review || 0,
-          interview_scheduled: stats.interview_scheduled || 0,
-          rejected: stats.rejected || 0,
-          accepted: stats.accepted || 0,
-        };
-      } catch (error) {
-        console.error("Unexpected error fetching application stats:", error);
-        throw error;
-      }
-    },
-    staleTime: 2 * 60 * 1000, // 2 minutes
   });
 };

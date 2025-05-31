@@ -199,6 +199,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_candidate_match_score: {
+        Args: {
+          candidate_skills: string[]
+          candidate_experience: number
+          candidate_location: string
+          job_skills: string[]
+          job_experience_level: string
+          job_location: string
+        }
+        Returns: number
+      }
+      delete_user_data: {
+        Args: { user_id_to_delete: string }
+        Returns: boolean
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string

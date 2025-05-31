@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import JobPostForm from "@/components/JobPostForm";
 import ApplicationReview from "@/components/ApplicationReview";
 import EnhancedCandidateSearch from "@/components/admin/EnhancedCandidateSearch";
+import DeleteUserDialog from "@/components/DeleteUserDialog";
 import { Users, Briefcase, FileText, Settings, Plus } from "lucide-react";
 import { useJobStats } from "@/hooks/useJobs";
 import { useApplicationStats } from "@/hooks/useApplications";
@@ -18,6 +19,7 @@ const Admin = () => {
   const { user, loading } = useAuth();
   const { data: profile } = useProfile(user?.id);
   const [showJobForm, setShowJobForm] = useState(false);
+  const [deleteDialogUser, setDeleteDialogUser] = useState<{id: string, name: string} | null>(null);
 
   const { data: jobStats } = useJobStats();
   const { data: applicationStats } = useApplicationStats();
@@ -35,6 +37,10 @@ const Admin = () => {
   if (profile?.role === 'applicant') {
     return <Navigate to="/" replace />;
   }
+
+  const handleDeleteUser = (userId: string, userName: string) => {
+    setDeleteDialogUser({ id: userId, name: userName });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -141,7 +147,7 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="candidates">
-            <EnhancedCandidateSearch />
+            <EnhancedCandidateSearch onDeleteUser={handleDeleteUser} />
           </TabsContent>
         </Tabs>
       </div>
@@ -153,6 +159,17 @@ const Admin = () => {
             <JobPostForm onClose={() => setShowJobForm(false)} />
           </div>
         </div>
+      )}
+
+      {/* Delete User Dialog */}
+      {deleteDialogUser && (
+        <DeleteUserDialog
+          userId={deleteDialogUser.id}
+          userName={deleteDialogUser.name}
+          isOpen={!!deleteDialogUser}
+          onClose={() => setDeleteDialogUser(null)}
+          isCurrentUser={false}
+        />
       )}
     </div>
   );

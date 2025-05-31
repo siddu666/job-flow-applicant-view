@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
@@ -77,6 +78,38 @@ export const useUpdateProfile = () => {
   });
 };
 
+export const useDeleteUserData = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (userId: string): Promise<boolean> => {
+      try {
+        const { data, error } = await supabase.rpc('delete_user_data', {
+          user_id_to_delete: userId
+        });
+
+        if (error) {
+          console.error("Error deleting user data:", error);
+          throw new Error(`Failed to delete user data: ${error.message}`);
+        }
+
+        return data;
+      } catch (error) {
+        console.error("Unexpected error deleting user data:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      queryClient.invalidateQueries({ queryKey: ['candidates'] });
+      toast.success("User data deleted successfully!");
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to delete user data: ${error.message}`);
+    },
+  });
+};
+
 export const useUploadCV = () => {
   const queryClient = useQueryClient();
 
@@ -107,6 +140,7 @@ export const useAllCandidates = (filters?: {
   location?: string;
   job_seeking_status?: string;
   search?: string;
+  visa_status?: string;
   page?: number;
   limit?: number;
 }): UseAllCandidatesResult => {
@@ -134,8 +168,13 @@ export const useAllCandidates = (filters?: {
           query = query.eq("job_seeking_status", filters.job_seeking_status);
         }
 
+        if (filters?.visa_status) {
+          // Note: We don't have visa_status in profiles table yet, but this prepares for it
+          query = query.eq("visa_status", filters.visa_status);
+        }
+
         if (filters?.search) {
-          query = query.or(`first_name.ilike.%${filters.search}%,last_name.ilike.%${filters.search}%,bio.ilike.%${filters.search}%`);
+          query = query.or(`first_name.ilike.%${filters.search}%,last_name.ilike.%${filters.search}%,bio.ilike.%${filters.search}%,skills.cs.{${filters.search}}`);
         }
 
         if (filters?.page && filters?.limit) {
