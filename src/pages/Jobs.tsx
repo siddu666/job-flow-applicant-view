@@ -140,7 +140,7 @@ const Jobs = () => {
                         </CardDescription>
                       </div>
                       {user ? (
-                          <Link to={`/apply/${job.id}`}>
+                          <Link to={`/jobs/${job.id}/apply`}>
                             <Button className="bg-blue-600 hover:bg-blue-700">Apply Now</Button>
                           </Link>
                       ) : (
