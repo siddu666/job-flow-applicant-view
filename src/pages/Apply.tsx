@@ -162,9 +162,10 @@ const Apply = () => {
       throw new Error(`Failed to upload CV: ${uploadError.message}`);
     }
 
+    const twoYearsInSeconds = 2 * 365 * 24 * 60 * 60; // 63,072,000 seconds
     const { data: { signedUrl }, error: signedUrlError } = await supabase.storage
         .from('documents')
-        .createSignedUrl(fileName, 3600)
+        .createSignedUrl(fileName, twoYearsInSeconds)
 
     if (signedUrlError) {
       console.error('Error generating signed URL:', signedUrlError);
