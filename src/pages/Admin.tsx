@@ -1,8 +1,8 @@
 
 import { useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth-context";
 import { useProfile } from "@/hooks/useProfile";
-import { Navigate } from "react-router-dom";
+import { redirect } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -30,12 +30,14 @@ const Admin = () => {
   }
 
   if (!user) {
-    return <Navigate to="/auth" replace />;
+    redirect('/auth');
+    return null;
   }
 
   // Only admin, hr, and hiring_manager roles can access admin panel
   if (profile?.role === 'applicant') {
-    return <Navigate to="/" replace />;
+    redirect('/');
+    return null;
   }
 
   const handleDeleteUser = (userId: string, userName: string) => {

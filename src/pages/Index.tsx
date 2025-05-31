@@ -1,27 +1,32 @@
-import {useEffect, useState} from "react";
-import {Button} from "@/components/ui/button";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Briefcase, Users, Star, Building, Phone, Mail, MapPin, CheckCircle} from "lucide-react";
-import {Link} from "react-router-dom";
-import {useAuth} from "@/contexts/AuthContext.tsx";
-import {supabase} from "@/integrations/supabase/client";
+import { useEffect, useState, FormEvent, ChangeEvent } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Briefcase, Users, Star, Building, Phone, Mail, MapPin, CheckCircle } from "lucide-react";
+import Link from "next/link";
+import { useAuth } from "@/contexts/auth-context";
+import { supabase } from "@/integrations/supabase/client";
 
+interface FormData {
+    fullName: string;
+    email: string;
+    mobile: string;
+}
 
-const Index = () => {
-    const [formData, setFormData] = useState({
+const HomePage = () => {
+    const [formData, setFormData] = useState<FormData>({
         fullName: '',
         email: '',
         mobile: ''
     });
 
-    const {user, signOut} = useAuth();
-    const [profile, setProfile] = useState(null);
+    const { user, signOut } = useAuth();
+    const [profile, setProfile] = useState<any>(null);
 
     useEffect(() => {
         const fetchProfile = async () => {
             if (user) {
                 try {
-                    const {data, error} = await supabase
+                    const { data, error } = await supabase
                         .from('profiles')
                         .select('*')
                         .eq('id', user.id)
@@ -41,19 +46,19 @@ const Index = () => {
         fetchProfile();
     }, [user]);
 
-    const handleInputChange = (e) => {
-        const {name, value} = e.target;
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         console.log('Form submitted:', formData);
         alert('Thank you for your submission! We will contact you soon.');
-        setFormData({fullName: '', email: '', mobile: ''});
+        setFormData({ fullName: '', email: '', mobile: '' });
     };
 
     return (
@@ -63,27 +68,27 @@ const Index = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         <div className="flex items-center space-x-2">
-                            <Briefcase className="h-8 w-8"/>
+                            <Briefcase className="h-8 w-8" />
                             <span className="text-xl font-bold">Justera Group AB</span>
                         </div>
                         <div className="flex items-center space-x-4">
                             {user ? (
                                 <div className="flex items-center space-x-4">
                                     <div className="flex items-center space-x-4">
-                                        <Link to="/jobs">
+                                        <Link href="/jobs">
                                             <Button>Career At Justera Group</Button>
                                         </Link>
                                     </div>
                                     <span className="text-sm text-white-600">
                     Welcome, {user.email}
                   </span>
-                                    {user.id != "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858" && (
-                                        <Link to="/profile">
+                                    {user.id !== "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858" && (
+                                        <Link href="/profile">
                                             <Button variant="ghost">My Profile</Button>
                                         </Link>
                                     )}
-                                    {(user.id == "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858") && (
-                                        <Link to="/admin">
+                                    {user.id === "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858" && (
+                                        <Link href="/admin">
                                             <Button variant="ghost">Admin Panel</Button>
                                         </Link>
                                     )}
@@ -93,7 +98,7 @@ const Index = () => {
                                 </div>
                             ) : (
                                 <div className="flex items-center space-x-4">
-                                    <Link to="/jobs">
+                                    <Link href="/jobs">
                                         <Button>Career At Justera Group</Button>
                                     </Link>
                                 </div>
@@ -108,26 +113,22 @@ const Index = () => {
                 <div className="max-w-7xl mx-auto text-center">
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
                         Empowering Businesses with{" "}
-                        <span
-                            className="text-blue-600 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                        <span className="text-blue-600 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Innovative IT Solutions
             </span>
                     </h1>
                     <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-                        At Justera Group AB, we provide cutting-edge IT solutions to help businesses thrive in the
-                        digital age.
+                        At Justera Group AB, we provide cutting-edge IT solutions to help businesses thrive in the digital age.
                     </p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <Link to="/jobs">
-                        <Button size="lg"
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                    <Link href="/jobs">
+                        <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
                             If you are looking for IT Career at Justera Group AB
                         </Button>
                     </Link>
                 </div>
-                
             </section>
 
             {/* About Section */}
@@ -150,25 +151,21 @@ const Index = () => {
                         <div className="grid md:grid-cols-2 gap-8 items-center">
                             <div className="space-y-6">
                                 <p className="text-lg text-gray-600 leading-relaxed">
-                                    We are different from the rest. We are driven by our belief that smarter businesses
-                                    make the world a better place.
+                                    We are different from the rest. We are driven by our belief that smarter businesses make the world a better place.
                                     And smarter businesses are ready for the future, today.
                                 </p>
                                 <p className="text-lg text-gray-600 leading-relaxed">
-                                    At Justera Group AB, we are obsessed with consistently delivering intelligent IT
-                                    solutions alongside impeccable services
+                                    At Justera Group AB, we are obsessed with consistently delivering intelligent IT solutions alongside impeccable services
                                     that propel businesses into the future.
                                 </p>
                             </div>
                             <div className="space-y-6">
                                 <p className="text-lg text-gray-600 leading-relaxed">
-                                    From customized Software Development to Cloud Solutions and Services, we offer
-                                    innovative services beyond
-                                    that of the average IT support company to help you leverage technology to your
-                                    competitive advantage.
+                                    From customized Software Development to Cloud Solutions and Services, we offer innovative services beyond
+                                    that of the average IT support company to help you leverage technology to your competitive advantage.
                                 </p>
                                 <div className="flex items-center space-x-3 bg-blue-50 p-4 rounded-lg">
-                                    <CheckCircle className="h-6 w-6 text-blue-600 flex-shrink-0"/>
+                                    <CheckCircle className="h-6 w-6 text-blue-600 flex-shrink-0" />
                                     <p className="text-lg font-semibold text-blue-800">
                                         We Practice Local Development, NO Overseas Outsource.
                                     </p>
@@ -219,8 +216,7 @@ const Index = () => {
                                 description: "Advanced cybersecurity measures to safeguard your operations."
                             }
                         ].map((service, index) => (
-                            <Card key={index}
-                                  className="border-0 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                            <Card key={index} className="border-0 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
                                 <CardHeader className="pb-4">
                                     <CardTitle className="text-xl font-semibold text-gray-900 mb-2">
                                         {service.title}
@@ -257,10 +253,9 @@ const Index = () => {
                             "Education",
                             "Technology"
                         ].map((industry, index) => (
-                            <Card key={index}
-                                  className="border-0 bg-gradient-to-br from-blue-50 to-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                            <Card key={index} className="border-0 bg-gradient-to-br from-blue-50 to-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
                                 <CardHeader className="text-center py-8">
-                                    <Building className="h-12 w-12 text-blue-600 mx-auto mb-4"/>
+                                    <Building className="h-12 w-12 text-blue-600 mx-auto mb-4" />
                                     <CardTitle className="text-xl font-semibold text-gray-900">
                                         {industry}
                                     </CardTitle>
@@ -282,12 +277,10 @@ const Index = () => {
                     </div>
 
                     <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
-                        <Users className="h-16 w-16 text-blue-600 mx-auto mb-6"/>
+                        <Users className="h-16 w-16 text-blue-600 mx-auto mb-6" />
                         <p className="text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto">
-                            We have had the privilege of working with a diverse range of clients across various
-                            industries,
-                            helping them achieve their digital transformation goals and drive business success through
-                            innovative IT solutions.
+                            We have had the privilege of working with a diverse range of clients across various industries,
+                            helping them achieve their digital transformation goals and drive business success through innovative IT solutions.
                         </p>
                     </div>
                 </div>
@@ -311,72 +304,72 @@ const Index = () => {
                         <div className="bg-gradient-to-br from-blue-50 to-white p-8 rounded-2xl shadow-lg">
                             <h3 className="text-2xl font-bold text-gray-900 mb-6">Schedule a Consultation</h3>
                             <p className="text-gray-600 mb-8 leading-relaxed">
-                                If you want to discuss your business with our fine consultants, please schedule a
-                                meeting through this contact form.
+                                If you want to discuss your business with our fine consultants, please schedule a meeting through this contact form.
                             </p>
 
-                            <div className="space-y-6">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Full Name *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="fullName"
-                                        value={formData.fullName}
-                                        onChange={handleInputChange}
-                                        className="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                        placeholder="Enter your full name"
-                                    />
-                                </div>
+                            <form onSubmit={handleSubmit}>
+                                <div className="space-y-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Full Name *
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="fullName"
+                                            value={formData.fullName}
+                                            onChange={handleInputChange}
+                                            className="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                            placeholder="Enter your full name"
+                                        />
+                                    </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Email Address *
-                                    </label>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={handleInputChange}
-                                        className="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                        placeholder="Enter your email address"
-                                    />
-                                </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Email Address *
+                                        </label>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            className="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                            placeholder="Enter your email address"
+                                        />
+                                    </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Mobile Number *
-                                    </label>
-                                    <input
-                                        type="tel"
-                                        name="mobile"
-                                        value={formData.mobile}
-                                        onChange={handleInputChange}
-                                        className="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                        placeholder="Enter your mobile number"
-                                    />
-                                </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Mobile Number *
+                                        </label>
+                                        <input
+                                            type="tel"
+                                            name="mobile"
+                                            value={formData.mobile}
+                                            onChange={handleInputChange}
+                                            className="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                            placeholder="Enter your mobile number"
+                                        />
+                                    </div>
 
-                                <Button
-                                    onClick={handleSubmit}
-                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                                >
-                                    Submit Now
-                                </Button>
-                            </div>
+                                    <Button
+                                        type="submit"
+                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                                    >
+                                        Submit Now
+                                    </Button>
+                                </div>
+                            </form>
                         </div>
 
                         {/* Contact Info */}
                         <div className="space-y-8">
-                            <div
-                                className="bg-gradient-to-br from-blue-600 to-purple-600 text-white p-8 rounded-2xl shadow-lg">
+                            <div className="bg-gradient-to-br from-blue-600 to-purple-600 text-white p-8 rounded-2xl shadow-lg">
                                 <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
 
                                 <div className="space-y-6">
                                     <div className="flex items-start space-x-4">
                                         <div className="bg-white bg-opacity-20 p-3 rounded-lg">
-                                            <Phone className="h-6 w-6"/>
+                                            <Phone className="h-6 w-6" />
                                         </div>
                                         <div>
                                             <p className="font-medium mb-1">Phone</p>
@@ -386,7 +379,7 @@ const Index = () => {
 
                                     <div className="flex items-start space-x-4">
                                         <div className="bg-white bg-opacity-20 p-3 rounded-lg">
-                                            <Mail className="h-6 w-6"/>
+                                            <Mail className="h-6 w-6" />
                                         </div>
                                         <div>
                                             <p className="font-medium mb-1">Email</p>
@@ -396,12 +389,12 @@ const Index = () => {
 
                                     <div className="flex items-start space-x-4">
                                         <div className="bg-white bg-opacity-20 p-3 rounded-lg">
-                                            <MapPin className="h-6 w-6"/>
+                                            <MapPin className="h-6 w-6" />
                                         </div>
                                         <div>
                                             <p className="font-medium mb-1">Address</p>
                                             <p className="text-blue-100 leading-relaxed">
-                                                Johannesbergsvagen 60<br/>
+                                                Johannesbergsvagen 60<br />
                                                 191 38 Sollentuna, Sweden
                                             </p>
                                         </div>
@@ -436,7 +429,7 @@ const Index = () => {
             <footer className="bg-gray-900 text-white py-12 px-4">
                 <div className="max-w-7xl mx-auto text-center">
                     <div className="flex items-center justify-center space-x-2 mb-6">
-                        <Briefcase className="h-8 w-8"/>
+                        <Briefcase className="h-8 w-8" />
                         <span className="text-xl font-bold">Justera Group AB</span>
                     </div>
                     <p className="text-gray-400 mb-4">
@@ -453,4 +446,4 @@ const Index = () => {
     );
 };
 
-export default Index;
+export default HomePage;

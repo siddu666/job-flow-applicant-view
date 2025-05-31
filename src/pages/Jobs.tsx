@@ -1,52 +1,56 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+
+'use client'
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, MapPin, Clock, DollarSign, Search, Building } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth-context";
 import { useJobs } from "@/hooks/useJobs";
+import { Building, MapPin, Calendar, DollarSign, Search, Filter } from "lucide-react";
 
 const Jobs = () => {
   const { user, signOut } = useAuth();
-  const { data: jobs = [], isLoading } = useJobs();
+  const { data: jobs, loading } = useJobs();
+  const router = useRouter();
+  
   const [searchTerm, setSearchTerm] = useState("");
-  const [locationFilter, setLocationFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
+  const [locationFilter, setLocationFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [experienceFilter, setExperienceFilter] = useState("all");
 
-  const swedishCities = [
-    "Stockholm", "Gothenburg", "Malmö", "Uppsala", "Västerås", "Örebro",
-    "Linköping", "Helsingborg", "Jönköping", "Norrköping", "Lund", "Umeå",
-    "Gävle", "Borås", "Eskilstuna", "Karlstad", "Täby", "Remote (Sweden)"
-  ];
-
-  const filteredJobs = jobs.filter(job => {
+  const filteredJobs = jobs?.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesLocation = !locationFilter || job.location.includes(locationFilter);
-    const matchesType = !typeFilter || job.type === typeFilter;
+                         job.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesLocation = locationFilter === "all" || job.location === locationFilter;
+    const matchesType = typeFilter === "all" || job.employment_type === typeFilter;
+    const matchesExperience = experienceFilter === "all" || job.experience_level === experienceFilter;
+    
+    return matchesSearch && matchesLocation && matchesType && matchesExperience;
+  }) || [];
 
-    return matchesSearch && matchesLocation && matchesType;
-  });
-
-  if (isLoading) {
+  if (loading) {
     return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-lg">Loading IT opportunities...</div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading job opportunities...</p>
         </div>
+      </div>
     );
   }
 
   return (
-      <div className="min-h-screen bg-gray-50">
-        {/* Navigation */}
-        <nav className="bg-white border-b border-gray-200 shadow-sm">
-          
+    <div className="min-h-screen bg-gray-50">
+      {/* Navigation */}
+      <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link to="/" className="flex items-center space-x-3">
+            <Link href="/" className="flex items-center space-x-3">
               <Building className="h-8 w-8 text-blue-600" />
               <div>
                 <span className="text-xl font-bold text-gray-900">Justera Group AB</span>
@@ -56,150 +60,233 @@ const Jobs = () => {
             <div className="flex items-center space-x-4">
               {user ? (
                 <div className="flex items-center space-x-4">
-                  <span className="text-sm text-white-600">Welcome, {user.email}</span>
-                  {user.id != "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858" && (
-                      <Link to="/profile">
-                        <Button variant="ghost">My Profile</Button>
-                      </Link>
-                  )}
-                  {user.id == "dbc5e54a-8ba0-49cb-84c2-57ac5dfb8858" && (
-                    <Link to="/admin">
-                      <Button variant="ghost">Admin Panel</Button>
-                    </Link>
-                  )}
+                  <span className="text-sm text-gray-600">Welcome, {user.email}</span>
+                  <Link href="/profile">
+                    <Button variant="ghost">My Profile</Button>
+                  </Link>
+                  <Link href="/admin">
+                    <Button variant="ghost">Admin Panel</Button>
+                  </Link>
                   <Button variant="ghost" onClick={signOut}>
                     Sign Out
                   </Button>
                 </div>
               ) : (
-                <Link to="/auth">
-                  <Button variant="outline">Sign In</Button>
-                </Link>
+                <div className="flex items-center space-x-2">
+                  <Link href="/auth">
+                    <Button variant="outline">Sign In</Button>
+                  </Link>
+                  <Link href="/auth">
+                    <Button className="bg-blue-600 hover:bg-blue-700">Sign Up</Button>
+                  </Link>
+                </div>
               )}
             </div>
           </div>
         </div>
-        </nav>
+      </nav>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">IT Careers at Justera Group AB</h1>
-            <p className="text-xl text-gray-600 mb-2">Future Ready IT Solutions for Smarter Businesses</p>
-            <p className="text-gray-500">Join our team of IT professionals in Sweden</p>
-          </div>
-
-          {/* Search and Filters */}
-          <div className="mb-8">
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                    placeholder="Search IT positions, technologies, skills..."
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold mb-4">Find Your Dream IT Career</h1>
+            <p className="text-xl mb-8 text-blue-100">
+              Join Sweden's leading IT companies and advance your career
+            </p>
+            
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto">
+              <div className="flex gap-4 mb-6">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <Input
+                    placeholder="Search for jobs, skills, or companies..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                />
-              </div>
-              <Select value={locationFilter} onValueChange={setLocationFilter}>
-                <SelectTrigger className="w-full md:w-48">
-                  <SelectValue placeholder="Location in Sweden" />
-                </SelectTrigger>
-                <SelectContent>
-                  {swedishCities.map((city) => (
-                      <SelectItem key={city} value={city}>{city}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className="w-full md:w-48">
-                  <SelectValue placeholder="Employment Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Full-time">Full-time</SelectItem>
-                  <SelectItem value="Part-time">Part-time</SelectItem>
-                  <SelectItem value="Contract">Contract</SelectItem>
-                  <SelectItem value="Consultant">Consultant</SelectItem>
-                  <SelectItem value="Internship">Internship</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Job Listings */}
-          <div className="space-y-6">
-            {filteredJobs.map((job) => (
-                <Card key={job.id} className="hover:shadow-lg transition-shadow border-l-4 border-l-blue-600">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-xl mb-2 text-blue-900">{job.title}</CardTitle>
-                        <CardDescription className="text-lg font-medium text-gray-900 flex items-center gap-2">
-                          <Building className="h-4 w-4" />
-                          Justera Group AB
-                        </CardDescription>
-                      </div>
-                      {user ? (
-                          <Link to={`/jobs/${job.id}/apply`}>
-                            <Button className="bg-blue-600 hover:bg-blue-700">Apply Now</Button>
-                          </Link>
-                      ) : (
-                          <Link to="/auth">
-                            <Button className="bg-blue-600 hover:bg-blue-700">Sign In to Apply</Button>
-                          </Link>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap items-center gap-4 mb-4 text-sm text-gray-600">
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {job.location}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        {job.type}
-                      </div>
-                      {job.salary_range && (
-                          <div className="flex items-center gap-1">
-                            SEK {job.salary_range}
-                          </div>
-                      )}
-                      <div className="ml-auto text-gray-500">
-                        {new Date(job.created_at).toLocaleDateString('sv-SE')}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-            ))}
-          </div>
-
-          {filteredJobs.length === 0 && (
-              <div className="text-center py-12">
-                <Building className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg mb-2">No IT positions found matching your criteria.</p>
-                <p className="text-gray-400">Check back soon for new opportunities at Justera Group AB!</p>
-              </div>
-          )}
-
-          {/* Company Info */}
-          <div className="mt-16 bg-blue-50 rounded-lg p-8">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold text-blue-900 mb-4">About Justera Group AB</h2>
-              <p className="text-gray-700 mb-6 max-w-3xl mx-auto">
-                We are driven by our belief that smarter businesses make the world a better place.
-                At Justera Group, we deliver intelligent IT solutions alongside impeccable services
-                that propel businesses into the future. Join our team in Sweden and be part of the future of IT.
-              </p>
-              <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
-                <span>📧 shruti@justeragroup.com</span>
-                <span>📞 +46734852217</span>
-                <span>📍 Johannesbergsvagen 60, 191 38 Sollentuna, Sweden</span>
+                    className="pl-10 py-3 text-lg"
+                  />
+                </div>
+                <Button className="bg-white text-blue-600 hover:bg-gray-100 px-8">
+                  Search
+                </Button>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Filters */}
+        <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Filter className="h-5 w-5 text-gray-500" />
+            <h3 className="font-semibold text-gray-900">Filter Jobs</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+              <Select value={locationFilter} onValueChange={setLocationFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All locations" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All locations</SelectItem>
+                  <SelectItem value="Stockholm">Stockholm</SelectItem>
+                  <SelectItem value="Gothenburg">Gothenburg</SelectItem>
+                  <SelectItem value="Malmö">Malmö</SelectItem>
+                  <SelectItem value="Remote">Remote</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Job Type</label>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All types</SelectItem>
+                  <SelectItem value="full-time">Full-time</SelectItem>
+                  <SelectItem value="part-time">Part-time</SelectItem>
+                  <SelectItem value="contract">Contract</SelectItem>
+                  <SelectItem value="freelance">Freelance</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Experience Level</label>
+              <Select value={experienceFilter} onValueChange={setExperienceFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All levels" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All levels</SelectItem>
+                  <SelectItem value="entry">Entry Level</SelectItem>
+                  <SelectItem value="mid">Mid Level</SelectItem>
+                  <SelectItem value="senior">Senior Level</SelectItem>
+                  <SelectItem value="lead">Lead/Principal</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+
+        {/* Results Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">
+            {filteredJobs.length} Job{filteredJobs.length !== 1 ? 's' : ''} Found
+          </h2>
+          <div className="text-sm text-gray-600">
+            Showing latest opportunities
+          </div>
+        </div>
+
+        {/* Job Listings */}
+        <div className="space-y-6">
+          {filteredJobs.map((job) => (
+            <Card key={job.id} className="hover:shadow-lg transition-shadow border-l-4 border-l-blue-600">
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-xl mb-2 text-blue-900">{job.title}</CardTitle>
+                    <CardDescription className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                      <Building className="h-4 w-4" />
+                      Justera Group AB
+                    </CardDescription>
+                  </div>
+                  {user ? (
+                    <Button 
+                      className="bg-blue-600 hover:bg-blue-700"
+                      onClick={() => router.push(`/jobs/${job.id}/apply`)}
+                    >
+                      Apply Now
+                    </Button>
+                  ) : (
+                    <Button 
+                      className="bg-blue-600 hover:bg-blue-700"
+                      onClick={() => router.push('/auth')}
+                    >
+                      Sign In to Apply
+                    </Button>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-4 mb-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    {job.location}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    {job.employment_type}
+                  </div>
+                  {job.salary_range && (
+                    <div className="flex items-center gap-1">
+                      <DollarSign className="h-4 w-4" />
+                      {job.salary_range}
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <Badge variant="secondary">{job.experience_level}</Badge>
+                  {job.department && <Badge variant="outline">{job.department}</Badge>}
+                </div>
+                
+                <p className="text-gray-700 mb-4 line-clamp-3">
+                  {job.description}
+                </p>
+                
+                {job.required_skills && job.required_skills.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 mb-2">Required Skills:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {job.required_skills.slice(0, 6).map((skill, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {skill}
+                        </Badge>
+                      ))}
+                      {job.required_skills.length > 6 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{job.required_skills.length - 6} more
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {filteredJobs.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-gray-400 mb-4">
+              <Search className="h-16 w-16 mx-auto" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No jobs found</h3>
+            <p className="text-gray-600 mb-4">
+              Try adjusting your search criteria or check back later for new opportunities.
+            </p>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setSearchTerm("");
+                setLocationFilter("all");
+                setTypeFilter("all");
+                setExperienceFilter("all");
+              }}
+            >
+              Clear filters
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

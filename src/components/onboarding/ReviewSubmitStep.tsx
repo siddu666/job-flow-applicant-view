@@ -5,11 +5,11 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChevronLeft, Edit, CheckCircle, FileText } from 'lucide-react';
 import { OnboardingData } from './OnboardingSteps';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth-context';
 import { useUpdateProfile } from '@/hooks/useProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 interface ReviewSubmitStepProps {
   data: OnboardingData;
@@ -32,7 +32,7 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({ data, onPrev, goToS
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { signUp } = useAuth();
   const updateProfile = useUpdateProfile();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -96,7 +96,7 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({ data, onPrev, goToS
         });
 
         toast.success('Profile created successfully! Please check your email to verify your account.');
-        navigate('/');
+        router.push('/');
       }
     } catch (error) {
       console.error('Submission error:', error);

@@ -1,46 +1,37 @@
-import { useAuth } from "@/contexts/AuthContext";
+
+'use client'
+
+import { useAuth } from "@/contexts/auth-context";
 import { useProfile } from "@/hooks/useProfile";
-import { Navigate } from "react-router-dom";
+import { redirect } from 'next/navigation';
+import { useEffect } from 'react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requireAuth?: boolean;
-  allowedRoles?: string[];
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-                                                         children,
-                                                         requireAuth = true,
-                                                         allowedRoles = []
-                                                       }) => {
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
-  const { data: profile, isLoading: profileLoading } = useProfile();
+  const { data: profile } = useProfile(user?.id);
 
-  if (loading || profileLoading) {
+  useEffect(() => {
+    if (!loading && !user) {
+      redirect('/auth');
+    }
+  }, [user, loading]);
+
+  if (loading) {
     return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-lg">Loading...</div>
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
     );
   }
 
-  if (requireAuth && !user) {
-    console.log('User not authenticated, redirecting to /auth');
-    return <Navigate to="/auth" replace />;
+  if (!user) {
+    return null; // Will redirect via useEffect
   }
 
-    if (allowedRoles.length > 0  && allowedRoles[0] != user.id || '') {
-        console.log(`User role not allowed, redirecting to /`);
-        return <Navigate to="/" replace />;
-    }
-
-  /*// If allowedRoles is specified, check if user has the required role
-  if (allowedRoles.length > 0 && profile && !allowedRoles.includes(profile.role || '')) {
-    console.log(`User role ${profile.role} not allowed, redirecting to /`);
-    return <Navigate to="/" replace />;
-  }
-
-  console.log(`User role ${profile.role} allowed, rendering children`); */
   return <>{children}</>;
 };
 

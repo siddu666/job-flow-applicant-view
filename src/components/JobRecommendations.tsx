@@ -1,3 +1,4 @@
+'use client'
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,13 +6,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, Clock, Briefcase, Star } from 'lucide-react';
 import { useJobRecommendations } from '@/hooks/useJobRecommendations';
-import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/auth-context';
+import { useRouter } from 'next/navigation';
 
-const JobRecommendations: React.FC = () => {
+const JobRecommendations = () => {
   const { user } = useAuth();
-  const { data: recommendations, isLoading } = useJobRecommendations(user?.id);
-  const navigate = useNavigate();
+  const router = useRouter();
+  const { data: recommendations = [], isLoading } = useJobRecommendations(user?.id);
 
   if (isLoading) {
     return (
@@ -23,23 +24,14 @@ const JobRecommendations: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-500">Loading recommendations...</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (!recommendations || recommendations.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Star className="h-5 w-5 text-yellow-500" />
-            Recommended Jobs
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-500">No job recommendations found. Complete your profile to get personalized recommendations!</p>
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
     );
@@ -50,75 +42,64 @@ const JobRecommendations: React.FC = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Star className="h-5 w-5 text-yellow-500" />
-          Recommended Jobs for You
+          Recommended Jobs
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {recommendations.map((job) => (
-          <div
-            key={job.id}
-            className="border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
-            onClick={() => navigate(`/jobs/${job.id}/apply`)}
-          >
-            <div className="flex justify-between items-start mb-2">
-              <div>
-                <h3 className="font-semibold text-lg">{job.title}</h3>
-                <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
-                  <span className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    {job.location}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Briefcase className="h-4 w-4" />
-                    {job.type}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    {job.experience_level}
-                  </span>
-                </div>
-              </div>
-              <div className="text-right">
-                <Badge 
-                  variant={job.match_score >= 80 ? "default" : job.match_score >= 60 ? "secondary" : "outline"}
-                  className="mb-2"
-                >
-                  {job.match_score}% Match
-                </Badge>
-              </div>
-            </div>
-
-            <p className="text-gray-700 text-sm mb-3 line-clamp-2">
-              {job.description.substring(0, 150)}...
-            </p>
-
-            {job.skills && job.skills.length > 0 && (
-              <div className="flex flex-wrap gap-1 mb-3">
-                {job.skills.slice(0, 4).map((skill) => (
-                  <Badge key={skill} variant="outline" className="text-xs">
-                    {skill}
-                  </Badge>
-                ))}
-                {job.skills.length > 4 && (
-                  <Badge variant="outline" className="text-xs">
-                    +{job.skills.length - 4} more
-                  </Badge>
-                )}
-              </div>
-            )}
-
+      <CardContent>
+        {recommendations.length === 0 ? (
+          <div className="text-center py-8">
+            <Briefcase className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500 mb-4">No job recommendations yet</p>
             <Button 
-              size="sm" 
-              className="w-full"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/jobs/${job.id}/apply`);
-              }}
+              variant="outline" 
+              onClick={() => router.push('/jobs')}
             >
-              Apply Now
+              Browse All Jobs
             </Button>
           </div>
-        ))}
+        ) : (
+          <div className="space-y-4">
+            {recommendations.slice(0, 3).map((rec) => (
+              <div key={rec.job.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-semibold text-sm">{rec.job.title}</h3>
+                  <Badge variant="secondary" className="text-xs">
+                    {Math.round(rec.match_score)}% match
+                  </Badge>
+                </div>
+
+                <div className="space-y-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-3 w-3" />
+                    {rec.job.location}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    {rec.job.type}
+                  </div>
+                </div>
+
+                <Button 
+                  size="sm" 
+                  className="w-full mt-3"
+                  onClick={() => router.push(`/jobs/${rec.job.id}/apply`)}
+                >
+                  Apply Now
+                </Button>
+              </div>
+            ))}
+
+            {recommendations.length > 3 && (
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => router.push('/jobs')}
+              >
+                View All Recommendations ({recommendations.length})
+              </Button>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

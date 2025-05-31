@@ -25,3 +25,41 @@ dist-ssr
 
 # envs
 .env*
+
+
+# Dependency directories
+node_modules
+
+# Build output
+.next
+tsconfig.tsbuildinfo
+
+# Production server output
+dist
+
+# Env overrides
+.env.local
+
+# Legacy files
+config
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editors
+.vs
+.vscode
+
+# Misc
+*.bat
+package-json.lock
+src/pages/*.json
+*.code-workspace
+
+#sonar
+.scannerwork
+
+#package-lock.json
+package-lock.json
