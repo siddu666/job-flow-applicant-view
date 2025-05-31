@@ -90,7 +90,7 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({ data, onPrev, goToS
             portfolio_url: data.portfolioUrl || null,
             job_seeking_status: 'actively_looking',
             willing_to_relocate: false,
-            availability: data.preferredJobType,
+            availability: data.availability || 'immediately',
           }
         });
 
@@ -171,6 +171,7 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({ data, onPrev, goToS
           <CardContent className="space-y-2 text-sm">
             <p><strong>Experience:</strong> {data.experience} years</p>
             <p><strong>Job Type:</strong> {data.preferredJobType}</p>
+            <p><strong>Availability:</strong> {data.availability}</p>
             <div>
               <strong>Skills:</strong>
               <div className="flex flex-wrap gap-1 mt-1">

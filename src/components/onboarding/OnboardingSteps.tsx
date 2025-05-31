@@ -33,6 +33,7 @@ export interface OnboardingData {
   experience: number;
   education: string;
   preferredJobType: string;
+  availability: string;
   
   // Resume & Links
   cvFile?: File;
@@ -65,6 +66,7 @@ const OnboardingSteps = () => {
     experience: 0,
     education: '',
     preferredJobType: '',
+    availability: 'immediately',
     linkedinUrl: '',
     portfolioUrl: '',
   });
