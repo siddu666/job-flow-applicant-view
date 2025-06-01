@@ -15,7 +15,7 @@ import { Building, MapPin, Calendar, DollarSign, Search, Filter } from "lucide-r
 
 const Jobs = () => {
   const { user, signOut } = useAuth();
-  const { data: jobs, loading } = useJobs();
+  const { data: jobs, isLoading } = useJobs();
   const router = useRouter();
   
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,7 +33,7 @@ const Jobs = () => {
     return matchesSearch && matchesLocation && matchesType && matchesExperience;
   }) || [];
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">

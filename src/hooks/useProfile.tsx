@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import { toast } from "sonner";
-import {UseAllCandidatesResult} from "@/interfaces/UseAllCandidatesResult.ts";
+import {UseAllCandidatesResult} from "@/interfaces/UseAllCandidatesResult";
 
 export type Profile = Tables<'profiles'>;
 export type ProfileInsert = TablesInsert<'profiles'>;
@@ -13,19 +13,21 @@ export const useProfile = (userId?: string) => {
   return useQuery({
     queryKey: ['profile', userId],
     queryFn: async (): Promise<Profile | null> => {
+      if (!userId) {
+        throw new Error("User ID is required to fetch profile.");
+      }
+
       try {
         const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", userId)
-          .single();
+            .from("profiles")
+            .select("*")
+            .eq("id", userId)
+            .single();
 
         if (error) {
           console.error("Error fetching profile:", error);
           throw new Error(`Failed to fetch profile: ${error.message}`);
         }
-        
-        console.log(data)
 
         return data;
       } catch (error) {
@@ -137,7 +139,7 @@ export const useUploadCV = () => {
         const twoYearsInSeconds = 2 * 365 * 24 * 60 * 60; // 63,072,000 seconds
 
         // Generate a signed URL for private access
-        const { data: { signedUrl }, error: signedUrlError } = await supabase.storage
+        const { data, error: signedUrlError } = await supabase.storage
             .from('documents')
             .createSignedUrl(fileName, twoYearsInSeconds); 
 
@@ -146,7 +148,7 @@ export const useUploadCV = () => {
           throw new Error(`Failed to generate signed URL: ${signedUrlError.message}`);
         }
 
-        return signedUrl;
+        return data?.signedUrl;
       } catch (error) {
         console.error("Unexpected error uploading CV:", error);
         throw error;

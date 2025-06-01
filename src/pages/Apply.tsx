@@ -187,6 +187,9 @@ const Apply = () => {
   };
 
   const handleSubmit = async (e: FormEvent) => {
+    if (!user?.id) {
+      throw new Error("User ID is required to fetch profile.");
+    }
     e.preventDefault();
     setIsUploading(true);
 
@@ -215,7 +218,7 @@ const Apply = () => {
 
       if (cvFile) {
         cvUrl = await uploadCV(cvFile);
-
+        
         const { error: profileUpdateError } = await supabase
             .from('profiles')
             .update({ cv_url: cvUrl })

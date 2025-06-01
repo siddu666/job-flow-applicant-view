@@ -39,7 +39,7 @@ const Admin = () => {
     redirect('/');
     return null;
   }
-
+  
   const handleDeleteUser = (userId: string, userName: string) => {
     setDeleteDialogUser({ id: userId, name: userName });
   };

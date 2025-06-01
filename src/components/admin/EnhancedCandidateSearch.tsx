@@ -62,8 +62,11 @@ const visaStatusOptions = [
   { value: 'other', label: 'Other' },
 ];
 
-const EnhancedCandidateSearch = () => {
-  const [filters, setFilters] = useState<CandidateFilters>({ page: 1, limit: 12 });
+type EnhancedCandidateSearchProps = {
+  onDeleteUser: (userId: string, userName: string) => void;
+};
+
+const EnhancedCandidateSearch = ({ onDeleteUser }: EnhancedCandidateSearchProps) => {  const [filters, setFilters] = useState<CandidateFilters>({ page: 1, limit: 12 });
   const [searchTerm, setSearchTerm] = useState("");
   const [cvSearchTerm, setCvSearchTerm] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
