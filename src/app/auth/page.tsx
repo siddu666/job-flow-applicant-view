@@ -55,7 +55,7 @@ export default function AuthPage() {
         full_name: formData.fullName,
         role: formData.role
       })
-      router.push('/profile')
+      // Don't redirect immediately, let the auth context handle it
     } catch (error) {
       console.error('Sign up error:', error)
     } finally {

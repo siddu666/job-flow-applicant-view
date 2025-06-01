@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         // Get user profile if logged in
         if (session?.user) {
-          const { data: profile } = await supabase
+          const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
@@ -49,6 +49,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           if (profile) {
             setUser({ ...session.user, profile })
+          } else if (profileError && profileError.code === 'PGRST116') {
+            // Profile doesn't exist, create one
+            const { data: newProfile } = await supabase
+              .from('profiles')
+              .insert({
+                id: session.user.id,
+                email: session.user.email,
+                full_name: session.user.user_metadata?.full_name || '',
+                role: session.user.user_metadata?.role || 'applicant'
+              })
+              .select()
+              .single()
+            
+            if (newProfile) {
+              setUser({ ...session.user, profile: newProfile })
+            }
           }
         }
       } catch (error) {
@@ -69,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (event === 'SIGNED_IN' && session?.user) {
           // Get user profile
-          const { data: profile } = await supabase
+          const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
@@ -77,6 +93,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           if (profile) {
             setUser({ ...session.user, profile })
+          } else if (profileError && profileError.code === 'PGRST116') {
+            // Profile doesn't exist, create one
+            const { data: newProfile } = await supabase
+              .from('profiles')
+              .insert({
+                id: session.user.id,
+                email: session.user.email,
+                full_name: session.user.user_metadata?.full_name || '',
+                role: session.user.user_metadata?.role || 'applicant'
+              })
+              .select()
+              .single()
+            
+            if (newProfile) {
+              setUser({ ...session.user, profile: newProfile })
+            }
           }
         }
 
