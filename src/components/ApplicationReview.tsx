@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from "react";
 import { useApplications, useUpdateApplication } from "@/hooks/useApplications";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,13 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Calendar, 
-  Briefcase, 
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Briefcase,
   Clock,
   FileText,
   ExternalLink
@@ -21,15 +23,15 @@ import {
 import { useAuth } from "@/contexts/auth-context";
 import type { Application } from "@/hooks/useApplications";
 
-const ApplicationReview = () => {
+export const ApplicationReview = () => {
   const { user } = useAuth();
   const { data: applications = [], isLoading } = useApplications();
   const updateApplication = useUpdateApplication();
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const filteredApplications = applications.filter(app => 
-    statusFilter === "all" || app.status === statusFilter
+  const filteredApplications = applications.filter(app =>
+      statusFilter === "all" || app.status === statusFilter
   );
 
   const handleStatusUpdate = async (applicationId: string, newStatus: string) => {
@@ -59,258 +61,237 @@ const ApplicationReview = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Filter Controls */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Application Reviews</h2>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="Filter by status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Applications</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="under_review">Under Review</SelectItem>
-            <SelectItem value="interview_scheduled">Interview Scheduled</SelectItem>
-            <SelectItem value="accepted">Accepted</SelectItem>
-            <SelectItem value="rejected">Rejected</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <div className="space-y-6">
+        {/* Filter Controls */}
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Application Reviews</h2>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Applications</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="under_review">Under Review</SelectItem>
+              <SelectItem value="interview_scheduled">Interview Scheduled</SelectItem>
+              <SelectItem value="accepted">Accepted</SelectItem>
+              <SelectItem value="rejected">Rejected</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-      <Tabs defaultValue="list" className="w-full">
-        <TabsList>
-          <TabsTrigger value="list">Applications List</TabsTrigger>
-          {selectedApp && <TabsTrigger value="detail">Application Detail</TabsTrigger>}
-        </TabsList>
+        <Tabs defaultValue="list" className="w-full">
+          <TabsList>
+            <TabsTrigger value="list">Applications List</TabsTrigger>
+            {selectedApp && <TabsTrigger value="detail">Application Detail</TabsTrigger>}
+          </TabsList>
 
-        <TabsContent value="list" className="space-y-4">
-          {filteredApplications.length === 0 ? (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <p className="text-gray-500">No applications found.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredApplications.map((application) => (
-              <Card key={application.id} className="cursor-pointer hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start space-x-4">
-                      <Avatar>
-                        <AvatarImage src={`https://avatar.vercel.sh/${application.email}.png`} />
-                        <AvatarFallback>
-                          {application.full_name?.split(' ').map(n => n[0]).join('').toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      
-                      <div className="space-y-2">
-                        <div>
-                          <h3 className="font-semibold text-lg">{application.full_name}</h3>
-                          <p className="text-sm text-gray-600">{application.email}</p>
-                        </div>
-                        
-                        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                          {application.phone && (
-                            <div className="flex items-center gap-1">
-                              <Phone className="h-3 w-3" />
-                              {application.phone}
+          <TabsContent value="list" className="space-y-4">
+            {filteredApplications.length === 0 ? (
+                <Card>
+                  <CardContent className="p-8 text-center">
+                    <p className="text-gray-500">No applications found.</p>
+                  </CardContent>
+                </Card>
+            ) : (
+                filteredApplications.map((application) => (
+                    <Card key={application.id} className="cursor-pointer hover:shadow-md transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start space-x-4">
+                            <Avatar>
+                              <AvatarImage src={`https://avatar.vercel.sh/${application.email}.png`} />
+                              <AvatarFallback>
+                                {application.full_name?.split(' ').map(n => n[0]).join('').toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+
+                            <div className="space-y-2">
+                              <div>
+                                <h3 className="font-semibold text-lg">{application.full_name}</h3>
+                                <p className="text-sm text-gray-600">{application.email}</p>
+                              </div>
+
+                              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                                {application.phone && (
+                                    <div className="flex items-center gap-1">
+                                      <Phone className="h-3 w-3" />
+                                      {application.phone}
+                                    </div>
+                                )}
+                                {application.availability && (
+                                    <div className="flex items-center gap-1">
+                                      <Calendar className="h-3 w-3" />
+                                      Available: {application.availability}
+                                    </div>
+                                )}
+                              </div>
+
+                              {application.skills && application.skills.length > 0 && (
+                                  <div className="flex flex-wrap gap-1">
+                                    {application.skills.slice(0, 3).map((skill, index) => (
+                                        <Badge key={index} variant="secondary" className="text-xs">
+                                          {skill}
+                                        </Badge>
+                                    ))}
+                                    {application.skills.length > 3 && (
+                                        <Badge variant="outline" className="text-xs">
+                                          +{application.skills.length - 3} more
+                                        </Badge>
+                                    )}
+                                  </div>
+                              )}
+
+                              {application.cv_url && (
+                                  <div className="flex items-center gap-1">
+                                    <FileText className="h-4 w-4 text-blue-600" />
+                                    <a
+                                        href={application.cv_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:underline text-sm"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                      View CV
+                                      <ExternalLink className="h-3 w-3 inline ml-1" />
+                                    </a>
+                                  </div>
+                              )}
                             </div>
-                          )}
-                          {application.availability && (
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-3 w-3" />
-                              Available: {application.availability}
+                          </div>
+
+                          <div className="space-y-3">
+                            <Badge className={getStatusColor(application.status || "pending")}>
+                              {application.status?.replace('_', ' ').toUpperCase() || "PENDING"}
+                            </Badge>
+
+                            <div className="flex gap-2">
+                              <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedApp(application);
+                                  }}
+                              >
+                                View Details
+                              </Button>
                             </div>
-                          )}
-                        </div>
-
-                        {application.skills && application.skills.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            {application.skills.slice(0, 3).map((skill, index) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
-                                {skill}
-                              </Badge>
-                            ))}
-                            {application.skills.length > 3 && (
-                              <Badge variant="outline" className="text-xs">
-                                +{application.skills.length - 3} more
-                              </Badge>
-                            )}
                           </div>
-                        )}
-
-                        {application.cv_url && (
-                          <div className="flex items-center gap-1">
-                            <FileText className="h-4 w-4 text-blue-600" />
-                            <a 
-                              href={application.cv_url} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-blue-600 hover:underline text-sm"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              View CV
-                              <ExternalLink className="h-3 w-3 inline ml-1" />
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <Badge className={getStatusColor(application.status || "pending")}>
-                        {application.status?.replace('_', ' ').toUpperCase() || "PENDING"}
-                      </Badge>
-                      
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedApp(application);
-                          }}
-                        >
-                          View Details
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </TabsContent>
-
-        {selectedApp && (
-          <TabsContent value="detail">
-            <Card>
-              <CardHeader>
-                <CardTitle>Application Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-semibold mb-3">Applicant Information</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4" />
-                        {selectedApp.full_name}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4" />
-                        {selectedApp.email}
-                      </div>
-                      {selectedApp.phone && (
-                        <div className="flex items-center gap-2">
-                          <Phone className="h-4 w-4" />
-                          {selectedApp.phone}
                         </div>
-                      )}
-                      {selectedApp.availability && (
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4" />
-                          Available: {selectedApp.availability}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-3">Application Status</h4>
-                    <Select
-                      value={selectedApp.status || "pending"}
-                      onValueChange={(value) => handleStatusUpdate(selectedApp.id, value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="under_review">Under Review</SelectItem>
-                        <SelectItem value="interview_scheduled">Interview Scheduled</SelectItem>
-                        <SelectItem value="accepted">Accepted</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {selectedApp.skills && selectedApp.skills.length > 0 && (
-                  <div>
-                    <h4 className="font-semibold mb-3">Skills</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedApp.skills.map((skill, index) => (
-                        <Badge key={index} variant="secondary">
-                          {skill}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {selectedApp.cv_url && (
-                  <div>
-                    <h4 className="font-semibold mb-3">CV/Resume</h4>
-                    <a 
-                      href={selectedApp.cv_url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-blue-600 hover:underline"
-                    >
-                      <FileText className="h-4 w-4" />
-                      View CV/Resume
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  </div>
-                )}
-
-                {selectedApp.cover_letter && (
-                  <div>
-                    <h4 className="font-semibold mb-3">Cover Letter</h4>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <p className="text-sm whitespace-pre-wrap">
-                        {selectedApp.cover_letter}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setSelectedApp(null)}
-                  >
-                    Back to List
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                      </CardContent>
+                    </Card>
+                ))
+            )}
           </TabsContent>
-        )}
-      </Tabs>
-    </div>
+
+          {selectedApp && (
+              <TabsContent value="detail">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Application Details</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="font-semibold mb-3">Applicant Information</h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center gap-2">
+                            <User className="h-4 w-4" />
+                            {selectedApp.full_name}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Mail className="h-4 w-4" />
+                            {selectedApp.email}
+                          </div>
+                          {selectedApp.phone && (
+                              <div className="flex items-center gap-2">
+                                <Phone className="h-4 w-4" />
+                                {selectedApp.phone}
+                              </div>
+                          )}
+                          {selectedApp.availability && (
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4" />
+                                Available: {selectedApp.availability}
+                              </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="font-semibold mb-3">Application Status</h4>
+                        <Select
+                            value={selectedApp.status || "pending"}
+                            onValueChange={(value) => handleStatusUpdate(selectedApp.id, value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="under_review">Under Review</SelectItem>
+                            <SelectItem value="interview_scheduled">Interview Scheduled</SelectItem>
+                            <SelectItem value="accepted">Accepted</SelectItem>
+                            <SelectItem value="rejected">Rejected</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    {selectedApp.skills && selectedApp.skills.length > 0 && (
+                        <div>
+                          <h4 className="font-semibold mb-3">Skills</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedApp.skills.map((skill, index) => (
+                                <Badge key={index} variant="secondary">
+                                  {skill}
+                                </Badge>
+                            ))}
+                          </div>
+                        </div>
+                    )}
+
+                    {selectedApp.cv_url && (
+                        <div>
+                          <h4 className="font-semibold mb-3">CV/Resume</h4>
+                          <a
+                              href={selectedApp.cv_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 text-blue-600 hover:underline"
+                          >
+                            <FileText className="h-4 w-4" />
+                            View CV/Resume
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                        </div>
+                    )}
+
+                    {selectedApp.cover_letter && (
+                        <div>
+                          <h4 className="font-semibold mb-3">Cover Letter</h4>
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <p className="text-sm whitespace-pre-wrap">
+                              {selectedApp.cover_letter}
+                            </p>
+                          </div>
+                        </div>
+                    )}
+
+                    <div className="flex gap-2">
+                      <Button
+                          variant="outline"
+                          onClick={() => setSelectedApp(null)}
+                      >
+                        Back to List
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+          )}
+        </Tabs>
+      </div>
   );
 };
-
-export default ApplicationReview;
-'use client'
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-
-export function ApplicationReview() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Application Review</CardTitle>
-        <CardDescription>
-          Review and manage job applications
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="text-gray-500">No applications to review at this time.</p>
-      </CardContent>
-    </Card>
-  )
-}

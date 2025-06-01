@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Users, Briefcase, FileText, Settings, Plus } from "lucide-react";
 import Link from "next/link";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import {ProtectedRoute} from "@/components/ProtectedRoute";
 
 const Admin = () => {
   const { user, signOut } = useAuth();
