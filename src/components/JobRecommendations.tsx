@@ -74,32 +74,22 @@ const JobRecommendations = () => {
                   <MapPin className="h-4 w-4" />
                   {job.location}
                 </div>
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  {job.type}
-                </div>
               </div>
-
-              {job.experience_level && (
-                <Badge variant="secondary" className="text-xs">
-                  {job.experience_level} level
-                </Badge>
-              )}
-
+                
               <p className="text-sm text-gray-700 line-clamp-3">
                 {job.description}
               </p>
 
-              {job.skills && job.skills.length > 0 && (
+              {job.requirements && job.requirements.length > 0 && (
                 <div className="flex flex-wrap gap-1">
-                  {job.skills.slice(0, 3).map((skill, index) => (
+                  {job.requirements.slice(0, 3).map((skill, index) => (
                     <Badge key={index} variant="outline" className="text-xs">
                       {skill}
                     </Badge>
                   ))}
-                  {job.skills.length > 3 && (
+                  {job.requirements.length > 3 && (
                     <Badge variant="outline" className="text-xs">
-                      +{job.skills.length - 3} more
+                      +{job.requirements.length - 3} more
                     </Badge>
                   )}
                 </div>

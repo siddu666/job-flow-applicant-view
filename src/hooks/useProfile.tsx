@@ -1,12 +1,12 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
+import { Tables, InsertTables, UpdateTables } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 
 export type Profile = Tables<'profiles'>;
-export type ProfileInsert = TablesInsert<'profiles'>;
-export type ProfileUpdate = TablesUpdate<'profiles'>;
+export type ProfileInsert = InsertTables<'profiles'>;
+export type ProfileUpdate = UpdateTables<'profiles'>;
 
 export const useProfile = (userId?: string) => {
   return useQuery({

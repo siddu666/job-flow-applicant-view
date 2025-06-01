@@ -1,12 +1,12 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
+import { Tables, InsertTables, UpdateTables } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 
+// Define types for applications
 export type Application = Tables<'applications'>;
-export type ApplicationInsert = TablesInsert<'applications'>;
-export type ApplicationUpdate = TablesUpdate<'applications'>;
+export type ApplicationInsert = InsertTables<'applications'>;
+export type ApplicationUpdate = UpdateTables<'applications'>;
 
 export type ApplicationWithCandidate = Application & {
   applicant: Tables<'profiles'>;

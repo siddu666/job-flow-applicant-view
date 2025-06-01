@@ -99,15 +99,8 @@ export default function JobsPage() {
                             <MapPin className="h-4 w-4" />
                             {job.location || "Location"}
                           </div>
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-4 w-4" />
-                            {job.employment_type || "Full-time"}
-                          </div>
                         </div>
                       </div>
-                      <Badge variant="secondary">
-                        {job.status || "Active"}
-                      </Badge>
                     </div>
                   </CardHeader>
                   <CardContent>
