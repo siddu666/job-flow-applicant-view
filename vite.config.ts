@@ -3,7 +3,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import path from 'path'
 // @ts-ignore
-import { lovableTagger } from 'lovable-tagger'
+import { componentTagger } from 'lovable-tagger'
 
 // @ts-ignore
 export default defineConfig(({ mode }) => ({
@@ -13,11 +13,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' &&
-      lovableTagger({
-        appName: "Justera Group Careers",
-        appIcon: "https://placeholder.svg",
-      }),
+    mode === 'development' && componentTagger(),
   ].filter(Boolean),
   resolve: {
     alias: {
