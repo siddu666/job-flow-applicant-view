@@ -14,7 +14,7 @@ interface EmailData {
 }
 
 const generatePeriodicCheckEmail = (fullName: string, token: string): EmailData => {
-  const baseUrl = Deno.env.get("SITE_URL") || "https://your-domain.com";
+  const baseUrl = (globalThis as any).Deno?.env?.get("SITE_URL") || "https://your-domain.com";
   
   return {
     to: "",
@@ -90,8 +90,13 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseUrl = (globalThis as any).Deno?.env?.get("SUPABASE_URL");
+    const supabaseServiceKey = (globalThis as any).Deno?.env?.get("SUPABASE_SERVICE_ROLE_KEY");
+    
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error("Missing Supabase configuration");
+    }
+    
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get all active candidates (not checked in last 2 months)
@@ -143,10 +148,10 @@ const handler = async (req: Request): Promise<Response> => {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error in send-periodic-check function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
