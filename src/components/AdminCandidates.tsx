@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import {Profile, useAllCandidates} from "@/hooks/useProfile";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card as UICard, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -85,296 +85,301 @@ const AdminCandidates = () => {
     "AWS",
     "Docker",
     "Kubernetes",
-    "CI/CD"
   ];
 
-  const totalPages = Math.ceil(total / (filters.limit || 10));
-
   return (
-      <div className="container mx-auto p-4">
-        <Card className="mb-4">
-          <CardHeader>
-            <CardTitle>Filter Candidates</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div>
-                <Input
-                    type="text"
-                    placeholder="Search by name or bio..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <Button className="mt-2 w-full" onClick={handleSearch}>
-                  <Search className="mr-2 h-4 w-4" />
-                  Search
-                </Button>
-              </div>
-
-              <div>
-                <Select onValueChange={handleExperienceChange}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Experience (Years)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any</SelectItem>
-                    <SelectItem value="1">1+ Years</SelectItem>
-                    <SelectItem value="3">3+ Years</SelectItem>
-                    <SelectItem value="5">5+ Years</SelectItem>
-                    <SelectItem value="7">7+ Years</SelectItem>
-                    <SelectItem value="10">10+ Years</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Input
-                    type="text"
-                    placeholder="Location..."
-                    onChange={(e) => handleLocationChange(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <Select onValueChange={handleJobSeekingStatusChange}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Job Seeking Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any</SelectItem>
-                    <SelectItem value="actively_looking">Actively Looking</SelectItem>
-                    <SelectItem value="open_to_opportunities">Open to Opportunities</SelectItem>
-                    <SelectItem value="not_looking">Not Looking</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+    <div className="space-y-6">
+      <UICard>
+        <CardHeader>
+          <CardTitle>Candidate Management</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Search candidates..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Button onClick={handleSearch} variant="outline">
+                <Search className="h-4 w-4" />
+              </Button>
             </div>
 
-            <div>
-              <p className="text-sm font-medium">Skills:</p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {skillsList.map((skill) => (
-                    <Badge
-                        key={skill}
-                        variant={selectedSkills.includes(skill) ? "secondary" : "outline"}
-                        onClick={() => handleSkillSelect(skill)}
-                        className="cursor-pointer"
-                    >
-                      {skill}
-                    </Badge>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            <Select onValueChange={handleExperienceChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Experience Level" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Any Experience</SelectItem>
+                <SelectItem value="1">1+ Years</SelectItem>
+                <SelectItem value="3">3+ Years</SelectItem>
+                <SelectItem value="5">5+ Years</SelectItem>
+                <SelectItem value="10">10+ Years</SelectItem>
+              </SelectContent>
+            </Select>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {candidates.map((candidate: Profile) => (
-              <Card key={candidate.id} onClick={() => openCandidateModal(candidate)} className="cursor-pointer hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center space-x-4">
-                    <Avatar>
-                      <AvatarImage src={`https://avatar.vercel.sh/${candidate.email}.png`} />
-                      <AvatarFallback>{candidate.first_name?.substring(0, 1)}{candidate.last_name?.substring(0, 1)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">{candidate.first_name} {candidate.last_name}</CardTitle>
-                      <p className="text-sm text-gray-500">{candidate.email}</p>
-                      {candidate.cv_url && (
-                        <div className="flex items-center gap-1 mt-1">
-                          <FileText className="h-3 w-3 text-green-600" />
-                          <span className="text-xs text-green-600">CV Available</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {candidate.current_location && (
-                      <p className="flex items-center text-sm text-gray-600">
-                        <MapPin className="mr-1 h-3 w-3" />
-                        {candidate.current_location}
-                      </p>
+            <Input
+              placeholder="Location..."
+              onChange={(e) => handleLocationChange(e.target.value)}
+            />
+
+            <Select onValueChange={handleJobSeekingStatusChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Job Seeking Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Any Status</SelectItem>
+                <SelectItem value="actively_looking">Actively Looking</SelectItem>
+                <SelectItem value="open_to_opportunities">Open to Opportunities</SelectItem>
+                <SelectItem value="not_looking">Not Looking</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="mb-4">
+            <h4 className="text-sm font-medium mb-2">Filter by Skills:</h4>
+            <div className="flex flex-wrap gap-2">
+              {skillsList.map((skill) => (
+                <Badge
+                  key={skill}
+                  variant={selectedSkills.includes(skill) ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => handleSkillSelect(skill)}
+                >
+                  {skill}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </UICard>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {candidates.map((candidate) => (
+          <UICard key={candidate.id} className="cursor-pointer hover:shadow-md transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-start space-x-4">
+                <Avatar>
+                  <AvatarImage src={candidate.avatar_url || undefined} />
+                  <AvatarFallback>
+                    {candidate.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-lg truncate">
+                    {candidate.full_name || 'Unknown Name'}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    {candidate.current_position || 'Position not specified'}
+                  </p>
+                  
+                  <div className="space-y-1 text-sm text-gray-500">
+                    {candidate.location && (
+                      <div className="flex items-center">
+                        <MapPin className="h-3 w-3 mr-1" />
+                        {candidate.location}
+                      </div>
                     )}
+                    
                     {candidate.experience_years && (
-                      <p className="flex items-center text-sm text-gray-600">
-                        <Calendar className="mr-1 h-3 w-3" />
+                      <div className="flex items-center">
+                        <Calendar className="h-3 w-3 mr-1" />
                         {candidate.experience_years} years experience
-                      </p>
+                      </div>
                     )}
-                    {candidate.skills && candidate.skills.length > 0 && (
+                    
+                    {candidate.salary_expectation && (
+                      <div className="flex items-center">
+                        <DollarSign className="h-3 w-3 mr-1" />
+                        {candidate.salary_expectation} SEK
+                      </div>
+                    )}
+                  </div>
+
+                  {candidate.skills && candidate.skills.length > 0 && (
+                    <div className="mt-3">
                       <div className="flex flex-wrap gap-1">
-                        {candidate.skills.slice(0, 2).map((skill: string, index: number) => (
+                        {candidate.skills.slice(0, 3).map((skill, index) => (
                           <Badge key={index} variant="secondary" className="text-xs">
                             {skill}
                           </Badge>
                         ))}
-                        {candidate.skills.length > 2 && (
+                        {candidate.skills.length > 3 && (
                           <Badge variant="outline" className="text-xs">
-                            +{candidate.skills.length - 2}
+                            +{candidate.skills.length - 3} more
                           </Badge>
                         )}
                       </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-          ))}
-        </div>
-
-        <div className="flex justify-center mt-4">
-          <Button
-              onClick={() => handlePageChange((filters.page || 1) - 1)}
-              disabled={filters.page === 1}
-              className="mr-2"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="flex items-center">
-          Page {filters.page} of {totalPages}
-        </span>
-          <Button
-              onClick={() => handlePageChange((filters.page || 1) + 1)}
-              disabled={(filters.page || 1) * (filters.limit || 10) >= total}
-              className="ml-2"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-
-        <Modal isOpen={isModalOpen} onClose={closeCandidateModal}>
-          {selectedCandidate && (
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <Avatar className="h-16 w-16">
-                    <AvatarImage src={`https://avatar.vercel.sh/${selectedCandidate.email}.png`} />
-                    <AvatarFallback className="text-lg">
-                      {selectedCandidate.first_name?.substring(0, 1)}{selectedCandidate.last_name?.substring(0, 1)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h2 className="text-xl font-bold">{selectedCandidate.first_name} {selectedCandidate.last_name}</h2>
-                    <p className="text-sm text-gray-500">{selectedCandidate.email}</p>
-                  </div>
-                </div>
-
-                {selectedCandidate.bio && (
-                  <div>
-                    <p className="text-sm font-medium">Bio:</p>
-                    <p className="text-sm text-gray-700">{selectedCandidate.bio}</p>
-                  </div>
-                )}
-
-                {selectedCandidate.skills && selectedCandidate.skills.length > 0 && (
-                  <div>
-                    <p className="text-sm font-medium">Skills:</p>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {selectedCandidate.skills.map((skill: string, index: number) => (
-                          <Badge key={index} variant="secondary">{skill}</Badge>
-                      ))}
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {selectedCandidate.cv_url && (
-                  <div>
-                    <p className="text-sm font-medium">CV/Resume:</p>
-                    <a 
-                      href={selectedCandidate.cv_url} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="inline-flex items-center gap-2 text-blue-600 hover:underline text-sm"
+                  <div className="mt-4 flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => openCandidateModal(candidate)}
                     >
-                      <FileText className="h-4 w-4" />
-                      View CV/Resume
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                  <div className="space-y-2">
-                    <p className="flex items-center text-sm">
-                      <MapPin className="mr-2 h-4 w-4" />
-                      {selectedCandidate.current_location || "No location specified"}
-                    </p>
-                    <p className="flex items-center text-sm">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      {selectedCandidate.experience_years || 0} Years Experience
-                    </p>
-                    <p className="flex items-center text-sm">
-                      <DollarSign className="mr-2 h-4 w-4" />
-                      {selectedCandidate.expected_salary_sek || 0} SEK
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <p className="flex items-center text-sm">
-                      <Mail className="mr-2 h-4 w-4" />
-                      {selectedCandidate.email}
-                    </p>
-                    <p className="flex items-center text-sm">
-                      <Phone className="mr-2 h-4 w-4" />
-                      {selectedCandidate.phone || "No phone specified"}
-                    </p>
-                    {selectedCandidate.availability && (
-                      <p className="text-sm">
-                        <span className="font-medium">Availability:</span> {selectedCandidate.availability}
-                      </p>
+                      View Profile
+                    </Button>
+                    {candidate.email && (
+                      <Button variant="outline" size="sm" asChild>
+                        <a href={`mailto:${candidate.email}`}>
+                          <Mail className="h-3 w-3 mr-1" />
+                          Email
+                        </a>
+                      </Button>
                     )}
                   </div>
                 </div>
-
-                {(selectedCandidate.linkedin_url || selectedCandidate.portfolio_url || selectedCandidate.github_url) && (
-                  <div>
-                    <p className="text-sm font-medium mb-2">Links:</p>
-                    <div className="space-y-1">
-                      {selectedCandidate.linkedin_url && (
-                          <a href={selectedCandidate.linkedin_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
-                            <ExternalLink className="mr-2 h-3 w-3" />
-                            LinkedIn
-                          </a>
-                      )}
-                      {selectedCandidate.portfolio_url && (
-                          <a href={selectedCandidate.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
-                            <ExternalLink className="mr-2 h-3 w-3" />
-                            Portfolio
-                          </a>
-                      )}
-                      {selectedCandidate.github_url && (
-                          <a href={selectedCandidate.github_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
-                            <ExternalLink className="mr-2 h-3 w-3" />
-                            GitHub
-                          </a>
-                      )}
-                    </div>
-                  </div>
-                )}
               </div>
-          )}
-        </Modal>
+            </CardContent>
+          </UICard>
+        ))}
       </div>
+
+      {total > 0 && (
+        <div className="flex justify-between items-center">
+          <p className="text-sm text-gray-500">
+            Showing {((filters.page || 1) - 1) * (filters.limit || 10) + 1} to{' '}
+            {Math.min((filters.page || 1) * (filters.limit || 10), total)} of {total} candidates
+          </p>
+          
+          <div className="flex space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={(filters.page || 1) <= 1}
+              onClick={() => handlePageChange((filters.page || 1) - 1)}
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={(filters.page || 1) >= Math.ceil(total / (filters.limit || 10))}
+              onClick={() => handlePageChange((filters.page || 1) + 1)}
+            >
+              Next
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeCandidateModal}
+        title={selectedCandidate?.full_name || 'Candidate Profile'}
+      >
+        {selectedCandidate && (
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <Avatar className="h-16 w-16">
+                <AvatarImage src={selectedCandidate.avatar_url || undefined} />
+                <AvatarFallback className="text-lg">
+                  {selectedCandidate.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h2 className="text-xl font-semibold">{selectedCandidate.full_name}</h2>
+                <p className="text-gray-600">{selectedCandidate.current_position}</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h3 className="font-semibold mb-2">Contact Information</h3>
+                <div className="space-y-1 text-sm">
+                  {selectedCandidate.email && (
+                    <div className="flex items-center">
+                      <Mail className="h-4 w-4 mr-2" />
+                      <a href={`mailto:${selectedCandidate.email}`} className="text-blue-600 hover:underline">
+                        {selectedCandidate.email}
+                      </a>
+                    </div>
+                  )}
+                  {selectedCandidate.phone && (
+                    <div className="flex items-center">
+                      <Phone className="h-4 w-4 mr-2" />
+                      <a href={`tel:${selectedCandidate.phone}`} className="text-blue-600 hover:underline">
+                        {selectedCandidate.phone}
+                      </a>
+                    </div>
+                  )}
+                  {selectedCandidate.location && (
+                    <div className="flex items-center">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      {selectedCandidate.location}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Professional Details</h3>
+                <div className="space-y-1 text-sm">
+                  {selectedCandidate.experience_years && (
+                    <div className="flex items-center">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      {selectedCandidate.experience_years} years experience
+                    </div>
+                  )}
+                  {selectedCandidate.salary_expectation && (
+                    <div className="flex items-center">
+                      <DollarSign className="h-4 w-4 mr-2" />
+                      {selectedCandidate.salary_expectation} SEK expected salary
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {selectedCandidate.skills && selectedCandidate.skills.length > 0 && (
+              <div>
+                <h3 className="font-semibold mb-2">Skills</h3>
+                <div className="flex flex-wrap gap-2">
+                  {selectedCandidate.skills.map((skill, index) => (
+                    <Badge key={index} variant="secondary">
+                      {skill}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {selectedCandidate.bio && (
+              <div>
+                <h3 className="font-semibold mb-2">Bio</h3>
+                <p className="text-sm text-gray-600">{selectedCandidate.bio}</p>
+              </div>
+            )}
+
+            <div className="flex space-x-2 pt-4">
+              {selectedCandidate.resume_url && (
+                <Button variant="outline" asChild>
+                  <a href={selectedCandidate.resume_url} target="_blank" rel="noopener noreferrer">
+                    <FileText className="h-4 w-4 mr-2" />
+                    View Resume
+                  </a>
+                </Button>
+              )}
+              {selectedCandidate.portfolio_url && (
+                <Button variant="outline" asChild>
+                  <a href={selectedCandidate.portfolio_url} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    View Portfolio
+                  </a>
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+      </Modal>
+    </div>
   );
 };
 
+export { AdminCandidates };
 export default AdminCandidates;
-'use client'
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-
-export function AdminCandidates() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Candidates</CardTitle>
-        <CardDescription>
-          Manage candidate profiles and information
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="text-gray-500">No candidates found.</p>
-      </CardContent>
-    </Card>
-  )
-}
