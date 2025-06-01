@@ -23,7 +23,6 @@ export type Database = {
           phone: string | null
           skills: string[] | null
           status: string | null
-          locations?: string[] | null;
         }
         Insert: {
           applicant_id: string
@@ -38,7 +37,6 @@ export type Database = {
           phone?: string | null
           skills?: string[] | null
           status?: string | null
-          locations?: string[] | null;
         }
         Update: {
           applicant_id?: string
@@ -53,7 +51,6 @@ export type Database = {
           phone?: string | null
           skills?: string[] | null
           status?: string | null
-          locations?: string[] | null;
         }
         Relationships: [
           {

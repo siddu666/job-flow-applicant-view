@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useApplications, useUpdateApplication } from "@/hooks/useApplications";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,7 +36,7 @@ const ApplicationReview = () => {
     try {
       await updateApplication.mutateAsync({
         id: applicationId,
-        updates: { status: newStatus } // Only include properties that are part of ApplicationUpdate
+        updates: { status: newStatus }
       });
     } catch (error) {
       console.error("Error updating application status:", error);

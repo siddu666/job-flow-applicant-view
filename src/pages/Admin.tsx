@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { useProfile } from "@/hooks/useProfile";
-import { redirect } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -30,13 +29,13 @@ const Admin = () => {
   }
 
   if (!user) {
-    redirect('/auth');
+    window.location.href = '/auth';
     return null;
   }
 
   // Only admin, hr, and hiring_manager roles can access admin panel
   if (profile?.role === 'applicant') {
-    redirect('/');
+    window.location.href = '/';
     return null;
   }
   

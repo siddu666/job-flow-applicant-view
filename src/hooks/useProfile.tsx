@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import { toast } from "sonner";
-import {UseAllCandidatesResult} from "@/interfaces/UseAllCandidatesResult";
 
 export type Profile = Tables<'profiles'>;
 export type ProfileInsert = TablesInsert<'profiles'>;
@@ -173,10 +172,10 @@ export const useAllCandidates = (filters?: {
   visa_status?: string;
   page?: number;
   limit?: number;
-}): UseAllCandidatesResult => {
-  const queryResult = useQuery<{ data: Profile[]; total: number }, Error>({
+}) => {
+  return useQuery({
     queryKey: ['candidates', filters],
-    queryFn: async (): Promise<{ data: Profile[]; total: number }> => {
+    queryFn: async () => {
       try {
         let query = supabase
             .from("profiles")
@@ -227,13 +226,6 @@ export const useAllCandidates = (filters?: {
     },
     staleTime: 5 * 60 * 1000,
   });
-
-  return {
-    data: queryResult.data?.data || [],
-    total: queryResult.data?.total || 0,
-    isLoading: queryResult.isLoading,
-    error: queryResult.error || undefined,
-  };
 };
 
 const getPaginationRange = (page: number, limit: number) => {
