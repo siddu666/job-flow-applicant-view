@@ -1,81 +1,77 @@
+'use client'
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/auth-context";
+import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { useAuth } from "@/contexts/auth-context";
-import { useProfile } from "@/hooks/useProfile";
-import { useApplications } from "@/hooks/useApplications";
-import { User, Briefcase, FileText, Settings, MapPin, Phone, Mail, Calendar, Star } from "lucide-react";
+import { User, Edit, Save, X } from "lucide-react";
 import { toast } from "sonner";
-import { format } from "date-fns";
+import Link from "next/link";
 
 const Profile = () => {
-  const { user } = useAuth();
-  const { data: profile, isLoading: isProfileLoading } = useProfile(user?.id);
-  const { data: applications, isLoading: isApplicationsLoading } = useApplications({ 
-    applicantId: user?.id 
-  });
-
+  const { user, signOut } = useAuth();
+  const { data: profile, isLoading } = useProfile(user?.id);
+  const updateProfile = useUpdateProfile();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     phone: "",
+    location: "",
     bio: "",
-    currentLocation: "",
-    experienceYears: "",
-    expectedSalarySek: "",
-    availability: "",
-    jobSeekingStatus: "",
-    willingToRelocate: false,
-    skills: [] as string[],
-    portfolioUrl: "",
-    linkedinUrl: "",
-    githubUrl: "",
-    certifications: [] as string[],
-    preferredCities: [] as string[],
+    experience_level: "",
+    job_seeking_status: "",
   });
 
   useEffect(() => {
     if (profile) {
       setFormData({
-        firstName: profile.first_name || "",
-        lastName: profile.last_name || "",
+        first_name: profile.first_name || "",
+        last_name: profile.last_name || "",
         phone: profile.phone || "",
+        location: profile.location || "",
         bio: profile.bio || "",
-        currentLocation: profile.current_location || "",
-        experienceYears: profile.experience_years?.toString() || "",
-        expectedSalarySek: profile.expected_salary_sek?.toString() || "",
-        availability: profile.availability || "",
-        jobSeekingStatus: profile.job_seeking_status || "",
-        willingToRelocate: profile.willing_to_relocate || false,
-        skills: profile.skills || [],
-        portfolioUrl: profile.portfolio_url || "",
-        linkedinUrl: profile.linkedin_url || "",
-        githubUrl: profile.github_url || "",
-        certifications: profile.certifications || [],
-        preferredCities: profile.preferred_cities || [],
+        experience_level: profile.experience_level || "",
+        job_seeking_status: profile.job_seeking_status || "",
       });
     }
   }, [profile]);
 
   const handleSave = async () => {
     try {
-      // Implementation for saving profile would go here
-      toast.success("Profile updated successfully!");
+      await updateProfile.mutateAsync({
+        id: user!.id,
+        ...formData,
+      });
       setIsEditing(false);
+      toast.success("Profile updated successfully!");
     } catch (error) {
       toast.error("Failed to update profile");
     }
   };
 
-  if (isProfileLoading) {
+  const handleCancel = () => {
+    if (profile) {
+      setFormData({
+        first_name: profile.first_name || "",
+        last_name: profile.last_name || "",
+        phone: profile.phone || "",
+        location: profile.location || "",
+        bio: profile.bio || "",
+        experience_level: profile.experience_level || "",
+        job_seeking_status: profile.job_seeking_status || "",
+      });
+    }
+    setIsEditing(false);
+  };
+
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -84,112 +80,96 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
-          <p className="text-gray-600">Manage your profile information and job applications</p>
+        <div className="bg-white shadow-sm border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <Link href="/" className="text-xl font-bold text-gray-900">
+                Justera Group AB
+              </Link>
+              <div className="flex items-center gap-4">
+                <Link href="/jobs" className="text-gray-600 hover:text-gray-900">
+                  Jobs
+                </Link>
+                {profile?.role === 'admin' && (
+                  <Link href="/admin" className="text-gray-600 hover:text-gray-900">
+                    Admin
+                  </Link>
+                )}
+                <Button onClick={signOut} variant="outline">
+                  Sign Out
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Profile Overview */}
-          <div className="lg:col-span-1">
+        {/* Profile Content */}
+        <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+          <div className="space-y-6">
+            {/* Profile Header */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Profile Overview
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-center">
-                  <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <User className="h-10 w-10 text-blue-600" />
-                  </div>
-                  <h3 className="text-lg font-semibold">
-                    {profile?.first_name} {profile?.last_name}
-                  </h3>
-                  <p className="text-gray-600">{profile?.current_location || "Location not set"}</p>
-                </div>
-
-                <Separator />
-
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Mail className="h-4 w-4 text-gray-500" />
-                    <span>{user?.email}</span>
-                  </div>
-                  
-                  {profile?.phone && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Phone className="h-4 w-4 text-gray-500" />
-                      <span>{profile.phone}</span>
-                    </div>
-                  )}
-                  
-                  {profile?.current_location && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="h-4 w-4 text-gray-500" />
-                      <span>{profile.current_location}</span>
+                <div className="flex justify-between items-center">
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5" />
+                    Profile Information
+                  </CardTitle>
+                  {!isEditing ? (
+                    <Button onClick={() => setIsEditing(true)} variant="outline">
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </Button>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Button onClick={handleSave} size="sm">
+                        <Save className="h-4 w-4 mr-2" />
+                        Save
+                      </Button>
+                      <Button onClick={handleCancel} variant="outline" size="sm">
+                        <X className="h-4 w-4 mr-2" />
+                        Cancel
+                      </Button>
                     </div>
                   )}
                 </div>
-
-                <Separator />
-
-                <div>
-                  <h4 className="font-medium mb-2">Personal Information</h4>
-                  <div className="space-y-2 text-sm">
-                    <div>
-                      <span className="text-gray-500">Experience:</span>{" "}
-                      <span>{profile?.experience_years ? `${profile.experience_years} years` : "Not specified"}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Expected Salary:</span>{" "}
-                      <span>{profile?.expected_salary_sek ? `${profile.expected_salary_sek} SEK/year` : "Not specified"}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <Button 
-                  onClick={() => setIsEditing(!isEditing)} 
-                  className="w-full"
-                  variant={isEditing ? "outline" : "default"}
-                >
-                  {isEditing ? "Cancel" : "Edit Profile"}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Basic Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label htmlFor="first_name">First Name</Label>
                     <Input
-                      id="firstName"
-                      value={formData.firstName}
-                      onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+                      id="first_name"
+                      value={formData.first_name}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, first_name: e.target.value }))
+                      }
                       disabled={!isEditing}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label htmlFor="last_name">Last Name</Label>
                     <Input
-                      id="lastName"
-                      value={formData.lastName}
-                      onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+                      id="last_name"
+                      value={formData.last_name}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, last_name: e.target.value }))
+                      }
                       disabled={!isEditing}
                     />
                   </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    value={user?.email || ""}
+                    disabled
+                    className="bg-gray-50"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -198,19 +178,21 @@ const Profile = () => {
                     <Input
                       id="phone"
                       value={formData.phone}
-                      onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, phone: e.target.value }))
+                      }
                       disabled={!isEditing}
-                      placeholder="+46 70 123 45 67"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="currentLocation">Current Location</Label>
+                    <Label htmlFor="location">Location</Label>
                     <Input
-                      id="currentLocation"
-                      value={formData.currentLocation}
-                      onChange={(e) => setFormData(prev => ({ ...prev, currentLocation: e.target.value }))}
+                      id="location"
+                      value={formData.location}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, location: e.target.value }))
+                      }
                       disabled={!isEditing}
-                      placeholder="Stockholm, Sweden"
                     />
                   </div>
                 </div>
@@ -220,132 +202,61 @@ const Profile = () => {
                   <Textarea
                     id="bio"
                     value={formData.bio}
-                    onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, bio: e.target.value }))
+                    }
                     disabled={!isEditing}
-                    placeholder="Tell us about yourself..."
-                    rows={3}
+                    rows={4}
                   />
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Professional Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Briefcase className="h-5 w-5" />
-                  Professional Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="experienceYears">Years of Experience</Label>
-                    <Input
-                      id="experienceYears"
-                      type="number"
-                      value={formData.experienceYears}
-                      onChange={(e) => setFormData(prev => ({ ...prev, experienceYears: e.target.value }))}
-                      disabled={!isEditing}
-                      placeholder="5"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="expectedSalarySek">Expected Salary (SEK/year)</Label>
-                    <Input
-                      id="expectedSalarySek"
-                      type="number"
-                      value={formData.expectedSalarySek}
-                      onChange={(e) => setFormData(prev => ({ ...prev, expectedSalarySek: e.target.value }))}
-                      disabled={!isEditing}
-                      placeholder="600000"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="availability">Availability</Label>
+                    <Label htmlFor="experience_level">Experience Level</Label>
                     <Select
-                      value={formData.availability}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, availability: value }))}
+                      value={formData.experience_level}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, experience_level: value }))
+                      }
                       disabled={!isEditing}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select availability" />
+                        <SelectValue placeholder="Select experience level" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="immediately">Immediately</SelectItem>
-                        <SelectItem value="2-weeks">2 weeks notice</SelectItem>
-                        <SelectItem value="1-month">1 month</SelectItem>
-                        <SelectItem value="2-months">2-3 months</SelectItem>
+                        <SelectItem value="entry">Entry Level</SelectItem>
+                        <SelectItem value="mid">Mid Level</SelectItem>
+                        <SelectItem value="senior">Senior Level</SelectItem>
+                        <SelectItem value="executive">Executive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="job_seeking_status">Job Seeking Status</Label>
+                    <Select
+                      value={formData.job_seeking_status}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, job_seeking_status: value }))
+                      }
+                      disabled={!isEditing}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="actively_looking">Actively Looking</SelectItem>
+                        <SelectItem value="open_to_opportunities">Open to Opportunities</SelectItem>
+                        <SelectItem value="not_looking">Not Looking</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
-
-                {formData.skills.length > 0 && (
-                  <div>
-                    <Label>Skills</Label>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {formData.skills.map((skill, index) => (
-                        <Badge key={index} variant="secondary">
-                          {skill}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {isEditing && (
-                  <Button onClick={handleSave} className="w-full">
-                    Save Changes
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Applications */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
-                  My Applications
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {isApplicationsLoading ? (
-                  <p className="text-gray-500">Loading applications...</p>
-                ) : applications && applications.length > 0 ? (
-                  <div className="space-y-4">
-                    {applications.map((application) => (
-                      <div key={application.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-semibold">{application.job.title}</h3>
-                          <Badge variant={
-                            application.status === 'accepted' ? 'default' :
-                            application.status === 'rejected' ? 'destructive' :
-                            application.status === 'interview_scheduled' ? 'secondary' :
-                            'outline'
-                          }>
-                            {application.status || 'pending'}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-2">
-                          Applied on {application.created_at ? format(new Date(application.created_at), 'PPP') : 'Unknown date'}
-                        </p>
-                        <p className="text-sm text-gray-700">{application.job.location}</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-center py-4">
-                    No applications yet. <a href="/jobs" className="text-blue-600 hover:underline">Browse jobs</a> to get started!
-                  </p>
-                )}
               </CardContent>
             </Card>
           </div>
         </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 };
 
