@@ -25,3 +25,27 @@ export function ClientsSection() {
     </section>
   )
 }
+export function ClientsSection() {
+  const clients = ['Company A', 'Company B', 'Company C', 'Company D', 'Company E', 'Company F']
+
+  return (
+    <section className="py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Trusted by Leading Companies</h2>
+          <p className="text-xl text-gray-600">
+            Join thousands of companies that trust us with their hiring needs
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+          {clients.map((client, index) => (
+            <div key={index} className="bg-gray-100 h-20 rounded-lg flex items-center justify-center">
+              <span className="text-gray-500 font-semibold">{client}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

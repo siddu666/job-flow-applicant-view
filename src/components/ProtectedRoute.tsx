@@ -1,39 +1,58 @@
 
 'use client'
 
-import { useAuth } from "@/contexts/auth-context";
-import { useProfile } from "@/hooks/useProfile";
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useAuth } from '@/contexts/auth-context'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
+  children: React.ReactNode
+  requiredRole?: string
 }
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user, loading } = useAuth();
-  const { data: profile } = useProfile(user?.id);
-  const router = useRouter();
+export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
+  const { user, loading } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth');
+    if (!loading) {
+      if (!user) {
+        router.push('/auth')
+        return
+      }
+
+      if (requiredRole && user.user_metadata?.role !== requiredRole) {
+        // Redirect to appropriate page based on user role
+        switch (user.user_metadata?.role) {
+          case 'admin':
+            router.push('/admin')
+            break
+          case 'recruiter':
+            router.push('/jobs')
+            break
+          default:
+            router.push('/profile')
+        }
+        return
+      }
     }
-  }, [user, loading, router]);
+  }, [user, loading, requiredRole, router])
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
       </div>
-    );
+    )
   }
 
   if (!user) {
-    return null; // Will redirect via useEffect
+    return null
   }
 
-  return <>{children}</>;
-};
+  if (requiredRole && user.user_metadata?.role !== requiredRole) {
+    return null
+  }
 
-export default ProtectedRoute;
+  return <>{children}</>
+}

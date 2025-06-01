@@ -169,3 +169,43 @@ export function ContactSection() {
     </section>
   )
 }
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
+export function ContactSection() {
+  return (
+    <section className="py-20 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Get in Touch</h2>
+          <p className="text-xl text-gray-600">
+            Have questions? We'd love to hear from you
+          </p>
+        </div>
+        
+        <div className="max-w-2xl mx-auto">
+          <Card>
+            <CardHeader>
+              <CardTitle>Contact Us</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input placeholder="Your Name" />
+                  <Input type="email" placeholder="Your Email" />
+                </div>
+                <Input placeholder="Subject" />
+                <Textarea placeholder="Your Message" rows={5} />
+                <Button type="submit" className="w-full">
+                  Send Message
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </section>
+  )
+}
