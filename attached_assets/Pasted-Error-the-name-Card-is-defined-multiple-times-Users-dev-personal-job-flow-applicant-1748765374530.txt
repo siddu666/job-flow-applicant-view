@@ -1,0 +1,1870 @@
+Error: 
+  × the name `Card` is defined multiple times
+     ╭─[/Users/dev/personal/job-flow-applicant-view/src/components/AdminCandidates.tsx:1:1]
+   1 │ 
+   2 │ import React, { useState } from "react";
+   3 │ import {Profile, useAllCandidates} from "@/hooks/useProfile";
+   4 │ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+     ·          ──┬─
+     ·            ╰── previous definition of `Card` here
+   5 │ import { Button } from "@/components/ui/button";
+   6 │ import { Input } from "@/components/ui/input";
+   7 │ import { Badge } from "@/components/ui/badge";
+   8 │ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+   9 │ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  10 │ import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, ChevronLeft, ChevronRight, FileText } from "lucide-react";
+  11 │ import Modal from "@/components/ui/Modal";
+  12 │ 
+  13 │ interface CandidateFilters {
+  14 │   skills?: string[];
+  15 │   experience_years?: number;
+  16 │   location?: string;
+  17 │   job_seeking_status?: 'actively_looking' | 'open_to_opportunities' | 'not_looking';
+  18 │   search?: string;
+  19 │   page?: number;
+  20 │   limit?: number;
+  21 │ }
+  22 │ 
+  23 │ const AdminCandidates = () => {
+  24 │   const [filters, setFilters] = useState<CandidateFilters>({ page: 1, limit: 10 });
+  25 │   const [searchTerm, setSearchTerm] = useState("");
+  26 │   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  27 │   const [selectedCandidate, setSelectedCandidate] = useState<Profile | null>(null);
+  28 │   const [isModalOpen, setIsModalOpen] = useState(false);
+  29 │ 
+  30 │   const { data: candidatesResult } = useAllCandidates(filters);
+  31 │   const candidates = candidatesResult?.data || [];
+  32 │   const total = candidatesResult?.total || 0;
+  33 │ 
+  34 │   const handleSearch = () => {
+  35 │     setFilters(prev => ({ ...prev, search: searchTerm }));
+  36 │   };
+  37 │ 
+  38 │   const handleSkillSelect = (skill: string) => {
+  39 │     setSelectedSkills(prev => {
+  40 │       if (prev.includes(skill)) {
+  41 │         return prev.filter(s => s !== skill);
+  42 │       } else {
+  43 │         return [...prev, skill];
+  44 │       }
+  45 │     });
+  46 │     setFilters(prev => ({ ...prev, skills: selectedSkills }));
+  47 │   };
+  48 │ 
+  49 │   const handleExperienceChange = (years: string) => {
+  50 │     const experience = years === "any" ? undefined : parseInt(years);
+  51 │     setFilters(prev => ({ ...prev, experience_years: experience }));
+  52 │   };
+  53 │ 
+  54 │   const handleLocationChange = (location: string) => {
+  55 │     setFilters(prev => ({ ...prev, location: location }));
+  56 │   };
+  57 │ 
+  58 │   const handleJobSeekingStatusChange = (value: string) => {
+  59 │     const status: 'actively_looking' | 'open_to_opportunities' | 'not_looking' | undefined =
+  60 │         value === "any" ? undefined : (value as 'actively_looking' | 'open_to_opportunities' | 'not_looking');
+  61 │ 
+  62 │     setFilters(prev => ({ ...prev, job_seeking_status: status }));
+  63 │   };
+  64 │ 
+  65 │   const openCandidateModal = (candidate: Profile) => {
+  66 │     setSelectedCandidate(candidate);
+  67 │     setIsModalOpen(true);
+  68 │   };
+  69 │ 
+  70 │   const closeCandidateModal = () => {
+  71 │     setIsModalOpen(false);
+  72 │   };
+  73 │ 
+  74 │   const handlePageChange = (page: number) => {
+  75 │     setFilters(prev => ({ ...prev, page }));
+  76 │   };
+  77 │ 
+  78 │   const skillsList = [
+  79 │     "JavaScript",
+  80 │     "React",
+  81 │     "Node.js",
+  82 │     "Python",
+  83 │     "SQL",
+  84 │     "TypeScript",
+  85 │     "AWS",
+  86 │     "Docker",
+  87 │     "Kubernetes",
+  88 │     "CI/CD"
+  89 │   ];
+  90 │ 
+  91 │   const totalPages = Math.ceil(total / (filters.limit || 10));
+  92 │ 
+  93 │   return (
+  94 │       <div className="container mx-auto p-4">
+  95 │         <Card className="mb-4">
+  96 │           <CardHeader>
+  97 │             <CardTitle>Filter Candidates</CardTitle>
+  98 │           </CardHeader>
+  99 │           <CardContent className="grid gap-4">
+ 100 │             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+ 101 │               <div>
+ 102 │                 <Input
+ 103 │                     type="text"
+ 104 │                     placeholder="Search by name or bio..."
+ 105 │                     value={searchTerm}
+ 106 │                     onChange={(e) => setSearchTerm(e.target.value)}
+ 107 │                 />
+ 108 │                 <Button className="mt-2 w-full" onClick={handleSearch}>
+ 109 │                   <Search className="mr-2 h-4 w-4" />
+ 110 │                   Search
+ 111 │                 </Button>
+ 112 │               </div>
+ 113 │ 
+ 114 │               <div>
+ 115 │                 <Select onValueChange={handleExperienceChange}>
+ 116 │                   <SelectTrigger className="w-full">
+ 117 │                     <SelectValue placeholder="Experience (Years)" />
+ 118 │                   </SelectTrigger>
+ 119 │                   <SelectContent>
+ 120 │                     <SelectItem value="any">Any</SelectItem>
+ 121 │                     <SelectItem value="1">1+ Years</SelectItem>
+ 122 │                     <SelectItem value="3">3+ Years</SelectItem>
+ 123 │                     <SelectItem value="5">5+ Years</SelectItem>
+ 124 │                     <SelectItem value="7">7+ Years</SelectItem>
+ 125 │                     <SelectItem value="10">10+ Years</SelectItem>
+ 126 │                   </SelectContent>
+ 127 │                 </Select>
+ 128 │               </div>
+ 129 │ 
+ 130 │               <div>
+ 131 │                 <Input
+ 132 │                     type="text"
+ 133 │                     placeholder="Location..."
+ 134 │                     onChange={(e) => handleLocationChange(e.target.value)}
+ 135 │                 />
+ 136 │               </div>
+ 137 │ 
+ 138 │               <div>
+ 139 │                 <Select onValueChange={handleJobSeekingStatusChange}>
+ 140 │                   <SelectTrigger className="w-full">
+ 141 │                     <SelectValue placeholder="Job Seeking Status" />
+ 142 │                   </SelectTrigger>
+ 143 │                   <SelectContent>
+ 144 │                     <SelectItem value="any">Any</SelectItem>
+ 145 │                     <SelectItem value="actively_looking">Actively Looking</SelectItem>
+ 146 │                     <SelectItem value="open_to_opportunities">Open to Opportunities</SelectItem>
+ 147 │                     <SelectItem value="not_looking">Not Looking</SelectItem>
+ 148 │                   </SelectContent>
+ 149 │                 </Select>
+ 150 │               </div>
+ 151 │             </div>
+ 152 │ 
+ 153 │             <div>
+ 154 │               <p className="text-sm font-medium">Skills:</p>
+ 155 │               <div className="flex flex-wrap gap-2 mt-2">
+ 156 │                 {skillsList.map((skill) => (
+ 157 │                     <Badge
+ 158 │                         key={skill}
+ 159 │                         variant={selectedSkills.includes(skill) ? "secondary" : "outline"}
+ 160 │                         onClick={() => handleSkillSelect(skill)}
+ 161 │                         className="cursor-pointer"
+ 162 │                     >
+ 163 │                       {skill}
+ 164 │                     </Badge>
+ 165 │                 ))}
+ 166 │               </div>
+ 167 │             </div>
+ 168 │           </CardContent>
+ 169 │         </Card>
+ 170 │ 
+ 171 │         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+ 172 │           {candidates.map((candidate: Profile) => (
+ 173 │               <Card key={candidate.id} onClick={() => openCandidateModal(candidate)} className="cursor-pointer hover:shadow-md transition-shadow">
+ 174 │                 <CardHeader>
+ 175 │                   <div className="flex items-center space-x-4">
+ 176 │                     <Avatar>
+ 177 │                       <AvatarImage src={`https://avatar.vercel.sh/${candidate.email}.png`} />
+ 178 │                       <AvatarFallback>{candidate.first_name?.substring(0, 1)}{candidate.last_name?.substring(0, 1)}</AvatarFallback>
+ 179 │                     </Avatar>
+ 180 │                     <div className="flex-1">
+ 181 │                       <CardTitle className="text-lg">{candidate.first_name} {candidate.last_name}</CardTitle>
+ 182 │                       <p className="text-sm text-gray-500">{candidate.email}</p>
+ 183 │                       {candidate.cv_url && (
+ 184 │                         <div className="flex items-center gap-1 mt-1">
+ 185 │                           <FileText className="h-3 w-3 text-green-600" />
+ 186 │                           <span className="text-xs text-green-600">CV Available</span>
+ 187 │                         </div>
+ 188 │                       )}
+ 189 │                     </div>
+ 190 │                   </div>
+ 191 │                 </CardHeader>
+ 192 │                 <CardContent>
+ 193 │                   <div className="space-y-2">
+ 194 │                     {candidate.current_location && (
+ 195 │                       <p className="flex items-center text-sm text-gray-600">
+ 196 │                         <MapPin className="mr-1 h-3 w-3" />
+ 197 │                         {candidate.current_location}
+ 198 │                       </p>
+ 199 │                     )}
+ 200 │                     {candidate.experience_years && (
+ 201 │                       <p className="flex items-center text-sm text-gray-600">
+ 202 │                         <Calendar className="mr-1 h-3 w-3" />
+ 203 │                         {candidate.experience_years} years experience
+ 204 │                       </p>
+ 205 │                     )}
+ 206 │                     {candidate.skills && candidate.skills.length > 0 && (
+ 207 │                       <div className="flex flex-wrap gap-1">
+ 208 │                         {candidate.skills.slice(0, 2).map((skill: string, index: number) => (
+ 209 │                           <Badge key={index} variant="secondary" className="text-xs">
+ 210 │                             {skill}
+ 211 │                           </Badge>
+ 212 │                         ))}
+ 213 │                         {candidate.skills.length > 2 && (
+ 214 │                           <Badge variant="outline" className="text-xs">
+ 215 │                             +{candidate.skills.length - 2}
+ 216 │                           </Badge>
+ 217 │                         )}
+ 218 │                       </div>
+ 219 │                     )}
+ 220 │                   </div>
+ 221 │                 </CardContent>
+ 222 │               </Card>
+ 223 │           ))}
+ 224 │         </div>
+ 225 │ 
+ 226 │         <div className="flex justify-center mt-4">
+ 227 │           <Button
+ 228 │               onClick={() => handlePageChange((filters.page || 1) - 1)}
+ 229 │               disabled={filters.page === 1}
+ 230 │               className="mr-2"
+ 231 │           >
+ 232 │             <ChevronLeft className="h-4 w-4" />
+ 233 │           </Button>
+ 234 │           <span className="flex items-center">
+ 235 │           Page {filters.page} of {totalPages}
+ 236 │         </span>
+ 237 │           <Button
+ 238 │               onClick={() => handlePageChange((filters.page || 1) + 1)}
+ 239 │               disabled={(filters.page || 1) * (filters.limit || 10) >= total}
+ 240 │               className="ml-2"
+ 241 │           >
+ 242 │             <ChevronRight className="h-4 w-4" />
+ 243 │           </Button>
+ 244 │         </div>
+ 245 │ 
+ 246 │         <Modal isOpen={isModalOpen} onClose={closeCandidateModal}>
+ 247 │           {selectedCandidate && (
+ 248 │               <div className="space-y-4">
+ 249 │                 <div className="flex items-center space-x-4">
+ 250 │                   <Avatar className="h-16 w-16">
+ 251 │                     <AvatarImage src={`https://avatar.vercel.sh/${selectedCandidate.email}.png`} />
+ 252 │                     <AvatarFallback className="text-lg">
+ 253 │                       {selectedCandidate.first_name?.substring(0, 1)}{selectedCandidate.last_name?.substring(0, 1)}
+ 254 │                     </AvatarFallback>
+ 255 │                   </Avatar>
+ 256 │                   <div>
+ 257 │                     <h2 className="text-xl font-bold">{selectedCandidate.first_name} {selectedCandidate.last_name}</h2>
+ 258 │                     <p className="text-sm text-gray-500">{selectedCandidate.email}</p>
+ 259 │                   </div>
+ 260 │                 </div>
+ 261 │ 
+ 262 │                 {selectedCandidate.bio && (
+ 263 │                   <div>
+ 264 │                     <p className="text-sm font-medium">Bio:</p>
+ 265 │                     <p className="text-sm text-gray-700">{selectedCandidate.bio}</p>
+ 266 │                   </div>
+ 267 │                 )}
+ 268 │ 
+ 269 │                 {selectedCandidate.skills && selectedCandidate.skills.length > 0 && (
+ 270 │                   <div>
+ 271 │                     <p className="text-sm font-medium">Skills:</p>
+ 272 │                     <div className="flex flex-wrap gap-1 mt-1">
+ 273 │                       {selectedCandidate.skills.map((skill: string, index: number) => (
+ 274 │                           <Badge key={index} variant="secondary">{skill}</Badge>
+ 275 │                       ))}
+ 276 │                     </div>
+ 277 │                   </div>
+ 278 │                 )}
+ 279 │ 
+ 280 │                 {selectedCandidate.cv_url && (
+ 281 │                   <div>
+ 282 │                     <p className="text-sm font-medium">CV/Resume:</p>
+ 283 │                     <a 
+ 284 │                       href={selectedCandidate.cv_url} 
+ 285 │                       target="_blank" 
+ 286 │                       rel="noopener noreferrer" 
+ 287 │                       className="inline-flex items-center gap-2 text-blue-600 hover:underline text-sm"
+ 288 │                     >
+ 289 │                       <FileText className="h-4 w-4" />
+ 290 │                       View CV/Resume
+ 291 │                       <ExternalLink className="h-3 w-3" />
+ 292 │                     </a>
+ 293 │                   </div>
+ 294 │                 )}
+ 295 │ 
+ 296 │                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+ 297 │                   <div className="space-y-2">
+ 298 │                     <p className="flex items-center text-sm">
+ 299 │                       <MapPin className="mr-2 h-4 w-4" />
+ 300 │                       {selectedCandidate.current_location || "No location specified"}
+ 301 │                     </p>
+ 302 │                     <p className="flex items-center text-sm">
+ 303 │                       <Calendar className="mr-2 h-4 w-4" />
+ 304 │                       {selectedCandidate.experience_years || 0} Years Experience
+ 305 │                     </p>
+ 306 │                     <p className="flex items-center text-sm">
+ 307 │                       <DollarSign className="mr-2 h-4 w-4" />
+ 308 │                       {selectedCandidate.expected_salary_sek || 0} SEK
+ 309 │                     </p>
+ 310 │                   </div>
+ 311 │                   
+ 312 │                   <div className="space-y-2">
+ 313 │                     <p className="flex items-center text-sm">
+ 314 │                       <Mail className="mr-2 h-4 w-4" />
+ 315 │                       {selectedCandidate.email}
+ 316 │                     </p>
+ 317 │                     <p className="flex items-center text-sm">
+ 318 │                       <Phone className="mr-2 h-4 w-4" />
+ 319 │                       {selectedCandidate.phone || "No phone specified"}
+ 320 │                     </p>
+ 321 │                     {selectedCandidate.availability && (
+ 322 │                       <p className="text-sm">
+ 323 │                         <span className="font-medium">Availability:</span> {selectedCandidate.availability}
+ 324 │                       </p>
+ 325 │                     )}
+ 326 │                   </div>
+ 327 │                 </div>
+ 328 │ 
+ 329 │                 {(selectedCandidate.linkedin_url || selectedCandidate.portfolio_url || selectedCandidate.github_url) && (
+ 330 │                   <div>
+ 331 │                     <p className="text-sm font-medium mb-2">Links:</p>
+ 332 │                     <div className="space-y-1">
+ 333 │                       {selectedCandidate.linkedin_url && (
+ 334 │                           <a href={selectedCandidate.linkedin_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 335 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 336 │                             LinkedIn
+ 337 │                           </a>
+ 338 │                       )}
+ 339 │                       {selectedCandidate.portfolio_url && (
+ 340 │                           <a href={selectedCandidate.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 341 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 342 │                             Portfolio
+ 343 │                           </a>
+ 344 │                       )}
+ 345 │                       {selectedCandidate.github_url && (
+ 346 │                           <a href={selectedCandidate.github_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 347 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 348 │                             GitHub
+ 349 │                           </a>
+ 350 │                       )}
+ 351 │                     </div>
+ 352 │                   </div>
+ 353 │                 )}
+ 354 │               </div>
+ 355 │           )}
+ 356 │         </Modal>
+ 357 │       </div>
+ 358 │   );
+ 359 │ };
+ 360 │ 
+ 361 │ export default AdminCandidates;
+ 362 │ 'use client'
+ 363 │ 
+ 364 │ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     ·          ──┬─
+     ·            ╰── `Card` redefined here
+ 365 │ 
+ 366 │ export function AdminCandidates() {
+ 367 │   return (
+     ╰────
+
+  × the name `CardContent` is defined multiple times
+     ╭─[/Users/dev/personal/job-flow-applicant-view/src/components/AdminCandidates.tsx:1:1]
+   1 │ 
+   2 │ import React, { useState } from "react";
+   3 │ import {Profile, useAllCandidates} from "@/hooks/useProfile";
+   4 │ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+     ·                ─────┬─────
+     ·                     ╰── previous definition of `CardContent` here
+   5 │ import { Button } from "@/components/ui/button";
+   6 │ import { Input } from "@/components/ui/input";
+   7 │ import { Badge } from "@/components/ui/badge";
+   8 │ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+   9 │ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  10 │ import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, ChevronLeft, ChevronRight, FileText } from "lucide-react";
+  11 │ import Modal from "@/components/ui/Modal";
+  12 │ 
+  13 │ interface CandidateFilters {
+  14 │   skills?: string[];
+  15 │   experience_years?: number;
+  16 │   location?: string;
+  17 │   job_seeking_status?: 'actively_looking' | 'open_to_opportunities' | 'not_looking';
+  18 │   search?: string;
+  19 │   page?: number;
+  20 │   limit?: number;
+  21 │ }
+  22 │ 
+  23 │ const AdminCandidates = () => {
+  24 │   const [filters, setFilters] = useState<CandidateFilters>({ page: 1, limit: 10 });
+  25 │   const [searchTerm, setSearchTerm] = useState("");
+  26 │   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  27 │   const [selectedCandidate, setSelectedCandidate] = useState<Profile | null>(null);
+  28 │   const [isModalOpen, setIsModalOpen] = useState(false);
+  29 │ 
+  30 │   const { data: candidatesResult } = useAllCandidates(filters);
+  31 │   const candidates = candidatesResult?.data || [];
+  32 │   const total = candidatesResult?.total || 0;
+  33 │ 
+  34 │   const handleSearch = () => {
+  35 │     setFilters(prev => ({ ...prev, search: searchTerm }));
+  36 │   };
+  37 │ 
+  38 │   const handleSkillSelect = (skill: string) => {
+  39 │     setSelectedSkills(prev => {
+  40 │       if (prev.includes(skill)) {
+  41 │         return prev.filter(s => s !== skill);
+  42 │       } else {
+  43 │         return [...prev, skill];
+  44 │       }
+  45 │     });
+  46 │     setFilters(prev => ({ ...prev, skills: selectedSkills }));
+  47 │   };
+  48 │ 
+  49 │   const handleExperienceChange = (years: string) => {
+  50 │     const experience = years === "any" ? undefined : parseInt(years);
+  51 │     setFilters(prev => ({ ...prev, experience_years: experience }));
+  52 │   };
+  53 │ 
+  54 │   const handleLocationChange = (location: string) => {
+  55 │     setFilters(prev => ({ ...prev, location: location }));
+  56 │   };
+  57 │ 
+  58 │   const handleJobSeekingStatusChange = (value: string) => {
+  59 │     const status: 'actively_looking' | 'open_to_opportunities' | 'not_looking' | undefined =
+  60 │         value === "any" ? undefined : (value as 'actively_looking' | 'open_to_opportunities' | 'not_looking');
+  61 │ 
+  62 │     setFilters(prev => ({ ...prev, job_seeking_status: status }));
+  63 │   };
+  64 │ 
+  65 │   const openCandidateModal = (candidate: Profile) => {
+  66 │     setSelectedCandidate(candidate);
+  67 │     setIsModalOpen(true);
+  68 │   };
+  69 │ 
+  70 │   const closeCandidateModal = () => {
+  71 │     setIsModalOpen(false);
+  72 │   };
+  73 │ 
+  74 │   const handlePageChange = (page: number) => {
+  75 │     setFilters(prev => ({ ...prev, page }));
+  76 │   };
+  77 │ 
+  78 │   const skillsList = [
+  79 │     "JavaScript",
+  80 │     "React",
+  81 │     "Node.js",
+  82 │     "Python",
+  83 │     "SQL",
+  84 │     "TypeScript",
+  85 │     "AWS",
+  86 │     "Docker",
+  87 │     "Kubernetes",
+  88 │     "CI/CD"
+  89 │   ];
+  90 │ 
+  91 │   const totalPages = Math.ceil(total / (filters.limit || 10));
+  92 │ 
+  93 │   return (
+  94 │       <div className="container mx-auto p-4">
+  95 │         <Card className="mb-4">
+  96 │           <CardHeader>
+  97 │             <CardTitle>Filter Candidates</CardTitle>
+  98 │           </CardHeader>
+  99 │           <CardContent className="grid gap-4">
+ 100 │             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+ 101 │               <div>
+ 102 │                 <Input
+ 103 │                     type="text"
+ 104 │                     placeholder="Search by name or bio..."
+ 105 │                     value={searchTerm}
+ 106 │                     onChange={(e) => setSearchTerm(e.target.value)}
+ 107 │                 />
+ 108 │                 <Button className="mt-2 w-full" onClick={handleSearch}>
+ 109 │                   <Search className="mr-2 h-4 w-4" />
+ 110 │                   Search
+ 111 │                 </Button>
+ 112 │               </div>
+ 113 │ 
+ 114 │               <div>
+ 115 │                 <Select onValueChange={handleExperienceChange}>
+ 116 │                   <SelectTrigger className="w-full">
+ 117 │                     <SelectValue placeholder="Experience (Years)" />
+ 118 │                   </SelectTrigger>
+ 119 │                   <SelectContent>
+ 120 │                     <SelectItem value="any">Any</SelectItem>
+ 121 │                     <SelectItem value="1">1+ Years</SelectItem>
+ 122 │                     <SelectItem value="3">3+ Years</SelectItem>
+ 123 │                     <SelectItem value="5">5+ Years</SelectItem>
+ 124 │                     <SelectItem value="7">7+ Years</SelectItem>
+ 125 │                     <SelectItem value="10">10+ Years</SelectItem>
+ 126 │                   </SelectContent>
+ 127 │                 </Select>
+ 128 │               </div>
+ 129 │ 
+ 130 │               <div>
+ 131 │                 <Input
+ 132 │                     type="text"
+ 133 │                     placeholder="Location..."
+ 134 │                     onChange={(e) => handleLocationChange(e.target.value)}
+ 135 │                 />
+ 136 │               </div>
+ 137 │ 
+ 138 │               <div>
+ 139 │                 <Select onValueChange={handleJobSeekingStatusChange}>
+ 140 │                   <SelectTrigger className="w-full">
+ 141 │                     <SelectValue placeholder="Job Seeking Status" />
+ 142 │                   </SelectTrigger>
+ 143 │                   <SelectContent>
+ 144 │                     <SelectItem value="any">Any</SelectItem>
+ 145 │                     <SelectItem value="actively_looking">Actively Looking</SelectItem>
+ 146 │                     <SelectItem value="open_to_opportunities">Open to Opportunities</SelectItem>
+ 147 │                     <SelectItem value="not_looking">Not Looking</SelectItem>
+ 148 │                   </SelectContent>
+ 149 │                 </Select>
+ 150 │               </div>
+ 151 │             </div>
+ 152 │ 
+ 153 │             <div>
+ 154 │               <p className="text-sm font-medium">Skills:</p>
+ 155 │               <div className="flex flex-wrap gap-2 mt-2">
+ 156 │                 {skillsList.map((skill) => (
+ 157 │                     <Badge
+ 158 │                         key={skill}
+ 159 │                         variant={selectedSkills.includes(skill) ? "secondary" : "outline"}
+ 160 │                         onClick={() => handleSkillSelect(skill)}
+ 161 │                         className="cursor-pointer"
+ 162 │                     >
+ 163 │                       {skill}
+ 164 │                     </Badge>
+ 165 │                 ))}
+ 166 │               </div>
+ 167 │             </div>
+ 168 │           </CardContent>
+ 169 │         </Card>
+ 170 │ 
+ 171 │         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+ 172 │           {candidates.map((candidate: Profile) => (
+ 173 │               <Card key={candidate.id} onClick={() => openCandidateModal(candidate)} className="cursor-pointer hover:shadow-md transition-shadow">
+ 174 │                 <CardHeader>
+ 175 │                   <div className="flex items-center space-x-4">
+ 176 │                     <Avatar>
+ 177 │                       <AvatarImage src={`https://avatar.vercel.sh/${candidate.email}.png`} />
+ 178 │                       <AvatarFallback>{candidate.first_name?.substring(0, 1)}{candidate.last_name?.substring(0, 1)}</AvatarFallback>
+ 179 │                     </Avatar>
+ 180 │                     <div className="flex-1">
+ 181 │                       <CardTitle className="text-lg">{candidate.first_name} {candidate.last_name}</CardTitle>
+ 182 │                       <p className="text-sm text-gray-500">{candidate.email}</p>
+ 183 │                       {candidate.cv_url && (
+ 184 │                         <div className="flex items-center gap-1 mt-1">
+ 185 │                           <FileText className="h-3 w-3 text-green-600" />
+ 186 │                           <span className="text-xs text-green-600">CV Available</span>
+ 187 │                         </div>
+ 188 │                       )}
+ 189 │                     </div>
+ 190 │                   </div>
+ 191 │                 </CardHeader>
+ 192 │                 <CardContent>
+ 193 │                   <div className="space-y-2">
+ 194 │                     {candidate.current_location && (
+ 195 │                       <p className="flex items-center text-sm text-gray-600">
+ 196 │                         <MapPin className="mr-1 h-3 w-3" />
+ 197 │                         {candidate.current_location}
+ 198 │                       </p>
+ 199 │                     )}
+ 200 │                     {candidate.experience_years && (
+ 201 │                       <p className="flex items-center text-sm text-gray-600">
+ 202 │                         <Calendar className="mr-1 h-3 w-3" />
+ 203 │                         {candidate.experience_years} years experience
+ 204 │                       </p>
+ 205 │                     )}
+ 206 │                     {candidate.skills && candidate.skills.length > 0 && (
+ 207 │                       <div className="flex flex-wrap gap-1">
+ 208 │                         {candidate.skills.slice(0, 2).map((skill: string, index: number) => (
+ 209 │                           <Badge key={index} variant="secondary" className="text-xs">
+ 210 │                             {skill}
+ 211 │                           </Badge>
+ 212 │                         ))}
+ 213 │                         {candidate.skills.length > 2 && (
+ 214 │                           <Badge variant="outline" className="text-xs">
+ 215 │                             +{candidate.skills.length - 2}
+ 216 │                           </Badge>
+ 217 │                         )}
+ 218 │                       </div>
+ 219 │                     )}
+ 220 │                   </div>
+ 221 │                 </CardContent>
+ 222 │               </Card>
+ 223 │           ))}
+ 224 │         </div>
+ 225 │ 
+ 226 │         <div className="flex justify-center mt-4">
+ 227 │           <Button
+ 228 │               onClick={() => handlePageChange((filters.page || 1) - 1)}
+ 229 │               disabled={filters.page === 1}
+ 230 │               className="mr-2"
+ 231 │           >
+ 232 │             <ChevronLeft className="h-4 w-4" />
+ 233 │           </Button>
+ 234 │           <span className="flex items-center">
+ 235 │           Page {filters.page} of {totalPages}
+ 236 │         </span>
+ 237 │           <Button
+ 238 │               onClick={() => handlePageChange((filters.page || 1) + 1)}
+ 239 │               disabled={(filters.page || 1) * (filters.limit || 10) >= total}
+ 240 │               className="ml-2"
+ 241 │           >
+ 242 │             <ChevronRight className="h-4 w-4" />
+ 243 │           </Button>
+ 244 │         </div>
+ 245 │ 
+ 246 │         <Modal isOpen={isModalOpen} onClose={closeCandidateModal}>
+ 247 │           {selectedCandidate && (
+ 248 │               <div className="space-y-4">
+ 249 │                 <div className="flex items-center space-x-4">
+ 250 │                   <Avatar className="h-16 w-16">
+ 251 │                     <AvatarImage src={`https://avatar.vercel.sh/${selectedCandidate.email}.png`} />
+ 252 │                     <AvatarFallback className="text-lg">
+ 253 │                       {selectedCandidate.first_name?.substring(0, 1)}{selectedCandidate.last_name?.substring(0, 1)}
+ 254 │                     </AvatarFallback>
+ 255 │                   </Avatar>
+ 256 │                   <div>
+ 257 │                     <h2 className="text-xl font-bold">{selectedCandidate.first_name} {selectedCandidate.last_name}</h2>
+ 258 │                     <p className="text-sm text-gray-500">{selectedCandidate.email}</p>
+ 259 │                   </div>
+ 260 │                 </div>
+ 261 │ 
+ 262 │                 {selectedCandidate.bio && (
+ 263 │                   <div>
+ 264 │                     <p className="text-sm font-medium">Bio:</p>
+ 265 │                     <p className="text-sm text-gray-700">{selectedCandidate.bio}</p>
+ 266 │                   </div>
+ 267 │                 )}
+ 268 │ 
+ 269 │                 {selectedCandidate.skills && selectedCandidate.skills.length > 0 && (
+ 270 │                   <div>
+ 271 │                     <p className="text-sm font-medium">Skills:</p>
+ 272 │                     <div className="flex flex-wrap gap-1 mt-1">
+ 273 │                       {selectedCandidate.skills.map((skill: string, index: number) => (
+ 274 │                           <Badge key={index} variant="secondary">{skill}</Badge>
+ 275 │                       ))}
+ 276 │                     </div>
+ 277 │                   </div>
+ 278 │                 )}
+ 279 │ 
+ 280 │                 {selectedCandidate.cv_url && (
+ 281 │                   <div>
+ 282 │                     <p className="text-sm font-medium">CV/Resume:</p>
+ 283 │                     <a 
+ 284 │                       href={selectedCandidate.cv_url} 
+ 285 │                       target="_blank" 
+ 286 │                       rel="noopener noreferrer" 
+ 287 │                       className="inline-flex items-center gap-2 text-blue-600 hover:underline text-sm"
+ 288 │                     >
+ 289 │                       <FileText className="h-4 w-4" />
+ 290 │                       View CV/Resume
+ 291 │                       <ExternalLink className="h-3 w-3" />
+ 292 │                     </a>
+ 293 │                   </div>
+ 294 │                 )}
+ 295 │ 
+ 296 │                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+ 297 │                   <div className="space-y-2">
+ 298 │                     <p className="flex items-center text-sm">
+ 299 │                       <MapPin className="mr-2 h-4 w-4" />
+ 300 │                       {selectedCandidate.current_location || "No location specified"}
+ 301 │                     </p>
+ 302 │                     <p className="flex items-center text-sm">
+ 303 │                       <Calendar className="mr-2 h-4 w-4" />
+ 304 │                       {selectedCandidate.experience_years || 0} Years Experience
+ 305 │                     </p>
+ 306 │                     <p className="flex items-center text-sm">
+ 307 │                       <DollarSign className="mr-2 h-4 w-4" />
+ 308 │                       {selectedCandidate.expected_salary_sek || 0} SEK
+ 309 │                     </p>
+ 310 │                   </div>
+ 311 │                   
+ 312 │                   <div className="space-y-2">
+ 313 │                     <p className="flex items-center text-sm">
+ 314 │                       <Mail className="mr-2 h-4 w-4" />
+ 315 │                       {selectedCandidate.email}
+ 316 │                     </p>
+ 317 │                     <p className="flex items-center text-sm">
+ 318 │                       <Phone className="mr-2 h-4 w-4" />
+ 319 │                       {selectedCandidate.phone || "No phone specified"}
+ 320 │                     </p>
+ 321 │                     {selectedCandidate.availability && (
+ 322 │                       <p className="text-sm">
+ 323 │                         <span className="font-medium">Availability:</span> {selectedCandidate.availability}
+ 324 │                       </p>
+ 325 │                     )}
+ 326 │                   </div>
+ 327 │                 </div>
+ 328 │ 
+ 329 │                 {(selectedCandidate.linkedin_url || selectedCandidate.portfolio_url || selectedCandidate.github_url) && (
+ 330 │                   <div>
+ 331 │                     <p className="text-sm font-medium mb-2">Links:</p>
+ 332 │                     <div className="space-y-1">
+ 333 │                       {selectedCandidate.linkedin_url && (
+ 334 │                           <a href={selectedCandidate.linkedin_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 335 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 336 │                             LinkedIn
+ 337 │                           </a>
+ 338 │                       )}
+ 339 │                       {selectedCandidate.portfolio_url && (
+ 340 │                           <a href={selectedCandidate.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 341 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 342 │                             Portfolio
+ 343 │                           </a>
+ 344 │                       )}
+ 345 │                       {selectedCandidate.github_url && (
+ 346 │                           <a href={selectedCandidate.github_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 347 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 348 │                             GitHub
+ 349 │                           </a>
+ 350 │                       )}
+ 351 │                     </div>
+ 352 │                   </div>
+ 353 │                 )}
+ 354 │               </div>
+ 355 │           )}
+ 356 │         </Modal>
+ 357 │       </div>
+ 358 │   );
+ 359 │ };
+ 360 │ 
+ 361 │ export default AdminCandidates;
+ 362 │ 'use client'
+ 363 │ 
+ 364 │ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     ·                ─────┬─────
+     ·                     ╰── `CardContent` redefined here
+ 365 │ 
+ 366 │ export function AdminCandidates() {
+ 367 │   return (
+     ╰────
+
+  × the name `CardHeader` is defined multiple times
+     ╭─[/Users/dev/personal/job-flow-applicant-view/src/components/AdminCandidates.tsx:1:1]
+   1 │ 
+   2 │ import React, { useState } from "react";
+   3 │ import {Profile, useAllCandidates} from "@/hooks/useProfile";
+   4 │ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+     ·                             ─────┬────
+     ·                                  ╰── previous definition of `CardHeader` here
+   5 │ import { Button } from "@/components/ui/button";
+   6 │ import { Input } from "@/components/ui/input";
+   7 │ import { Badge } from "@/components/ui/badge";
+   8 │ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+   9 │ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  10 │ import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, ChevronLeft, ChevronRight, FileText } from "lucide-react";
+  11 │ import Modal from "@/components/ui/Modal";
+  12 │ 
+  13 │ interface CandidateFilters {
+  14 │   skills?: string[];
+  15 │   experience_years?: number;
+  16 │   location?: string;
+  17 │   job_seeking_status?: 'actively_looking' | 'open_to_opportunities' | 'not_looking';
+  18 │   search?: string;
+  19 │   page?: number;
+  20 │   limit?: number;
+  21 │ }
+  22 │ 
+  23 │ const AdminCandidates = () => {
+  24 │   const [filters, setFilters] = useState<CandidateFilters>({ page: 1, limit: 10 });
+  25 │   const [searchTerm, setSearchTerm] = useState("");
+  26 │   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  27 │   const [selectedCandidate, setSelectedCandidate] = useState<Profile | null>(null);
+  28 │   const [isModalOpen, setIsModalOpen] = useState(false);
+  29 │ 
+  30 │   const { data: candidatesResult } = useAllCandidates(filters);
+  31 │   const candidates = candidatesResult?.data || [];
+  32 │   const total = candidatesResult?.total || 0;
+  33 │ 
+  34 │   const handleSearch = () => {
+  35 │     setFilters(prev => ({ ...prev, search: searchTerm }));
+  36 │   };
+  37 │ 
+  38 │   const handleSkillSelect = (skill: string) => {
+  39 │     setSelectedSkills(prev => {
+  40 │       if (prev.includes(skill)) {
+  41 │         return prev.filter(s => s !== skill);
+  42 │       } else {
+  43 │         return [...prev, skill];
+  44 │       }
+  45 │     });
+  46 │     setFilters(prev => ({ ...prev, skills: selectedSkills }));
+  47 │   };
+  48 │ 
+  49 │   const handleExperienceChange = (years: string) => {
+  50 │     const experience = years === "any" ? undefined : parseInt(years);
+  51 │     setFilters(prev => ({ ...prev, experience_years: experience }));
+  52 │   };
+  53 │ 
+  54 │   const handleLocationChange = (location: string) => {
+  55 │     setFilters(prev => ({ ...prev, location: location }));
+  56 │   };
+  57 │ 
+  58 │   const handleJobSeekingStatusChange = (value: string) => {
+  59 │     const status: 'actively_looking' | 'open_to_opportunities' | 'not_looking' | undefined =
+  60 │         value === "any" ? undefined : (value as 'actively_looking' | 'open_to_opportunities' | 'not_looking');
+  61 │ 
+  62 │     setFilters(prev => ({ ...prev, job_seeking_status: status }));
+  63 │   };
+  64 │ 
+  65 │   const openCandidateModal = (candidate: Profile) => {
+  66 │     setSelectedCandidate(candidate);
+  67 │     setIsModalOpen(true);
+  68 │   };
+  69 │ 
+  70 │   const closeCandidateModal = () => {
+  71 │     setIsModalOpen(false);
+  72 │   };
+  73 │ 
+  74 │   const handlePageChange = (page: number) => {
+  75 │     setFilters(prev => ({ ...prev, page }));
+  76 │   };
+  77 │ 
+  78 │   const skillsList = [
+  79 │     "JavaScript",
+  80 │     "React",
+  81 │     "Node.js",
+  82 │     "Python",
+  83 │     "SQL",
+  84 │     "TypeScript",
+  85 │     "AWS",
+  86 │     "Docker",
+  87 │     "Kubernetes",
+  88 │     "CI/CD"
+  89 │   ];
+  90 │ 
+  91 │   const totalPages = Math.ceil(total / (filters.limit || 10));
+  92 │ 
+  93 │   return (
+  94 │       <div className="container mx-auto p-4">
+  95 │         <Card className="mb-4">
+  96 │           <CardHeader>
+  97 │             <CardTitle>Filter Candidates</CardTitle>
+  98 │           </CardHeader>
+  99 │           <CardContent className="grid gap-4">
+ 100 │             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+ 101 │               <div>
+ 102 │                 <Input
+ 103 │                     type="text"
+ 104 │                     placeholder="Search by name or bio..."
+ 105 │                     value={searchTerm}
+ 106 │                     onChange={(e) => setSearchTerm(e.target.value)}
+ 107 │                 />
+ 108 │                 <Button className="mt-2 w-full" onClick={handleSearch}>
+ 109 │                   <Search className="mr-2 h-4 w-4" />
+ 110 │                   Search
+ 111 │                 </Button>
+ 112 │               </div>
+ 113 │ 
+ 114 │               <div>
+ 115 │                 <Select onValueChange={handleExperienceChange}>
+ 116 │                   <SelectTrigger className="w-full">
+ 117 │                     <SelectValue placeholder="Experience (Years)" />
+ 118 │                   </SelectTrigger>
+ 119 │                   <SelectContent>
+ 120 │                     <SelectItem value="any">Any</SelectItem>
+ 121 │                     <SelectItem value="1">1+ Years</SelectItem>
+ 122 │                     <SelectItem value="3">3+ Years</SelectItem>
+ 123 │                     <SelectItem value="5">5+ Years</SelectItem>
+ 124 │                     <SelectItem value="7">7+ Years</SelectItem>
+ 125 │                     <SelectItem value="10">10+ Years</SelectItem>
+ 126 │                   </SelectContent>
+ 127 │                 </Select>
+ 128 │               </div>
+ 129 │ 
+ 130 │               <div>
+ 131 │                 <Input
+ 132 │                     type="text"
+ 133 │                     placeholder="Location..."
+ 134 │                     onChange={(e) => handleLocationChange(e.target.value)}
+ 135 │                 />
+ 136 │               </div>
+ 137 │ 
+ 138 │               <div>
+ 139 │                 <Select onValueChange={handleJobSeekingStatusChange}>
+ 140 │                   <SelectTrigger className="w-full">
+ 141 │                     <SelectValue placeholder="Job Seeking Status" />
+ 142 │                   </SelectTrigger>
+ 143 │                   <SelectContent>
+ 144 │                     <SelectItem value="any">Any</SelectItem>
+ 145 │                     <SelectItem value="actively_looking">Actively Looking</SelectItem>
+ 146 │                     <SelectItem value="open_to_opportunities">Open to Opportunities</SelectItem>
+ 147 │                     <SelectItem value="not_looking">Not Looking</SelectItem>
+ 148 │                   </SelectContent>
+ 149 │                 </Select>
+ 150 │               </div>
+ 151 │             </div>
+ 152 │ 
+ 153 │             <div>
+ 154 │               <p className="text-sm font-medium">Skills:</p>
+ 155 │               <div className="flex flex-wrap gap-2 mt-2">
+ 156 │                 {skillsList.map((skill) => (
+ 157 │                     <Badge
+ 158 │                         key={skill}
+ 159 │                         variant={selectedSkills.includes(skill) ? "secondary" : "outline"}
+ 160 │                         onClick={() => handleSkillSelect(skill)}
+ 161 │                         className="cursor-pointer"
+ 162 │                     >
+ 163 │                       {skill}
+ 164 │                     </Badge>
+ 165 │                 ))}
+ 166 │               </div>
+ 167 │             </div>
+ 168 │           </CardContent>
+ 169 │         </Card>
+ 170 │ 
+ 171 │         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+ 172 │           {candidates.map((candidate: Profile) => (
+ 173 │               <Card key={candidate.id} onClick={() => openCandidateModal(candidate)} className="cursor-pointer hover:shadow-md transition-shadow">
+ 174 │                 <CardHeader>
+ 175 │                   <div className="flex items-center space-x-4">
+ 176 │                     <Avatar>
+ 177 │                       <AvatarImage src={`https://avatar.vercel.sh/${candidate.email}.png`} />
+ 178 │                       <AvatarFallback>{candidate.first_name?.substring(0, 1)}{candidate.last_name?.substring(0, 1)}</AvatarFallback>
+ 179 │                     </Avatar>
+ 180 │                     <div className="flex-1">
+ 181 │                       <CardTitle className="text-lg">{candidate.first_name} {candidate.last_name}</CardTitle>
+ 182 │                       <p className="text-sm text-gray-500">{candidate.email}</p>
+ 183 │                       {candidate.cv_url && (
+ 184 │                         <div className="flex items-center gap-1 mt-1">
+ 185 │                           <FileText className="h-3 w-3 text-green-600" />
+ 186 │                           <span className="text-xs text-green-600">CV Available</span>
+ 187 │                         </div>
+ 188 │                       )}
+ 189 │                     </div>
+ 190 │                   </div>
+ 191 │                 </CardHeader>
+ 192 │                 <CardContent>
+ 193 │                   <div className="space-y-2">
+ 194 │                     {candidate.current_location && (
+ 195 │                       <p className="flex items-center text-sm text-gray-600">
+ 196 │                         <MapPin className="mr-1 h-3 w-3" />
+ 197 │                         {candidate.current_location}
+ 198 │                       </p>
+ 199 │                     )}
+ 200 │                     {candidate.experience_years && (
+ 201 │                       <p className="flex items-center text-sm text-gray-600">
+ 202 │                         <Calendar className="mr-1 h-3 w-3" />
+ 203 │                         {candidate.experience_years} years experience
+ 204 │                       </p>
+ 205 │                     )}
+ 206 │                     {candidate.skills && candidate.skills.length > 0 && (
+ 207 │                       <div className="flex flex-wrap gap-1">
+ 208 │                         {candidate.skills.slice(0, 2).map((skill: string, index: number) => (
+ 209 │                           <Badge key={index} variant="secondary" className="text-xs">
+ 210 │                             {skill}
+ 211 │                           </Badge>
+ 212 │                         ))}
+ 213 │                         {candidate.skills.length > 2 && (
+ 214 │                           <Badge variant="outline" className="text-xs">
+ 215 │                             +{candidate.skills.length - 2}
+ 216 │                           </Badge>
+ 217 │                         )}
+ 218 │                       </div>
+ 219 │                     )}
+ 220 │                   </div>
+ 221 │                 </CardContent>
+ 222 │               </Card>
+ 223 │           ))}
+ 224 │         </div>
+ 225 │ 
+ 226 │         <div className="flex justify-center mt-4">
+ 227 │           <Button
+ 228 │               onClick={() => handlePageChange((filters.page || 1) - 1)}
+ 229 │               disabled={filters.page === 1}
+ 230 │               className="mr-2"
+ 231 │           >
+ 232 │             <ChevronLeft className="h-4 w-4" />
+ 233 │           </Button>
+ 234 │           <span className="flex items-center">
+ 235 │           Page {filters.page} of {totalPages}
+ 236 │         </span>
+ 237 │           <Button
+ 238 │               onClick={() => handlePageChange((filters.page || 1) + 1)}
+ 239 │               disabled={(filters.page || 1) * (filters.limit || 10) >= total}
+ 240 │               className="ml-2"
+ 241 │           >
+ 242 │             <ChevronRight className="h-4 w-4" />
+ 243 │           </Button>
+ 244 │         </div>
+ 245 │ 
+ 246 │         <Modal isOpen={isModalOpen} onClose={closeCandidateModal}>
+ 247 │           {selectedCandidate && (
+ 248 │               <div className="space-y-4">
+ 249 │                 <div className="flex items-center space-x-4">
+ 250 │                   <Avatar className="h-16 w-16">
+ 251 │                     <AvatarImage src={`https://avatar.vercel.sh/${selectedCandidate.email}.png`} />
+ 252 │                     <AvatarFallback className="text-lg">
+ 253 │                       {selectedCandidate.first_name?.substring(0, 1)}{selectedCandidate.last_name?.substring(0, 1)}
+ 254 │                     </AvatarFallback>
+ 255 │                   </Avatar>
+ 256 │                   <div>
+ 257 │                     <h2 className="text-xl font-bold">{selectedCandidate.first_name} {selectedCandidate.last_name}</h2>
+ 258 │                     <p className="text-sm text-gray-500">{selectedCandidate.email}</p>
+ 259 │                   </div>
+ 260 │                 </div>
+ 261 │ 
+ 262 │                 {selectedCandidate.bio && (
+ 263 │                   <div>
+ 264 │                     <p className="text-sm font-medium">Bio:</p>
+ 265 │                     <p className="text-sm text-gray-700">{selectedCandidate.bio}</p>
+ 266 │                   </div>
+ 267 │                 )}
+ 268 │ 
+ 269 │                 {selectedCandidate.skills && selectedCandidate.skills.length > 0 && (
+ 270 │                   <div>
+ 271 │                     <p className="text-sm font-medium">Skills:</p>
+ 272 │                     <div className="flex flex-wrap gap-1 mt-1">
+ 273 │                       {selectedCandidate.skills.map((skill: string, index: number) => (
+ 274 │                           <Badge key={index} variant="secondary">{skill}</Badge>
+ 275 │                       ))}
+ 276 │                     </div>
+ 277 │                   </div>
+ 278 │                 )}
+ 279 │ 
+ 280 │                 {selectedCandidate.cv_url && (
+ 281 │                   <div>
+ 282 │                     <p className="text-sm font-medium">CV/Resume:</p>
+ 283 │                     <a 
+ 284 │                       href={selectedCandidate.cv_url} 
+ 285 │                       target="_blank" 
+ 286 │                       rel="noopener noreferrer" 
+ 287 │                       className="inline-flex items-center gap-2 text-blue-600 hover:underline text-sm"
+ 288 │                     >
+ 289 │                       <FileText className="h-4 w-4" />
+ 290 │                       View CV/Resume
+ 291 │                       <ExternalLink className="h-3 w-3" />
+ 292 │                     </a>
+ 293 │                   </div>
+ 294 │                 )}
+ 295 │ 
+ 296 │                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+ 297 │                   <div className="space-y-2">
+ 298 │                     <p className="flex items-center text-sm">
+ 299 │                       <MapPin className="mr-2 h-4 w-4" />
+ 300 │                       {selectedCandidate.current_location || "No location specified"}
+ 301 │                     </p>
+ 302 │                     <p className="flex items-center text-sm">
+ 303 │                       <Calendar className="mr-2 h-4 w-4" />
+ 304 │                       {selectedCandidate.experience_years || 0} Years Experience
+ 305 │                     </p>
+ 306 │                     <p className="flex items-center text-sm">
+ 307 │                       <DollarSign className="mr-2 h-4 w-4" />
+ 308 │                       {selectedCandidate.expected_salary_sek || 0} SEK
+ 309 │                     </p>
+ 310 │                   </div>
+ 311 │                   
+ 312 │                   <div className="space-y-2">
+ 313 │                     <p className="flex items-center text-sm">
+ 314 │                       <Mail className="mr-2 h-4 w-4" />
+ 315 │                       {selectedCandidate.email}
+ 316 │                     </p>
+ 317 │                     <p className="flex items-center text-sm">
+ 318 │                       <Phone className="mr-2 h-4 w-4" />
+ 319 │                       {selectedCandidate.phone || "No phone specified"}
+ 320 │                     </p>
+ 321 │                     {selectedCandidate.availability && (
+ 322 │                       <p className="text-sm">
+ 323 │                         <span className="font-medium">Availability:</span> {selectedCandidate.availability}
+ 324 │                       </p>
+ 325 │                     )}
+ 326 │                   </div>
+ 327 │                 </div>
+ 328 │ 
+ 329 │                 {(selectedCandidate.linkedin_url || selectedCandidate.portfolio_url || selectedCandidate.github_url) && (
+ 330 │                   <div>
+ 331 │                     <p className="text-sm font-medium mb-2">Links:</p>
+ 332 │                     <div className="space-y-1">
+ 333 │                       {selectedCandidate.linkedin_url && (
+ 334 │                           <a href={selectedCandidate.linkedin_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 335 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 336 │                             LinkedIn
+ 337 │                           </a>
+ 338 │                       )}
+ 339 │                       {selectedCandidate.portfolio_url && (
+ 340 │                           <a href={selectedCandidate.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 341 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 342 │                             Portfolio
+ 343 │                           </a>
+ 344 │                       )}
+ 345 │                       {selectedCandidate.github_url && (
+ 346 │                           <a href={selectedCandidate.github_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 347 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 348 │                             GitHub
+ 349 │                           </a>
+ 350 │                       )}
+ 351 │                     </div>
+ 352 │                   </div>
+ 353 │                 )}
+ 354 │               </div>
+ 355 │           )}
+ 356 │         </Modal>
+ 357 │       </div>
+ 358 │   );
+ 359 │ };
+ 360 │ 
+ 361 │ export default AdminCandidates;
+ 362 │ 'use client'
+ 363 │ 
+ 364 │ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     ·                                              ─────┬────
+     ·                                                   ╰── `CardHeader` redefined here
+ 365 │ 
+ 366 │ export function AdminCandidates() {
+ 367 │   return (
+     ╰────
+
+  × the name `CardTitle` is defined multiple times
+     ╭─[/Users/dev/personal/job-flow-applicant-view/src/components/AdminCandidates.tsx:1:1]
+   1 │ 
+   2 │ import React, { useState } from "react";
+   3 │ import {Profile, useAllCandidates} from "@/hooks/useProfile";
+   4 │ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+     ·                                         ────┬────
+     ·                                             ╰── previous definition of `CardTitle` here
+   5 │ import { Button } from "@/components/ui/button";
+   6 │ import { Input } from "@/components/ui/input";
+   7 │ import { Badge } from "@/components/ui/badge";
+   8 │ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+   9 │ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  10 │ import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, ChevronLeft, ChevronRight, FileText } from "lucide-react";
+  11 │ import Modal from "@/components/ui/Modal";
+  12 │ 
+  13 │ interface CandidateFilters {
+  14 │   skills?: string[];
+  15 │   experience_years?: number;
+  16 │   location?: string;
+  17 │   job_seeking_status?: 'actively_looking' | 'open_to_opportunities' | 'not_looking';
+  18 │   search?: string;
+  19 │   page?: number;
+  20 │   limit?: number;
+  21 │ }
+  22 │ 
+  23 │ const AdminCandidates = () => {
+  24 │   const [filters, setFilters] = useState<CandidateFilters>({ page: 1, limit: 10 });
+  25 │   const [searchTerm, setSearchTerm] = useState("");
+  26 │   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  27 │   const [selectedCandidate, setSelectedCandidate] = useState<Profile | null>(null);
+  28 │   const [isModalOpen, setIsModalOpen] = useState(false);
+  29 │ 
+  30 │   const { data: candidatesResult } = useAllCandidates(filters);
+  31 │   const candidates = candidatesResult?.data || [];
+  32 │   const total = candidatesResult?.total || 0;
+  33 │ 
+  34 │   const handleSearch = () => {
+  35 │     setFilters(prev => ({ ...prev, search: searchTerm }));
+  36 │   };
+  37 │ 
+  38 │   const handleSkillSelect = (skill: string) => {
+  39 │     setSelectedSkills(prev => {
+  40 │       if (prev.includes(skill)) {
+  41 │         return prev.filter(s => s !== skill);
+  42 │       } else {
+  43 │         return [...prev, skill];
+  44 │       }
+  45 │     });
+  46 │     setFilters(prev => ({ ...prev, skills: selectedSkills }));
+  47 │   };
+  48 │ 
+  49 │   const handleExperienceChange = (years: string) => {
+  50 │     const experience = years === "any" ? undefined : parseInt(years);
+  51 │     setFilters(prev => ({ ...prev, experience_years: experience }));
+  52 │   };
+  53 │ 
+  54 │   const handleLocationChange = (location: string) => {
+  55 │     setFilters(prev => ({ ...prev, location: location }));
+  56 │   };
+  57 │ 
+  58 │   const handleJobSeekingStatusChange = (value: string) => {
+  59 │     const status: 'actively_looking' | 'open_to_opportunities' | 'not_looking' | undefined =
+  60 │         value === "any" ? undefined : (value as 'actively_looking' | 'open_to_opportunities' | 'not_looking');
+  61 │ 
+  62 │     setFilters(prev => ({ ...prev, job_seeking_status: status }));
+  63 │   };
+  64 │ 
+  65 │   const openCandidateModal = (candidate: Profile) => {
+  66 │     setSelectedCandidate(candidate);
+  67 │     setIsModalOpen(true);
+  68 │   };
+  69 │ 
+  70 │   const closeCandidateModal = () => {
+  71 │     setIsModalOpen(false);
+  72 │   };
+  73 │ 
+  74 │   const handlePageChange = (page: number) => {
+  75 │     setFilters(prev => ({ ...prev, page }));
+  76 │   };
+  77 │ 
+  78 │   const skillsList = [
+  79 │     "JavaScript",
+  80 │     "React",
+  81 │     "Node.js",
+  82 │     "Python",
+  83 │     "SQL",
+  84 │     "TypeScript",
+  85 │     "AWS",
+  86 │     "Docker",
+  87 │     "Kubernetes",
+  88 │     "CI/CD"
+  89 │   ];
+  90 │ 
+  91 │   const totalPages = Math.ceil(total / (filters.limit || 10));
+  92 │ 
+  93 │   return (
+  94 │       <div className="container mx-auto p-4">
+  95 │         <Card className="mb-4">
+  96 │           <CardHeader>
+  97 │             <CardTitle>Filter Candidates</CardTitle>
+  98 │           </CardHeader>
+  99 │           <CardContent className="grid gap-4">
+ 100 │             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+ 101 │               <div>
+ 102 │                 <Input
+ 103 │                     type="text"
+ 104 │                     placeholder="Search by name or bio..."
+ 105 │                     value={searchTerm}
+ 106 │                     onChange={(e) => setSearchTerm(e.target.value)}
+ 107 │                 />
+ 108 │                 <Button className="mt-2 w-full" onClick={handleSearch}>
+ 109 │                   <Search className="mr-2 h-4 w-4" />
+ 110 │                   Search
+ 111 │                 </Button>
+ 112 │               </div>
+ 113 │ 
+ 114 │               <div>
+ 115 │                 <Select onValueChange={handleExperienceChange}>
+ 116 │                   <SelectTrigger className="w-full">
+ 117 │                     <SelectValue placeholder="Experience (Years)" />
+ 118 │                   </SelectTrigger>
+ 119 │                   <SelectContent>
+ 120 │                     <SelectItem value="any">Any</SelectItem>
+ 121 │                     <SelectItem value="1">1+ Years</SelectItem>
+ 122 │                     <SelectItem value="3">3+ Years</SelectItem>
+ 123 │                     <SelectItem value="5">5+ Years</SelectItem>
+ 124 │                     <SelectItem value="7">7+ Years</SelectItem>
+ 125 │                     <SelectItem value="10">10+ Years</SelectItem>
+ 126 │                   </SelectContent>
+ 127 │                 </Select>
+ 128 │               </div>
+ 129 │ 
+ 130 │               <div>
+ 131 │                 <Input
+ 132 │                     type="text"
+ 133 │                     placeholder="Location..."
+ 134 │                     onChange={(e) => handleLocationChange(e.target.value)}
+ 135 │                 />
+ 136 │               </div>
+ 137 │ 
+ 138 │               <div>
+ 139 │                 <Select onValueChange={handleJobSeekingStatusChange}>
+ 140 │                   <SelectTrigger className="w-full">
+ 141 │                     <SelectValue placeholder="Job Seeking Status" />
+ 142 │                   </SelectTrigger>
+ 143 │                   <SelectContent>
+ 144 │                     <SelectItem value="any">Any</SelectItem>
+ 145 │                     <SelectItem value="actively_looking">Actively Looking</SelectItem>
+ 146 │                     <SelectItem value="open_to_opportunities">Open to Opportunities</SelectItem>
+ 147 │                     <SelectItem value="not_looking">Not Looking</SelectItem>
+ 148 │                   </SelectContent>
+ 149 │                 </Select>
+ 150 │               </div>
+ 151 │             </div>
+ 152 │ 
+ 153 │             <div>
+ 154 │               <p className="text-sm font-medium">Skills:</p>
+ 155 │               <div className="flex flex-wrap gap-2 mt-2">
+ 156 │                 {skillsList.map((skill) => (
+ 157 │                     <Badge
+ 158 │                         key={skill}
+ 159 │                         variant={selectedSkills.includes(skill) ? "secondary" : "outline"}
+ 160 │                         onClick={() => handleSkillSelect(skill)}
+ 161 │                         className="cursor-pointer"
+ 162 │                     >
+ 163 │                       {skill}
+ 164 │                     </Badge>
+ 165 │                 ))}
+ 166 │               </div>
+ 167 │             </div>
+ 168 │           </CardContent>
+ 169 │         </Card>
+ 170 │ 
+ 171 │         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+ 172 │           {candidates.map((candidate: Profile) => (
+ 173 │               <Card key={candidate.id} onClick={() => openCandidateModal(candidate)} className="cursor-pointer hover:shadow-md transition-shadow">
+ 174 │                 <CardHeader>
+ 175 │                   <div className="flex items-center space-x-4">
+ 176 │                     <Avatar>
+ 177 │                       <AvatarImage src={`https://avatar.vercel.sh/${candidate.email}.png`} />
+ 178 │                       <AvatarFallback>{candidate.first_name?.substring(0, 1)}{candidate.last_name?.substring(0, 1)}</AvatarFallback>
+ 179 │                     </Avatar>
+ 180 │                     <div className="flex-1">
+ 181 │                       <CardTitle className="text-lg">{candidate.first_name} {candidate.last_name}</CardTitle>
+ 182 │                       <p className="text-sm text-gray-500">{candidate.email}</p>
+ 183 │                       {candidate.cv_url && (
+ 184 │                         <div className="flex items-center gap-1 mt-1">
+ 185 │                           <FileText className="h-3 w-3 text-green-600" />
+ 186 │                           <span className="text-xs text-green-600">CV Available</span>
+ 187 │                         </div>
+ 188 │                       )}
+ 189 │                     </div>
+ 190 │                   </div>
+ 191 │                 </CardHeader>
+ 192 │                 <CardContent>
+ 193 │                   <div className="space-y-2">
+ 194 │                     {candidate.current_location && (
+ 195 │                       <p className="flex items-center text-sm text-gray-600">
+ 196 │                         <MapPin className="mr-1 h-3 w-3" />
+ 197 │                         {candidate.current_location}
+ 198 │                       </p>
+ 199 │                     )}
+ 200 │                     {candidate.experience_years && (
+ 201 │                       <p className="flex items-center text-sm text-gray-600">
+ 202 │                         <Calendar className="mr-1 h-3 w-3" />
+ 203 │                         {candidate.experience_years} years experience
+ 204 │                       </p>
+ 205 │                     )}
+ 206 │                     {candidate.skills && candidate.skills.length > 0 && (
+ 207 │                       <div className="flex flex-wrap gap-1">
+ 208 │                         {candidate.skills.slice(0, 2).map((skill: string, index: number) => (
+ 209 │                           <Badge key={index} variant="secondary" className="text-xs">
+ 210 │                             {skill}
+ 211 │                           </Badge>
+ 212 │                         ))}
+ 213 │                         {candidate.skills.length > 2 && (
+ 214 │                           <Badge variant="outline" className="text-xs">
+ 215 │                             +{candidate.skills.length - 2}
+ 216 │                           </Badge>
+ 217 │                         )}
+ 218 │                       </div>
+ 219 │                     )}
+ 220 │                   </div>
+ 221 │                 </CardContent>
+ 222 │               </Card>
+ 223 │           ))}
+ 224 │         </div>
+ 225 │ 
+ 226 │         <div className="flex justify-center mt-4">
+ 227 │           <Button
+ 228 │               onClick={() => handlePageChange((filters.page || 1) - 1)}
+ 229 │               disabled={filters.page === 1}
+ 230 │               className="mr-2"
+ 231 │           >
+ 232 │             <ChevronLeft className="h-4 w-4" />
+ 233 │           </Button>
+ 234 │           <span className="flex items-center">
+ 235 │           Page {filters.page} of {totalPages}
+ 236 │         </span>
+ 237 │           <Button
+ 238 │               onClick={() => handlePageChange((filters.page || 1) + 1)}
+ 239 │               disabled={(filters.page || 1) * (filters.limit || 10) >= total}
+ 240 │               className="ml-2"
+ 241 │           >
+ 242 │             <ChevronRight className="h-4 w-4" />
+ 243 │           </Button>
+ 244 │         </div>
+ 245 │ 
+ 246 │         <Modal isOpen={isModalOpen} onClose={closeCandidateModal}>
+ 247 │           {selectedCandidate && (
+ 248 │               <div className="space-y-4">
+ 249 │                 <div className="flex items-center space-x-4">
+ 250 │                   <Avatar className="h-16 w-16">
+ 251 │                     <AvatarImage src={`https://avatar.vercel.sh/${selectedCandidate.email}.png`} />
+ 252 │                     <AvatarFallback className="text-lg">
+ 253 │                       {selectedCandidate.first_name?.substring(0, 1)}{selectedCandidate.last_name?.substring(0, 1)}
+ 254 │                     </AvatarFallback>
+ 255 │                   </Avatar>
+ 256 │                   <div>
+ 257 │                     <h2 className="text-xl font-bold">{selectedCandidate.first_name} {selectedCandidate.last_name}</h2>
+ 258 │                     <p className="text-sm text-gray-500">{selectedCandidate.email}</p>
+ 259 │                   </div>
+ 260 │                 </div>
+ 261 │ 
+ 262 │                 {selectedCandidate.bio && (
+ 263 │                   <div>
+ 264 │                     <p className="text-sm font-medium">Bio:</p>
+ 265 │                     <p className="text-sm text-gray-700">{selectedCandidate.bio}</p>
+ 266 │                   </div>
+ 267 │                 )}
+ 268 │ 
+ 269 │                 {selectedCandidate.skills && selectedCandidate.skills.length > 0 && (
+ 270 │                   <div>
+ 271 │                     <p className="text-sm font-medium">Skills:</p>
+ 272 │                     <div className="flex flex-wrap gap-1 mt-1">
+ 273 │                       {selectedCandidate.skills.map((skill: string, index: number) => (
+ 274 │                           <Badge key={index} variant="secondary">{skill}</Badge>
+ 275 │                       ))}
+ 276 │                     </div>
+ 277 │                   </div>
+ 278 │                 )}
+ 279 │ 
+ 280 │                 {selectedCandidate.cv_url && (
+ 281 │                   <div>
+ 282 │                     <p className="text-sm font-medium">CV/Resume:</p>
+ 283 │                     <a 
+ 284 │                       href={selectedCandidate.cv_url} 
+ 285 │                       target="_blank" 
+ 286 │                       rel="noopener noreferrer" 
+ 287 │                       className="inline-flex items-center gap-2 text-blue-600 hover:underline text-sm"
+ 288 │                     >
+ 289 │                       <FileText className="h-4 w-4" />
+ 290 │                       View CV/Resume
+ 291 │                       <ExternalLink className="h-3 w-3" />
+ 292 │                     </a>
+ 293 │                   </div>
+ 294 │                 )}
+ 295 │ 
+ 296 │                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+ 297 │                   <div className="space-y-2">
+ 298 │                     <p className="flex items-center text-sm">
+ 299 │                       <MapPin className="mr-2 h-4 w-4" />
+ 300 │                       {selectedCandidate.current_location || "No location specified"}
+ 301 │                     </p>
+ 302 │                     <p className="flex items-center text-sm">
+ 303 │                       <Calendar className="mr-2 h-4 w-4" />
+ 304 │                       {selectedCandidate.experience_years || 0} Years Experience
+ 305 │                     </p>
+ 306 │                     <p className="flex items-center text-sm">
+ 307 │                       <DollarSign className="mr-2 h-4 w-4" />
+ 308 │                       {selectedCandidate.expected_salary_sek || 0} SEK
+ 309 │                     </p>
+ 310 │                   </div>
+ 311 │                   
+ 312 │                   <div className="space-y-2">
+ 313 │                     <p className="flex items-center text-sm">
+ 314 │                       <Mail className="mr-2 h-4 w-4" />
+ 315 │                       {selectedCandidate.email}
+ 316 │                     </p>
+ 317 │                     <p className="flex items-center text-sm">
+ 318 │                       <Phone className="mr-2 h-4 w-4" />
+ 319 │                       {selectedCandidate.phone || "No phone specified"}
+ 320 │                     </p>
+ 321 │                     {selectedCandidate.availability && (
+ 322 │                       <p className="text-sm">
+ 323 │                         <span className="font-medium">Availability:</span> {selectedCandidate.availability}
+ 324 │                       </p>
+ 325 │                     )}
+ 326 │                   </div>
+ 327 │                 </div>
+ 328 │ 
+ 329 │                 {(selectedCandidate.linkedin_url || selectedCandidate.portfolio_url || selectedCandidate.github_url) && (
+ 330 │                   <div>
+ 331 │                     <p className="text-sm font-medium mb-2">Links:</p>
+ 332 │                     <div className="space-y-1">
+ 333 │                       {selectedCandidate.linkedin_url && (
+ 334 │                           <a href={selectedCandidate.linkedin_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 335 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 336 │                             LinkedIn
+ 337 │                           </a>
+ 338 │                       )}
+ 339 │                       {selectedCandidate.portfolio_url && (
+ 340 │                           <a href={selectedCandidate.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 341 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 342 │                             Portfolio
+ 343 │                           </a>
+ 344 │                       )}
+ 345 │                       {selectedCandidate.github_url && (
+ 346 │                           <a href={selectedCandidate.github_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 347 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 348 │                             GitHub
+ 349 │                           </a>
+ 350 │                       )}
+ 351 │                     </div>
+ 352 │                   </div>
+ 353 │                 )}
+ 354 │               </div>
+ 355 │           )}
+ 356 │         </Modal>
+ 357 │       </div>
+ 358 │   );
+ 359 │ };
+ 360 │ 
+ 361 │ export default AdminCandidates;
+ 362 │ 'use client'
+ 363 │ 
+ 364 │ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     ·                                                          ────┬────
+     ·                                                              ╰── `CardTitle` redefined here
+ 365 │ 
+ 366 │ export function AdminCandidates() {
+ 367 │   return (
+     ╰────
+
+  × the name `AdminCandidates` is defined multiple times
+     ╭─[/Users/dev/personal/job-flow-applicant-view/src/components/AdminCandidates.tsx:20:1]
+  20 │   limit?: number;
+  21 │ }
+  22 │ 
+  23 │ const AdminCandidates = () => {
+     ·       ───────┬───────
+     ·              ╰── previous definition of `AdminCandidates` here
+  24 │   const [filters, setFilters] = useState<CandidateFilters>({ page: 1, limit: 10 });
+  25 │   const [searchTerm, setSearchTerm] = useState("");
+  26 │   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  27 │   const [selectedCandidate, setSelectedCandidate] = useState<Profile | null>(null);
+  28 │   const [isModalOpen, setIsModalOpen] = useState(false);
+  29 │ 
+  30 │   const { data: candidatesResult } = useAllCandidates(filters);
+  31 │   const candidates = candidatesResult?.data || [];
+  32 │   const total = candidatesResult?.total || 0;
+  33 │ 
+  34 │   const handleSearch = () => {
+  35 │     setFilters(prev => ({ ...prev, search: searchTerm }));
+  36 │   };
+  37 │ 
+  38 │   const handleSkillSelect = (skill: string) => {
+  39 │     setSelectedSkills(prev => {
+  40 │       if (prev.includes(skill)) {
+  41 │         return prev.filter(s => s !== skill);
+  42 │       } else {
+  43 │         return [...prev, skill];
+  44 │       }
+  45 │     });
+  46 │     setFilters(prev => ({ ...prev, skills: selectedSkills }));
+  47 │   };
+  48 │ 
+  49 │   const handleExperienceChange = (years: string) => {
+  50 │     const experience = years === "any" ? undefined : parseInt(years);
+  51 │     setFilters(prev => ({ ...prev, experience_years: experience }));
+  52 │   };
+  53 │ 
+  54 │   const handleLocationChange = (location: string) => {
+  55 │     setFilters(prev => ({ ...prev, location: location }));
+  56 │   };
+  57 │ 
+  58 │   const handleJobSeekingStatusChange = (value: string) => {
+  59 │     const status: 'actively_looking' | 'open_to_opportunities' | 'not_looking' | undefined =
+  60 │         value === "any" ? undefined : (value as 'actively_looking' | 'open_to_opportunities' | 'not_looking');
+  61 │ 
+  62 │     setFilters(prev => ({ ...prev, job_seeking_status: status }));
+  63 │   };
+  64 │ 
+  65 │   const openCandidateModal = (candidate: Profile) => {
+  66 │     setSelectedCandidate(candidate);
+  67 │     setIsModalOpen(true);
+  68 │   };
+  69 │ 
+  70 │   const closeCandidateModal = () => {
+  71 │     setIsModalOpen(false);
+  72 │   };
+  73 │ 
+  74 │   const handlePageChange = (page: number) => {
+  75 │     setFilters(prev => ({ ...prev, page }));
+  76 │   };
+  77 │ 
+  78 │   const skillsList = [
+  79 │     "JavaScript",
+  80 │     "React",
+  81 │     "Node.js",
+  82 │     "Python",
+  83 │     "SQL",
+  84 │     "TypeScript",
+  85 │     "AWS",
+  86 │     "Docker",
+  87 │     "Kubernetes",
+  88 │     "CI/CD"
+  89 │   ];
+  90 │ 
+  91 │   const totalPages = Math.ceil(total / (filters.limit || 10));
+  92 │ 
+  93 │   return (
+  94 │       <div className="container mx-auto p-4">
+  95 │         <Card className="mb-4">
+  96 │           <CardHeader>
+  97 │             <CardTitle>Filter Candidates</CardTitle>
+  98 │           </CardHeader>
+  99 │           <CardContent className="grid gap-4">
+ 100 │             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+ 101 │               <div>
+ 102 │                 <Input
+ 103 │                     type="text"
+ 104 │                     placeholder="Search by name or bio..."
+ 105 │                     value={searchTerm}
+ 106 │                     onChange={(e) => setSearchTerm(e.target.value)}
+ 107 │                 />
+ 108 │                 <Button className="mt-2 w-full" onClick={handleSearch}>
+ 109 │                   <Search className="mr-2 h-4 w-4" />
+ 110 │                   Search
+ 111 │                 </Button>
+ 112 │               </div>
+ 113 │ 
+ 114 │               <div>
+ 115 │                 <Select onValueChange={handleExperienceChange}>
+ 116 │                   <SelectTrigger className="w-full">
+ 117 │                     <SelectValue placeholder="Experience (Years)" />
+ 118 │                   </SelectTrigger>
+ 119 │                   <SelectContent>
+ 120 │                     <SelectItem value="any">Any</SelectItem>
+ 121 │                     <SelectItem value="1">1+ Years</SelectItem>
+ 122 │                     <SelectItem value="3">3+ Years</SelectItem>
+ 123 │                     <SelectItem value="5">5+ Years</SelectItem>
+ 124 │                     <SelectItem value="7">7+ Years</SelectItem>
+ 125 │                     <SelectItem value="10">10+ Years</SelectItem>
+ 126 │                   </SelectContent>
+ 127 │                 </Select>
+ 128 │               </div>
+ 129 │ 
+ 130 │               <div>
+ 131 │                 <Input
+ 132 │                     type="text"
+ 133 │                     placeholder="Location..."
+ 134 │                     onChange={(e) => handleLocationChange(e.target.value)}
+ 135 │                 />
+ 136 │               </div>
+ 137 │ 
+ 138 │               <div>
+ 139 │                 <Select onValueChange={handleJobSeekingStatusChange}>
+ 140 │                   <SelectTrigger className="w-full">
+ 141 │                     <SelectValue placeholder="Job Seeking Status" />
+ 142 │                   </SelectTrigger>
+ 143 │                   <SelectContent>
+ 144 │                     <SelectItem value="any">Any</SelectItem>
+ 145 │                     <SelectItem value="actively_looking">Actively Looking</SelectItem>
+ 146 │                     <SelectItem value="open_to_opportunities">Open to Opportunities</SelectItem>
+ 147 │                     <SelectItem value="not_looking">Not Looking</SelectItem>
+ 148 │                   </SelectContent>
+ 149 │                 </Select>
+ 150 │               </div>
+ 151 │             </div>
+ 152 │ 
+ 153 │             <div>
+ 154 │               <p className="text-sm font-medium">Skills:</p>
+ 155 │               <div className="flex flex-wrap gap-2 mt-2">
+ 156 │                 {skillsList.map((skill) => (
+ 157 │                     <Badge
+ 158 │                         key={skill}
+ 159 │                         variant={selectedSkills.includes(skill) ? "secondary" : "outline"}
+ 160 │                         onClick={() => handleSkillSelect(skill)}
+ 161 │                         className="cursor-pointer"
+ 162 │                     >
+ 163 │                       {skill}
+ 164 │                     </Badge>
+ 165 │                 ))}
+ 166 │               </div>
+ 167 │             </div>
+ 168 │           </CardContent>
+ 169 │         </Card>
+ 170 │ 
+ 171 │         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+ 172 │           {candidates.map((candidate: Profile) => (
+ 173 │               <Card key={candidate.id} onClick={() => openCandidateModal(candidate)} className="cursor-pointer hover:shadow-md transition-shadow">
+ 174 │                 <CardHeader>
+ 175 │                   <div className="flex items-center space-x-4">
+ 176 │                     <Avatar>
+ 177 │                       <AvatarImage src={`https://avatar.vercel.sh/${candidate.email}.png`} />
+ 178 │                       <AvatarFallback>{candidate.first_name?.substring(0, 1)}{candidate.last_name?.substring(0, 1)}</AvatarFallback>
+ 179 │                     </Avatar>
+ 180 │                     <div className="flex-1">
+ 181 │                       <CardTitle className="text-lg">{candidate.first_name} {candidate.last_name}</CardTitle>
+ 182 │                       <p className="text-sm text-gray-500">{candidate.email}</p>
+ 183 │                       {candidate.cv_url && (
+ 184 │                         <div className="flex items-center gap-1 mt-1">
+ 185 │                           <FileText className="h-3 w-3 text-green-600" />
+ 186 │                           <span className="text-xs text-green-600">CV Available</span>
+ 187 │                         </div>
+ 188 │                       )}
+ 189 │                     </div>
+ 190 │                   </div>
+ 191 │                 </CardHeader>
+ 192 │                 <CardContent>
+ 193 │                   <div className="space-y-2">
+ 194 │                     {candidate.current_location && (
+ 195 │                       <p className="flex items-center text-sm text-gray-600">
+ 196 │                         <MapPin className="mr-1 h-3 w-3" />
+ 197 │                         {candidate.current_location}
+ 198 │                       </p>
+ 199 │                     )}
+ 200 │                     {candidate.experience_years && (
+ 201 │                       <p className="flex items-center text-sm text-gray-600">
+ 202 │                         <Calendar className="mr-1 h-3 w-3" />
+ 203 │                         {candidate.experience_years} years experience
+ 204 │                       </p>
+ 205 │                     )}
+ 206 │                     {candidate.skills && candidate.skills.length > 0 && (
+ 207 │                       <div className="flex flex-wrap gap-1">
+ 208 │                         {candidate.skills.slice(0, 2).map((skill: string, index: number) => (
+ 209 │                           <Badge key={index} variant="secondary" className="text-xs">
+ 210 │                             {skill}
+ 211 │                           </Badge>
+ 212 │                         ))}
+ 213 │                         {candidate.skills.length > 2 && (
+ 214 │                           <Badge variant="outline" className="text-xs">
+ 215 │                             +{candidate.skills.length - 2}
+ 216 │                           </Badge>
+ 217 │                         )}
+ 218 │                       </div>
+ 219 │                     )}
+ 220 │                   </div>
+ 221 │                 </CardContent>
+ 222 │               </Card>
+ 223 │           ))}
+ 224 │         </div>
+ 225 │ 
+ 226 │         <div className="flex justify-center mt-4">
+ 227 │           <Button
+ 228 │               onClick={() => handlePageChange((filters.page || 1) - 1)}
+ 229 │               disabled={filters.page === 1}
+ 230 │               className="mr-2"
+ 231 │           >
+ 232 │             <ChevronLeft className="h-4 w-4" />
+ 233 │           </Button>
+ 234 │           <span className="flex items-center">
+ 235 │           Page {filters.page} of {totalPages}
+ 236 │         </span>
+ 237 │           <Button
+ 238 │               onClick={() => handlePageChange((filters.page || 1) + 1)}
+ 239 │               disabled={(filters.page || 1) * (filters.limit || 10) >= total}
+ 240 │               className="ml-2"
+ 241 │           >
+ 242 │             <ChevronRight className="h-4 w-4" />
+ 243 │           </Button>
+ 244 │         </div>
+ 245 │ 
+ 246 │         <Modal isOpen={isModalOpen} onClose={closeCandidateModal}>
+ 247 │           {selectedCandidate && (
+ 248 │               <div className="space-y-4">
+ 249 │                 <div className="flex items-center space-x-4">
+ 250 │                   <Avatar className="h-16 w-16">
+ 251 │                     <AvatarImage src={`https://avatar.vercel.sh/${selectedCandidate.email}.png`} />
+ 252 │                     <AvatarFallback className="text-lg">
+ 253 │                       {selectedCandidate.first_name?.substring(0, 1)}{selectedCandidate.last_name?.substring(0, 1)}
+ 254 │                     </AvatarFallback>
+ 255 │                   </Avatar>
+ 256 │                   <div>
+ 257 │                     <h2 className="text-xl font-bold">{selectedCandidate.first_name} {selectedCandidate.last_name}</h2>
+ 258 │                     <p className="text-sm text-gray-500">{selectedCandidate.email}</p>
+ 259 │                   </div>
+ 260 │                 </div>
+ 261 │ 
+ 262 │                 {selectedCandidate.bio && (
+ 263 │                   <div>
+ 264 │                     <p className="text-sm font-medium">Bio:</p>
+ 265 │                     <p className="text-sm text-gray-700">{selectedCandidate.bio}</p>
+ 266 │                   </div>
+ 267 │                 )}
+ 268 │ 
+ 269 │                 {selectedCandidate.skills && selectedCandidate.skills.length > 0 && (
+ 270 │                   <div>
+ 271 │                     <p className="text-sm font-medium">Skills:</p>
+ 272 │                     <div className="flex flex-wrap gap-1 mt-1">
+ 273 │                       {selectedCandidate.skills.map((skill: string, index: number) => (
+ 274 │                           <Badge key={index} variant="secondary">{skill}</Badge>
+ 275 │                       ))}
+ 276 │                     </div>
+ 277 │                   </div>
+ 278 │                 )}
+ 279 │ 
+ 280 │                 {selectedCandidate.cv_url && (
+ 281 │                   <div>
+ 282 │                     <p className="text-sm font-medium">CV/Resume:</p>
+ 283 │                     <a 
+ 284 │                       href={selectedCandidate.cv_url} 
+ 285 │                       target="_blank" 
+ 286 │                       rel="noopener noreferrer" 
+ 287 │                       className="inline-flex items-center gap-2 text-blue-600 hover:underline text-sm"
+ 288 │                     >
+ 289 │                       <FileText className="h-4 w-4" />
+ 290 │                       View CV/Resume
+ 291 │                       <ExternalLink className="h-3 w-3" />
+ 292 │                     </a>
+ 293 │                   </div>
+ 294 │                 )}
+ 295 │ 
+ 296 │                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+ 297 │                   <div className="space-y-2">
+ 298 │                     <p className="flex items-center text-sm">
+ 299 │                       <MapPin className="mr-2 h-4 w-4" />
+ 300 │                       {selectedCandidate.current_location || "No location specified"}
+ 301 │                     </p>
+ 302 │                     <p className="flex items-center text-sm">
+ 303 │                       <Calendar className="mr-2 h-4 w-4" />
+ 304 │                       {selectedCandidate.experience_years || 0} Years Experience
+ 305 │                     </p>
+ 306 │                     <p className="flex items-center text-sm">
+ 307 │                       <DollarSign className="mr-2 h-4 w-4" />
+ 308 │                       {selectedCandidate.expected_salary_sek || 0} SEK
+ 309 │                     </p>
+ 310 │                   </div>
+ 311 │                   
+ 312 │                   <div className="space-y-2">
+ 313 │                     <p className="flex items-center text-sm">
+ 314 │                       <Mail className="mr-2 h-4 w-4" />
+ 315 │                       {selectedCandidate.email}
+ 316 │                     </p>
+ 317 │                     <p className="flex items-center text-sm">
+ 318 │                       <Phone className="mr-2 h-4 w-4" />
+ 319 │                       {selectedCandidate.phone || "No phone specified"}
+ 320 │                     </p>
+ 321 │                     {selectedCandidate.availability && (
+ 322 │                       <p className="text-sm">
+ 323 │                         <span className="font-medium">Availability:</span> {selectedCandidate.availability}
+ 324 │                       </p>
+ 325 │                     )}
+ 326 │                   </div>
+ 327 │                 </div>
+ 328 │ 
+ 329 │                 {(selectedCandidate.linkedin_url || selectedCandidate.portfolio_url || selectedCandidate.github_url) && (
+ 330 │                   <div>
+ 331 │                     <p className="text-sm font-medium mb-2">Links:</p>
+ 332 │                     <div className="space-y-1">
+ 333 │                       {selectedCandidate.linkedin_url && (
+ 334 │                           <a href={selectedCandidate.linkedin_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 335 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 336 │                             LinkedIn
+ 337 │                           </a>
+ 338 │                       )}
+ 339 │                       {selectedCandidate.portfolio_url && (
+ 340 │                           <a href={selectedCandidate.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 341 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 342 │                             Portfolio
+ 343 │                           </a>
+ 344 │                       )}
+ 345 │                       {selectedCandidate.github_url && (
+ 346 │                           <a href={selectedCandidate.github_url} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:underline text-blue-600">
+ 347 │                             <ExternalLink className="mr-2 h-3 w-3" />
+ 348 │                             GitHub
+ 349 │                           </a>
+ 350 │                       )}
+ 351 │                     </div>
+ 352 │                   </div>
+ 353 │                 )}
+ 354 │               </div>
+ 355 │           )}
+ 356 │         </Modal>
+ 357 │       </div>
+ 358 │   );
+ 359 │ };
+ 360 │ 
+ 361 │ export default AdminCandidates;
+ 362 │ 'use client'
+ 363 │ 
+ 364 │ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+ 365 │ 
+ 366 │ export function AdminCandidates() {
+     ·                 ───────┬───────
+     ·                        ╰── `AdminCandidates` redefined here
+ 367 │   return (
+ 368 │     <Card>
+ 369 │       <CardHeader>
+     ╰────
+
+  × The "use client" directive must be placed before other expressions. Move it to the top of the file to resolve this issue.
+     ╭─[/Users/dev/personal/job-flow-applicant-view/src/components/AdminCandidates.tsx:359:1]
+ 359 │ };
+ 360 │ 
+ 361 │ export default AdminCandidates;
+ 362 │ 'use client'
+     · ────────────
+ 363 │ 
+ 364 │ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     ╰────
+This error occurred during the build process and can only be dismissed by
