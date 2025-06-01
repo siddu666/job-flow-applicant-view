@@ -1,4 +1,3 @@
-'use client'
 
 import { Badge } from '@/components/ui/badge'
 
@@ -8,29 +7,31 @@ export function IndustriesSection() {
     'Healthcare',
     'Finance',
     'Education',
-    'Manufacturing',
-    'Retail',
-    'Consulting',
-    'Media',
-    'Government',
-    'Non-profit'
+    'Marketing',
+    'Sales',
+    'Engineering',
+    'Design',
+    'Operations',
+    'Human Resources',
+    'Legal',
+    'Consulting'
   ]
 
   return (
-    <section className="py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 bg-white">
+      <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Industries We Serve
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            We connect professionals with opportunities across various industries and sectors.
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Find opportunities across various industries and sectors
           </p>
         </div>
-
+        
         <div className="flex flex-wrap justify-center gap-4">
           {industries.map((industry, index) => (
-            <Badge key={index} variant="secondary" className="text-sm py-2 px-4">
+            <Badge key={index} variant="secondary" className="text-lg py-2 px-4">
               {industry}
             </Badge>
           ))}
