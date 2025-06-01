@@ -15,16 +15,16 @@ import { useApplicationStats } from "@/hooks/useApplications";
 import { useAllCandidates } from "@/hooks/useProfile";
 
 const Admin = () => {
-  const { user, loading } = useAuth();
-  const { data: profile } = useProfile(user?.id);
+  const { user } = useAuth();
+  const { data: profile, isLoading } = useProfile(user?.id);
   const [showJobForm, setShowJobForm] = useState(false);
   const [deleteDialogUser, setDeleteDialogUser] = useState<{id: string, name: string} | null>(null);
 
   const { data: jobStats } = useJobStats();
   const { data: applicationStats } = useApplicationStats();
-  const { data: candidates } = useAllCandidates();
+  const { data: candidatesResult } = useAllCandidates();
 
-  if (loading) {
+  if (isLoading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
@@ -42,6 +42,10 @@ const Admin = () => {
   const handleDeleteUser = (userId: string, userName: string) => {
     setDeleteDialogUser({ id: userId, name: userName });
   };
+
+  const candidates = candidatesResult?.data || [];
+  const activeCandidatesCount = candidates.filter(c => c.job_seeking_status === 'actively_looking').length;
+  const totalCandidatesCount = candidates.length;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -117,11 +121,9 @@ const Admin = () => {
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">
-                    {candidates?.filter(c => c.job_seeking_status === 'actively_looking').length || 0}
-                  </div>
+                  <div className="text-2xl font-bold">{activeCandidatesCount}</div>
                   <p className="text-xs text-muted-foreground">
-                    {candidates?.length || 0} total candidates
+                    {totalCandidatesCount} total candidates
                   </p>
                 </CardContent>
               </Card>

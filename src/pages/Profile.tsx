@@ -16,8 +16,8 @@ import { User, Mail, Phone, MapPin, Calendar, FileText, Briefcase, Edit, Setting
 
 const Profile = () => {
   const { user, loading: authLoading, signOut } = useAuth();
-  const { data: profile, loading: profileLoading } = useProfile(user?.id);
-  const { data: applications, loading: applicationsLoading } = useApplications(user?.id);
+  const { data: profile, isLoading: profileLoading } = useProfile(user?.id);
+  const { data: applications, isLoading: applicationsLoading } = useApplications({ applicantId: user?.id });
   const router = useRouter();
 
   useEffect(() => {
@@ -87,7 +87,7 @@ const Profile = () => {
                   <h1 className="text-2xl font-bold text-gray-900">
                     {profile.first_name} {profile.last_name}
                   </h1>
-                  <p className="text-gray-600">{profile.current_position || 'Job Seeker'}</p>
+                  <p className="text-gray-600">Job Seeker</p>
                   <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
                     <div className="flex items-center gap-1">
                       <Mail className="h-4 w-4" />
@@ -99,10 +99,10 @@ const Profile = () => {
                         {profile.phone}
                       </div>
                     )}
-                    {profile.location && (
+                    {profile.current_location && (
                       <div className="flex items-center gap-1">
                         <MapPin className="h-4 w-4" />
-                        {profile.location}
+                        {profile.current_location}
                       </div>
                     )}
                   </div>
@@ -135,16 +135,16 @@ const Profile = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Date of Birth</label>
-                    <p className="text-gray-900">{profile.date_of_birth || 'Not provided'}</p>
+                    <label className="text-sm font-medium text-gray-700">Location</label>
+                    <p className="text-gray-900">{profile.current_location || 'Not provided'}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Nationality</label>
-                    <p className="text-gray-900">{profile.nationality || 'Not provided'}</p>
+                    <label className="text-sm font-medium text-gray-700">Phone</label>
+                    <p className="text-gray-900">{profile.phone || 'Not provided'}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Work Authorization</label>
-                    <p className="text-gray-900">{profile.work_authorization_status || 'Not provided'}</p>
+                    <label className="text-sm font-medium text-gray-700">Expected Salary</label>
+                    <p className="text-gray-900">{profile.expected_salary_sek ? `${profile.expected_salary_sek.toLocaleString()} SEK` : 'Not provided'}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -156,12 +156,12 @@ const Profile = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Current Position</label>
-                    <p className="text-gray-900">{profile.current_position || 'Not provided'}</p>
+                    <label className="text-sm font-medium text-gray-700">Experience</label>
+                    <p className="text-gray-900">{profile.experience_years ? `${profile.experience_years} years` : 'Not provided'}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Experience Level</label>
-                    <p className="text-gray-900">{profile.experience_level || 'Not provided'}</p>
+                    <label className="text-sm font-medium text-gray-700">Availability</label>
+                    <p className="text-gray-900">{profile.availability || 'Not provided'}</p>
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-700">Job Seeking Status</label>
@@ -191,7 +191,7 @@ const Profile = () => {
               {/* Documents */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Documents</CardTitle>
+                  <CardTitle>Documents & Links</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {profile.cv_url && (
@@ -226,8 +226,40 @@ const Profile = () => {
                       </a>
                     </div>
                   )}
-                  {!profile.cv_url && !profile.portfolio_url && (
-                    <p className="text-gray-500 text-sm">No documents uploaded yet.</p>
+                  {profile.linkedin_url && (
+                    <div className="flex items-center justify-between p-2 border rounded">
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-blue-600" />
+                        <span>LinkedIn</span>
+                      </div>
+                      <a
+                        href={profile.linkedin_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-700"
+                      >
+                        View
+                      </a>
+                    </div>
+                  )}
+                  {profile.github_url && (
+                    <div className="flex items-center justify-between p-2 border rounded">
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-blue-600" />
+                        <span>GitHub</span>
+                      </div>
+                      <a
+                        href={profile.github_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-700"
+                      >
+                        View
+                      </a>
+                    </div>
+                  )}
+                  {!profile.cv_url && !profile.portfolio_url && !profile.linkedin_url && !profile.github_url && (
+                    <p className="text-gray-500 text-sm">No documents or links uploaded yet.</p>
                   )}
                 </CardContent>
               </Card>
@@ -250,14 +282,14 @@ const Profile = () => {
                         <div className="flex items-start justify-between">
                           <div>
                             <h3 className="font-medium text-gray-900">
-                              {application.jobs?.title || 'Job Title Not Available'}
+                              {application.job?.title || 'Job Title Not Available'}
                             </h3>
                             <p className="text-sm text-gray-600">
-                              Applied on {new Date(application.created_at).toLocaleDateString()}
+                              Applied on {application.created_at ? new Date(application.created_at).toLocaleDateString() : 'Unknown date'}
                             </p>
                           </div>
-                          <Badge className={getStatusColor(application.status)}>
-                            {application.status.replace('_', ' ')}
+                          <Badge className={getStatusColor(application.status || 'pending')}>
+                            {(application.status || 'pending').replace('_', ' ')}
                           </Badge>
                         </div>
                       </div>

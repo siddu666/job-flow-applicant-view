@@ -1,107 +1,135 @@
-'use client'
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { MapPin, Clock, Briefcase, Star } from 'lucide-react';
-import { useJobRecommendations } from '@/hooks/useJobRecommendations';
-import { useAuth } from '@/contexts/auth-context';
-import { useRouter } from 'next/navigation';
+import React from "react";
+import { useAuth } from "@/contexts/auth-context";
+import { useJobRecommendations } from "@/hooks/useJobRecommendations";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { MapPin, Calendar, Building2, Star } from "lucide-react";
+import Link from "next/link";
 
 const JobRecommendations = () => {
   const { user } = useAuth();
-  const router = useRouter();
-  const { data: recommendations = [], isLoading } = useJobRecommendations(user?.id);
+  const { data: recommendedJobs, isLoading } = useJobRecommendations(user?.id, 6);
 
   if (isLoading) {
     return (
       <Card>
+        <CardContent className="py-8 text-center">
+          <p className="text-gray-500">Loading job recommendations...</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!recommendedJobs || recommendedJobs.length === 0) {
+    return (
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Star className="h-5 w-5 text-yellow-500" />
-            Recommended Jobs
-          </CardTitle>
+          <CardTitle>Recommended Jobs</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-              </div>
-            ))}
-          </div>
+        <CardContent className="py-8 text-center">
+          <p className="text-gray-500 mb-4">No job recommendations available at the moment.</p>
+          <p className="text-sm text-gray-400">
+            Complete your profile with skills and experience to get personalized job recommendations.
+          </p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Star className="h-5 w-5 text-yellow-500" />
-          Recommended Jobs
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {recommendations.length === 0 ? (
-          <div className="text-center py-8">
-            <Briefcase className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 mb-4">No job recommendations yet</p>
-            <Button 
-              variant="outline" 
-              onClick={() => router.push('/jobs')}
-            >
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Star className="h-5 w-5 text-yellow-500" />
+            Recommended Jobs for You
+          </CardTitle>
+        </CardHeader>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {recommendedJobs.map((job) => (
+          <Card key={job.id} className="hover:shadow-md transition-shadow">
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <CardTitle className="text-lg line-clamp-2">{job.title}</CardTitle>
+                  <div className="flex items-center gap-1 mt-1 text-sm text-gray-600">
+                    <Building2 className="h-4 w-4" />
+                    <span>Justera Group AB</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
+                  <Star className="h-3 w-3" />
+                  {job.match_score}% match
+                </div>
+              </div>
+            </CardHeader>
+            
+            <CardContent className="space-y-3">
+              <div className="flex items-center gap-4 text-sm text-gray-600">
+                <div className="flex items-center gap-1">
+                  <MapPin className="h-4 w-4" />
+                  {job.location}
+                </div>
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  {job.type}
+                </div>
+              </div>
+
+              {job.experience_level && (
+                <Badge variant="secondary" className="text-xs">
+                  {job.experience_level} level
+                </Badge>
+              )}
+
+              <p className="text-sm text-gray-700 line-clamp-3">
+                {job.description}
+              </p>
+
+              {job.skills && job.skills.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {job.skills.slice(0, 3).map((skill, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {skill}
+                    </Badge>
+                  ))}
+                  {job.skills.length > 3 && (
+                    <Badge variant="outline" className="text-xs">
+                      +{job.skills.length - 3} more
+                    </Badge>
+                  )}
+                </div>
+              )}
+
+              <div className="pt-2">
+                <Link href={`/apply/${job.id}`}>
+                  <Button className="w-full">
+                    Apply Now
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <Card>
+        <CardContent className="py-4 text-center">
+          <p className="text-sm text-gray-600 mb-2">
+            Want to see more opportunities?
+          </p>
+          <Link href="/jobs">
+            <Button variant="outline">
               Browse All Jobs
             </Button>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {recommendations.slice(0, 3).map((rec) => (
-              <div key={rec.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold text-sm">{rec.title}</h3>
-                  <Badge variant="secondary" className="text-xs">
-                    {Math.round(rec.match_score)}% match
-                  </Badge>
-                </div>
-
-                <div className="space-y-2 text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-3 w-3" />
-                    {rec.location}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    {rec.type}
-                  </div>
-                </div>
-
-                <Button 
-                  size="sm" 
-                  className="w-full mt-3"
-                  onClick={() => router.push(`/jobs/${rec.id}/apply`)}
-                >
-                  Apply Now
-                </Button>
-              </div>
-            ))}
-
-            {recommendations.length > 3 && (
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => router.push('/jobs')}
-              >
-                View All Recommendations ({recommendations.length})
-              </Button>
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          </Link>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

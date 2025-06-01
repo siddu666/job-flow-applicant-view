@@ -27,7 +27,9 @@ const AdminCandidates = () => {
   const [selectedCandidate, setSelectedCandidate] = useState<Profile | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data: candidates, total, } = useAllCandidates(filters);
+  const { data: candidatesResult } = useAllCandidates(filters);
+  const candidates = candidatesResult?.data || [];
+  const total = candidatesResult?.total || 0;
 
   const handleSearch = () => {
     setFilters(prev => ({ ...prev, search: searchTerm }));
@@ -86,7 +88,7 @@ const AdminCandidates = () => {
     "CI/CD"
   ];
 
-  const totalPages = Math.ceil(total / filters.limit!);
+  const totalPages = Math.ceil(total / (filters.limit || 10));
 
   return (
       <div className="container mx-auto p-4">
@@ -167,7 +169,7 @@ const AdminCandidates = () => {
         </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {candidates?.map((candidate) => (
+          {candidates.map((candidate: Profile) => (
               <Card key={candidate.id} onClick={() => openCandidateModal(candidate)} className="cursor-pointer hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex items-center space-x-4">
@@ -203,7 +205,7 @@ const AdminCandidates = () => {
                     )}
                     {candidate.skills && candidate.skills.length > 0 && (
                       <div className="flex flex-wrap gap-1">
-                        {candidate.skills.slice(0, 2).map((skill, index) => (
+                        {candidate.skills.slice(0, 2).map((skill: string, index: number) => (
                           <Badge key={index} variant="secondary" className="text-xs">
                             {skill}
                           </Badge>
@@ -223,7 +225,7 @@ const AdminCandidates = () => {
 
         <div className="flex justify-center mt-4">
           <Button
-              onClick={() => handlePageChange(filters.page! - 1)}
+              onClick={() => handlePageChange((filters.page || 1) - 1)}
               disabled={filters.page === 1}
               className="mr-2"
           >
@@ -233,8 +235,8 @@ const AdminCandidates = () => {
           Page {filters.page} of {totalPages}
         </span>
           <Button
-              onClick={() => handlePageChange(filters.page! + 1)}
-              disabled={filters.page! * filters.limit! >= total}
+              onClick={() => handlePageChange((filters.page || 1) + 1)}
+              disabled={(filters.page || 1) * (filters.limit || 10) >= total}
               className="ml-2"
           >
             <ChevronRight className="h-4 w-4" />
@@ -268,7 +270,7 @@ const AdminCandidates = () => {
                   <div>
                     <p className="text-sm font-medium">Skills:</p>
                     <div className="flex flex-wrap gap-1 mt-1">
-                      {selectedCandidate.skills.map((skill, index) => (
+                      {selectedCandidate.skills.map((skill: string, index: number) => (
                           <Badge key={index} variant="secondary">{skill}</Badge>
                       ))}
                     </div>
