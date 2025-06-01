@@ -359,3 +359,22 @@ const AdminCandidates = () => {
 };
 
 export default AdminCandidates;
+'use client'
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+
+export function AdminCandidates() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Candidates</CardTitle>
+        <CardDescription>
+          Manage candidate profiles and information
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-gray-500">No candidates found.</p>
+      </CardContent>
+    </Card>
+  )
+}

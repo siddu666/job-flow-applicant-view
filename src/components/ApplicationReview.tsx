@@ -295,3 +295,22 @@ const ApplicationReview = () => {
 };
 
 export default ApplicationReview;
+'use client'
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+
+export function ApplicationReview() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Application Review</CardTitle>
+        <CardDescription>
+          Review and manage job applications
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-gray-500">No applications to review at this time.</p>
+      </CardContent>
+    </Card>
+  )
+}
