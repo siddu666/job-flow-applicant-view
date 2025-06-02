@@ -19,6 +19,26 @@ export interface Application {
 }
 
 type ApplicationInsert = TablesInsert<'applications'>
+
+export const useCreateApplication = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (applicationData: Omit<ApplicationInsert, 'id' | 'created_at'>) => {
+      const { data, error } = await supabase
+        .from('applications')
+        .insert([applicationData])
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['applications'] })
+    },
+  })
+}
 type ApplicationUpdate = TablesUpdate<'applications'>
 
 export const useApplications = () => {

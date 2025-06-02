@@ -315,3 +315,47 @@ export const useJobStats = () => {
     staleTime: 2 * 60 * 1000,
   });
 };
+
+export const useAllJobs = (filters?: JobFilters) => {
+  return useQuery({
+    queryKey: ['all-jobs', filters],
+    queryFn: async () => {
+      let query = supabase
+        .from('jobs')
+        .select('*', { count: 'exact' })
+        .eq('status', 'active')
+
+      if (filters?.search) {
+        query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%,company.ilike.%${filters.search}%`)
+      }
+
+      if (filters?.location) {
+        query = query.ilike('location', `%${filters.location}%`)
+      }
+
+      if (filters?.type) {
+        query = query.eq('type', filters.type)
+      }
+
+      if (filters?.experience_level) {
+        query = query.eq('experience_level', filters.experience_level)
+      }
+
+      const page = filters?.page || 1
+      const limit = filters?.limit || 10
+      const from = (page - 1) * limit
+      const to = from + limit - 1
+
+      query = query.range(from, to).order('created_at', { ascending: false })
+
+      const { data, error, count } = await query
+
+      if (error) throw error
+
+      return {
+        data: data as Job[],
+        total: count || 0,
+      }
+    },
+  })
+}
