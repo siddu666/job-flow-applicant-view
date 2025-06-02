@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -57,19 +56,15 @@ export const useProcessGDPRRequest = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ 
-      id, 
+    mutationFn: async ({
       action,
-      processedBy,
-      completionDetails,
-      rejectionReason 
-    }: { 
-      id: string; 
-      action: 'approve' | 'reject' | 'complete';
+    }: {
+      id: string;
+      action: 'approve' | 'reject';
       processedBy: string;
-      completionDetails?: any;
+      completionDetails?: Record<string, unknown>;
       rejectionReason?: string;
-    }): Promise<GDPRRequest> => {
+    }) => {
       throw new Error("GDPR functionality not implemented yet - tables don't exist");
     },
     onSuccess: (data, variables) => {

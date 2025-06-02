@@ -1,11 +1,10 @@
-
 import React, { useState } from "react";
 import {Profile, useAllCandidates} from "@/hooks/useProfile";
 import { Card as UICard, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, ChevronLeft, ChevronRight, FileText } from "lucide-react";
 import Modal from "@/components/ui/Modal";
@@ -184,7 +183,7 @@ const AdminCandidates = () => {
                   <p className="text-sm text-gray-600 mb-2">
                     Professional
                   </p>
-                  
+
                   <div className="space-y-1 text-sm text-gray-500">
                     {candidate.current_location && (
                       <div className="flex items-center">
@@ -192,14 +191,14 @@ const AdminCandidates = () => {
                         {candidate.current_location}
                       </div>
                     )}
-                    
+
                     {candidate.experience_years && (
                       <div className="flex items-center">
                         <Calendar className="h-3 w-3 mr-1" />
                         {candidate.experience_years} years experience
                       </div>
                     )}
-                    
+
                     {candidate.expected_salary_sek && (
                       <div className="flex items-center">
                         <DollarSign className="h-3 w-3 mr-1" />
@@ -255,7 +254,7 @@ const AdminCandidates = () => {
             Showing {((filters.page || 1) - 1) * (filters.limit || 10) + 1} to{' '}
             {Math.min((filters.page || 1) * (filters.limit || 10), total)} of {total} candidates
           </p>
-          
+
           <div className="flex space-x-2">
             <Button
               variant="outline"

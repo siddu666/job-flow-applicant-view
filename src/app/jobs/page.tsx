@@ -1,24 +1,23 @@
-
 'use client'
 
-import { useAuth } from '@/contexts/auth-context'
-import { useAllJobs } from '@/hooks/useJobs'
-import { useProfile } from '@/hooks/useProfile'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { Briefcase, MapPin, DollarSign, Clock, Search, Filter, Building } from 'lucide-react'
 import Link from 'next/link'
+import { useAuth } from '@/contexts/auth-context'
+import { useAllJobs } from '@/hooks/useJobs'
+import { useProfile } from '@/hooks/useProfile'
 
 export default function JobsPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { data: profile } = useProfile(user?.id)
-  
+
   const [filters, setFilters] = useState({
     search: '',
     location: '',
@@ -77,7 +76,7 @@ export default function JobsPage() {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Location</label>
               <Input
@@ -86,7 +85,7 @@ export default function JobsPage() {
                 onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value, page: 1 }))}
               />
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Job Type</label>
               <Select value={filters.type} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value, page: 1 }))}>
@@ -102,7 +101,7 @@ export default function JobsPage() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Experience Level</label>
               <Select value={filters.experience_level} onValueChange={(value) => setFilters(prev => ({ ...prev, experience_level: value, page: 1 }))}>
@@ -170,13 +169,13 @@ export default function JobsPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 mb-4">{job.description}</p>
-                
+
                 {job.experience_level && (
                   <div className="mb-3">
                     <Badge variant="outline">{job.experience_level}</Badge>
                   </div>
                 )}
-                
+
                 {job.skills && job.skills.length > 0 && (
                   <div className="space-y-2">
                     <p className="text-sm font-medium">Required Skills:</p>
@@ -190,7 +189,7 @@ export default function JobsPage() {
               </CardContent>
             </Card>
           ))}
-          
+
           {jobsData?.length === 0 && (
             <div className="text-center py-8">
               <p className="text-gray-600">No jobs found matching your criteria.</p>

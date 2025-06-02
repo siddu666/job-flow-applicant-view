@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useAuth } from '@/contexts/auth-context'
@@ -8,7 +7,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 export function Navigation() {
-  const { user, signOut, loading } = useAuth()
+  const { user, loading, signOut } = useAuth()
   const router = useRouter()
 
   const handleSignOut = async () => {
@@ -30,7 +29,7 @@ export function Navigation() {
           <Link href="/" className="text-2xl font-bold text-blue-600">
             JobFlow
           </Link>
-          
+
           <div className="hidden md:flex items-center space-x-8">
             <Link href="/jobs" className="text-gray-700 hover:text-blue-600 transition-colors">
               Jobs
@@ -44,7 +43,7 @@ export function Navigation() {
               </Link>
             )}
           </div>
-          
+
           <div className="flex items-center space-x-4">
             {user ? (
               <>

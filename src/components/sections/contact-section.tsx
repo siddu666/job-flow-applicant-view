@@ -1,4 +1,3 @@
-
 'use client'
 
 import { Button } from '@/components/ui/button'
@@ -18,7 +17,7 @@ export function ContactSection() {
             Have questions? We're here to help you succeed in your job search journey.
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
           {/* Contact Information */}
           <div className="space-y-8">
@@ -39,7 +38,7 @@ export function ContactSection() {
                 </div>
               </div>
             </div>
-            
+
             <div>
               <h4 className="text-lg font-semibold text-gray-900 mb-4">Office Hours</h4>
               <div className="space-y-2 text-gray-600">
@@ -49,7 +48,7 @@ export function ContactSection() {
               </div>
             </div>
           </div>
-          
+
           {/* Contact Form */}
           <Card>
             <CardHeader>

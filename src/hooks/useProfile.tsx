@@ -65,7 +65,7 @@ export function useUploadCV() {
       const fileExt = file.name.split('.').pop()
       const fileName = `${userId}/cv.${fileExt}`
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('documents')
         .upload(fileName, file, {
           upsert: true

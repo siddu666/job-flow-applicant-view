@@ -7,9 +7,6 @@ const PASSWORD_MIN_LENGTH = 8;
 const PASSWORD_REQUIRES_MIXED_CASE = true;
 const PASSWORD_REQUIRES_NUMBERS = true;
 const PASSWORD_REQUIRES_SYMBOLS = true;
-const MAX_LOGIN_ATTEMPTS = 5;
-const LOCKOUT_DURATION_MINUTES = 15;
-const SESSION_EXPIRY_DAYS = 7;
 const SENSITIVE_OPERATIONS_REQUIRE_REAUTH = true;
 
 // Rate limiting
@@ -89,13 +86,13 @@ export const validateFileType = (file: File, allowedMimeTypes: string[]): string
     "image/png",
     "image/webp"
   ];
-  
+
   const fileType = file.type;
-  
+
   if (!allowedTypes.includes(fileType)) {
     throw new Error(`File type ${fileType} is not allowed`);
   }
-  
+
   return fileType;
 };
 
@@ -125,10 +122,10 @@ export const isAuthenticated = async (): Promise<boolean> => {
 
 export const requiresReauthentication = (lastAuthTime: number): boolean => {
   if (!SENSITIVE_OPERATIONS_REQUIRE_REAUTH) return false;
-  
+
   const now = Date.now();
   const authAgeMinutes = (now - lastAuthTime) / (1000 * 60);
-  
+
   // Require re-auth if last authentication was more than 30 minutes ago
   return authAgeMinutes > 30;
 };
@@ -152,15 +149,15 @@ export const validateCSRFToken = (token: string, storedToken: string): boolean =
   if (!token || !storedToken) {
     return false;
   }
-  
+
   // Use constant-time comparison to prevent timing attacks
   let result = token.length === storedToken.length;
   let diff = 0;
-  
+
   for (let i = 0; i < token.length && i < storedToken.length; i++) {
     diff |= token.charCodeAt(i) ^ storedToken.charCodeAt(i);
   }
-  
+
   return result && diff === 0;
 };
 

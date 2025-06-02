@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { useJobRecommendations } from "@/hooks/useJobRecommendations";
@@ -82,7 +81,7 @@ const JobRecommendations = () => {
                   </div>
                 </div>
               </CardHeader>
-              
+
               <CardContent className="space-y-3">
                 <div className="flex items-center gap-4 text-sm text-gray-600">
                   <div className="flex items-center gap-1">
@@ -90,7 +89,7 @@ const JobRecommendations = () => {
                     {job.location}
                   </div>
                 </div>
-                  
+
                 <p className="text-sm text-gray-700 line-clamp-3">
                   {job.description}
                 </p>

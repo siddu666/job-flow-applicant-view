@@ -78,15 +78,11 @@ function ApplyPageContent() {
     }
   };
 
-  const addSkill = (skill: string) => {
-    if (skill && !formData.skills.includes(skill)) {
-      setFormData(prev => ({ ...prev, skills: [...prev.skills, skill] }));
-    }
-  };
-
   const removeSkill = (skill: string) => {
     setFormData(prev => ({ ...prev, skills: prev.skills.filter(s => s !== skill) }));
   };
+
+  const [, setAddSkill] = useState('')
 
   if (authLoading || profileLoading || jobLoading) {
     return (

@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Upload, Plus, X, User, FileText, Briefcase, MapPin } from "lucide-react";
+import { Upload, Plus, X, User, FileText, Briefcase } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 
