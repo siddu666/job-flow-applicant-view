@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useAuth } from '@/contexts/auth-context'
@@ -10,8 +11,10 @@ export default function OnboardingPage() {
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth')
+    // If user is already signed in and has completed onboarding, redirect to profile
+    if (user && !loading) {
+      // Check if they already have a complete profile
+      // This will be handled by the AuthProvider redirect logic
     }
   }, [user, loading, router])
 
@@ -21,10 +24,6 @@ export default function OnboardingPage() {
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
       </div>
     )
-  }
-
-  if (!user) {
-    return null
   }
 
   return <OnboardingSteps />

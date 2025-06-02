@@ -135,3 +135,6 @@ export function useDeleteCV() {
     }
   })
 }
+
+// Export default for easier imports
+export { useProfile as default }
