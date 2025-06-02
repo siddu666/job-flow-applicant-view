@@ -71,6 +71,46 @@ export const useUpdateProfile = () => {
   })
 }
 
+export const useUploadCV = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ id, file }: { id: string; file: File }) => {
+      // For now, we'll simulate file upload since storage isn't configured
+      // In a real implementation, this would upload to Supabase storage
+      const fileName = `cv_${id}_${Date.now()}.${file.name.split('.').pop()}`
+      const mockUrl = `https://example.com/uploads/${fileName}`
+      
+      // Simulate upload delay
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      return mockUrl
+    },
+    onSuccess: (url, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ['profile', id] })
+    },
+  })
+}
+
+export const useDeleteUserData = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const { data, error } = await supabase.rpc('delete_user_data', {
+        user_id_to_delete: userId
+      })
+
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] })
+      queryClient.invalidateQueries({ queryKey: ['candidates'] })
+    },
+  })
+}
+
 export const useAllCandidates = (filters?: any) => {
   return useQuery({
     queryKey: ['candidates', filters],

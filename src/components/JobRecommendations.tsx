@@ -50,61 +50,77 @@ const JobRecommendations = () => {
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {recommendedJobs.map((job) => (
-          <Card key={job.id} className="hover:shadow-md transition-shadow">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-lg line-clamp-2">{job.title}</CardTitle>
-                  <div className="flex items-center gap-1 mt-1 text-sm text-gray-600">
-                    <Building2 className="h-4 w-4" />
-                    <span>Justera Group AB</span>
+        {recommendedJobs.map((job) => {
+          // Parse requirements if it's a string, otherwise use as array
+          let requirementsArray: string[] = [];
+          if (typeof job.requirements === 'string') {
+            try {
+              // Try to parse as JSON first
+              requirementsArray = JSON.parse(job.requirements);
+            } catch {
+              // If not JSON, split by common delimiters
+              requirementsArray = job.requirements.split(/[,;]\s*/).filter(req => req.trim());
+            }
+          } else if (Array.isArray(job.requirements)) {
+            requirementsArray = job.requirements;
+          }
+
+          return (
+            <Card key={job.id} className="hover:shadow-md transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="text-lg line-clamp-2">{job.title}</CardTitle>
+                    <div className="flex items-center gap-1 mt-1 text-sm text-gray-600">
+                      <Building2 className="h-4 w-4" />
+                      <span>Justera Group AB</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
+                    <Star className="h-3 w-3" />
+                    {job.match_score}% match
                   </div>
                 </div>
-                <div className="flex items-center gap-1 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
-                  <Star className="h-3 w-3" />
-                  {job.match_score}% match
+              </CardHeader>
+              
+              <CardContent className="space-y-3">
+                <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    {job.location}
+                  </div>
                 </div>
-              </div>
-            </CardHeader>
-            
-            <CardContent className="space-y-3">
-              <div className="flex items-center gap-4 text-sm text-gray-600">
-                <div className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
-                  {job.location}
-                </div>
-              </div>
-                
-              <p className="text-sm text-gray-700 line-clamp-3">
-                {job.description}
-              </p>
+                  
+                <p className="text-sm text-gray-700 line-clamp-3">
+                  {job.description}
+                </p>
 
-              {job.requirements && Array.isArray(job.requirements) && job.requirements.length > 0 && (
-                <div className="flex flex-wrap gap-1">
-                  {job.requirements.slice(0, 3).map((skill: string, index: number) => (
-                    <Badge key={index} variant="outline" className="text-xs">
-                      {skill}
-                    </Badge>
-                  ))}
-                  {job.requirements.length > 3 && (
-                    <Badge variant="outline" className="text-xs">
-                      +{job.requirements.length - 3} more
-                    </Badge>
-                  )}
-                </div>
-              )}
+                {requirementsArray.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {requirementsArray.slice(0, 3).map((skill: string, index: number) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {skill}
+                      </Badge>
+                    ))}
+                    {requirementsArray.length > 3 && (
+                      <Badge variant="outline" className="text-xs">
+                        +{requirementsArray.length - 3} more
+                      </Badge>
+                    )}
+                  </div>
+                )}
 
-              <div className="pt-2">
-                <Link href={`/apply/${job.id}`}>
-                  <Button className="w-full">
-                    Apply Now
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                <div className="pt-2">
+                  <Link href={`/apply/${job.id}`}>
+                    <Button className="w-full">
+                      Apply Now
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       <Card>
