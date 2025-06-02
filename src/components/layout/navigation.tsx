@@ -1,14 +1,19 @@
 'use client'
 
+import { useState } from 'react'
+import Link from 'next/link'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
+import { Menu, X } from 'lucide-react'
 import { toast } from 'sonner'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 export function Navigation() {
-  const { user, signOut, loading } = useAuth()
+  const { user, signOut } = useAuth()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const router = useRouter()
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
   const handleSignOut = async () => {
     try {
@@ -19,57 +24,6 @@ export function Navigation() {
       toast.error('Failed to sign out')
     }
   }
-
-  if (loading) return null
-
-  return (
-    <nav className="bg-white shadow-sm border-b">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          <Link href="/" className="text-xl font-bold text-blue-600">
-            JobFlow
-          </Link>
-
-          {user ? (
-            <div className="flex items-center space-x-4">
-              <Link href="/profile">
-                <Button variant="ghost">Profile</Button>
-              </Link>
-              <Link href="/jobs">
-                <Button variant="ghost">Jobs</Button>
-              </Link>
-              {user.user_metadata?.role === 'admin' && (
-                <Link href="/admin">
-                  <Button variant="ghost">Admin</Button>
-                </Link>
-              )}
-              <Button onClick={handleSignOut} variant="outline">
-                Sign Out
-              </Button>
-            </div>
-          ) : (
-            <Link href="/auth">
-              <Button>Sign In</Button>
-            </Link>
-          )}
-        </div>
-      </div>
-    </nav>
-  )
-}
-'use client'
-
-import { useState } from 'react'
-import Link from 'next/link'
-import { useAuth } from '@/contexts/auth-context'
-import { Button } from '@/components/ui/button'
-import { Menu, X } from 'lucide-react'
-
-export function Navigation() {
-  const { user, logout } = useAuth()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
   return (
     <nav className="bg-white shadow-sm border-b">
@@ -94,7 +48,7 @@ export function Navigation() {
                     Admin
                   </Link>
                 )}
-                <Button onClick={logout} variant="outline">
+                <Button onClick={handleSignOut} variant="outline">
                   Logout
                 </Button>
               </>
@@ -142,7 +96,7 @@ export function Navigation() {
                       Admin
                     </Link>
                   )}
-                  <Button onClick={logout} variant="outline" className="w-fit">
+                  <Button onClick={handleSignOut} variant="outline" className="w-fit">
                     Logout
                   </Button>
                 </>

@@ -1,4 +1,3 @@
-
 'use client'
 
 import { Button } from '@/components/ui/button'
@@ -18,94 +17,59 @@ export function HeroSection() {
             <span className="text-blue-600">JobFlow</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Connect with top employers and discover opportunities that match your skills. 
-            Our platform streamlines the job application process for both candidates and recruiters.
+            Connect with top employers and discover opportunities that match your skills and aspirations. Your next career move starts here.
           </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             {user ? (
               <>
-                <Link href="/jobs">
-                  <Button size="lg" className="w-full sm:w-auto">
-                    Browse Jobs
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link href="/profile">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                    View Profile
-                  </Button>
-                </Link>
+                <Button asChild size="lg" className="text-lg px-8">
+                  <Link href="/jobs">
+                    Browse Jobs <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="text-lg px-8">
+                  <Link href="/profile">View Profile</Link>
+                </Button>
               </>
             ) : (
               <>
-                <Link href="/auth">
-                  <Button size="lg" className="w-full sm:w-auto">
-                    Get Started
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link href="/jobs">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                    Browse Jobs
-                  </Button>
-                </Link>
+                <Button asChild size="lg" className="text-lg px-8">
+                  <Link href="/auth">
+                    Get Started <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="text-lg px-8">
+                  <Link href="/jobs">Browse Jobs</Link>
+                </Button>
               </>
             )}
           </div>
 
+          {/* Stats Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
             <div className="text-center">
-              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-blue-600" />
+              <div className="flex justify-center mb-4">
+                <Users className="h-12 w-12 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">10,000+ Candidates</h3>
-              <p className="text-gray-600">Connect with talented professionals</p>
+              <div className="text-3xl font-bold text-gray-900 mb-2">10,000+</div>
+              <div className="text-gray-600">Active Job Seekers</div>
             </div>
-            
             <div className="text-center">
-              <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Briefcase className="h-8 w-8 text-green-600" />
+              <div className="flex justify-center mb-4">
+                <Briefcase className="h-12 w-12 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">5,000+ Jobs</h3>
-              <p className="text-gray-600">Opportunities across all industries</p>
+              <div className="text-3xl font-bold text-gray-900 mb-2">5,000+</div>
+              <div className="text-gray-600">Job Opportunities</div>
             </div>
-            
             <div className="text-center">
-              <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="h-8 w-8 text-purple-600" />
+              <div className="flex justify-center mb-4">
+                <TrendingUp className="h-12 w-12 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">95% Success Rate</h3>
-              <p className="text-gray-600">High placement success</p>
+              <div className="text-3xl font-bold text-gray-900 mb-2">95%</div>
+              <div className="text-gray-600">Success Rate</div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-'use client'
-
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
-
-export function HeroSection() {
-  return (
-    <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
-      <div className="container mx-auto px-4 text-center">
-        <h1 className="text-5xl font-bold mb-6">
-          Find Your Dream Career
-        </h1>
-        <p className="text-xl mb-8 max-w-2xl mx-auto">
-          Connect with top employers and discover opportunities that match your skills and aspirations.
-        </p>
-        <div className="space-x-4">
-          <Button asChild size="lg">
-            <Link href="/jobs">Browse Jobs</Link>
-          </Button>
-          <Button asChild variant="outline" size="lg" className="text-white border-white hover:bg-white hover:text-blue-600">
-            <Link href="/auth">Sign Up</Link>
-          </Button>
         </div>
       </div>
     </section>

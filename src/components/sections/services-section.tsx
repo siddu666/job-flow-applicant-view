@@ -1,4 +1,3 @@
-
 'use client'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -18,13 +17,13 @@ export function ServicesSection() {
     },
     {
       icon: FileText,
-      title: 'Application Tracking',
-      description: 'Track all your applications in one place and get real-time updates on your application status.'
+      title: 'Resume Builder',
+      description: 'Create professional resumes with our advanced builder tools and templates designed for success.'
     },
     {
       icon: Award,
-      title: 'Skill Assessment',
-      description: 'Validate your skills with our comprehensive assessment tools and showcase your expertise.'
+      title: 'Career Coaching',
+      description: 'Personalized career coaching sessions to help you navigate your career path and achieve your goals.'
     }
   ]
 
@@ -34,79 +33,23 @@ export function ServicesSection() {
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Services</h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Comprehensive solutions to help you succeed in your job search journey
+            Comprehensive tools and services to accelerate your job search and career growth.
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {services.map((service, index) => {
-            const IconComponent = service.icon
-            return (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <IconComponent className="h-8 w-8 text-blue-600" />
-                  </div>
-                  <CardTitle className="text-xl">{service.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-600">
-                    {service.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
-      </div>
-    </section>
-  )
-}
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Briefcase, Users, Target, Award } from 'lucide-react'
-
-export function ServicesSection() {
-  const services = [
-    {
-      icon: Briefcase,
-      title: 'Job Matching',
-      description: 'Our AI-powered algorithm matches you with the perfect job opportunities based on your skills and preferences.'
-    },
-    {
-      icon: Users,
-      title: 'Career Guidance',
-      description: 'Get personalized career advice and mentorship from industry experts to accelerate your professional growth.'
-    },
-    {
-      icon: Target,
-      title: 'Skill Assessment',
-      description: 'Comprehensive skill evaluations to help you identify strengths and areas for improvement.'
-    },
-    {
-      icon: Award,
-      title: 'Certification Programs',
-      description: 'Access industry-recognized certification programs to enhance your qualifications and marketability.'
-    }
-  ]
-
-  return (
-    <section className="py-20 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Our Services</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            We provide comprehensive career solutions to help you succeed in your professional journey.
-          </p>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {services.map((service, index) => (
             <Card key={index} className="text-center hover:shadow-lg transition-shadow">
               <CardHeader>
-                <service.icon className="w-12 h-12 mx-auto text-blue-600 mb-4" />
-                <CardTitle>{service.title}</CardTitle>
+                <div className="mx-auto mb-4 p-3 bg-blue-100 rounded-full w-fit">
+                  <service.icon className="h-8 w-8 text-blue-600" />
+                </div>
+                <CardTitle className="text-xl">{service.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">{service.description}</p>
+                <CardDescription className="text-gray-600">
+                  {service.description}
+                </CardDescription>
               </CardContent>
             </Card>
           ))}

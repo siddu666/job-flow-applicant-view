@@ -1,4 +1,3 @@
-
 'use client'
 
 import { Button } from '@/components/ui/button'
@@ -24,110 +23,41 @@ export function AboutSection() {
               Why Choose JobFlow?
             </h2>
             <p className="text-lg text-gray-600 mb-8">
-              We're not just another job board. JobFlow is a comprehensive platform 
-              that streamlines the entire job search and recruitment process, making 
-              it easier for talented professionals to connect with forward-thinking companies.
+              We're revolutionizing the job search experience with cutting-edge technology 
+              and personalized service. Our platform connects talented professionals with 
+              their ideal career opportunities.
             </p>
-            
+
             <div className="space-y-4 mb-8">
               {features.map((feature, index) => (
-                <div key={index} className="flex items-center space-x-3">
-                  <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                <div key={index} className="flex items-center">
+                  <CheckCircle className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
                   <span className="text-gray-700">{feature}</span>
                 </div>
               ))}
             </div>
-            
-            <Link href="/auth">
-              <Button size="lg">
-                Get Started Today
-              </Button>
-            </Link>
+
+            <Button asChild size="lg">
+              <Link href="/auth">Get Started Today</Link>
+            </Button>
           </div>
-          
-          <div className="lg:pl-8">
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8">
-              <div className="grid grid-cols-2 gap-6 text-center">
+
+          <div className="relative">
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-8 text-white">
+              <h3 className="text-2xl font-bold mb-4">Join Thousands of Success Stories</h3>
+              <p className="text-blue-100 mb-6">
+                "JobFlow helped me find my dream job in just 2 weeks. The AI matching 
+                technology is incredible!"
+              </p>
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-white/20 rounded-full mr-4"></div>
                 <div>
-                  <div className="text-3xl font-bold text-blue-600 mb-2">10K+</div>
-                  <div className="text-gray-600">Active Candidates</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-green-600 mb-2">5K+</div>
-                  <div className="text-gray-600">Open Positions</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-purple-600 mb-2">500+</div>
-                  <div className="text-gray-600">Partner Companies</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-orange-600 mb-2">95%</div>
-                  <div className="text-gray-600">Success Rate</div>
+                  <div className="font-semibold">Sarah Johnson</div>
+                  <div className="text-blue-200 text-sm">Software Engineer</div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-import { Card, CardContent } from '@/components/ui/card'
-import { CheckCircle } from 'lucide-react'
-
-export function AboutSection() {
-  const features = [
-    'Advanced AI matching technology',
-    'Comprehensive skill assessments',
-    'Industry expert mentorship',
-    'Real-time job market insights',
-    'Professional development resources',
-    'Secure and confidential platform'
-  ]
-
-  return (
-    <section className="py-20 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-4xl font-bold mb-6">About Our Platform</h2>
-            <p className="text-gray-600 mb-8 text-lg">
-              We are dedicated to revolutionizing the job search experience by connecting 
-              talented professionals with their ideal career opportunities. Our platform 
-              leverages cutting-edge technology and human expertise to create meaningful 
-              professional connections.
-            </p>
-            <div className="space-y-4">
-              {features.map((feature) => (
-                <div key={feature} className="flex items-center space-x-3">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
-                  <span className="text-gray-700">{feature}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <Card className="lg:ml-8">
-            <CardContent className="p-8">
-              <div className="grid grid-cols-2 gap-8 text-center">
-                <div>
-                  <div className="text-3xl font-bold text-blue-600 mb-2">10K+</div>
-                  <div className="text-gray-600">Active Jobs</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-blue-600 mb-2">50K+</div>
-                  <div className="text-gray-600">Professionals</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-blue-600 mb-2">500+</div>
-                  <div className="text-gray-600">Companies</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-blue-600 mb-2">95%</div>
-                  <div className="text-gray-600">Success Rate</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </section>
