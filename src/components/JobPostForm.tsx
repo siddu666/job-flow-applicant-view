@@ -314,3 +314,196 @@ const JobPostForm = ({ onClose }: JobPostFormProps) => {
 };
 
 export default JobPostForm;
+'use client'
+
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Badge } from '@/components/ui/badge'
+import { X } from 'lucide-react'
+
+interface JobPostFormProps {
+  onSubmit: (jobData: any) => void
+  onCancel: () => void
+  initialData?: any
+}
+
+export function JobPostForm({ onSubmit, onCancel, initialData }: JobPostFormProps) {
+  const [formData, setFormData] = useState({
+    title: initialData?.title || '',
+    company: initialData?.company || '',
+    location: initialData?.location || '',
+    type: initialData?.type || '',
+    salary_range: initialData?.salary_range || '',
+    description: initialData?.description || '',
+    requirements: initialData?.requirements || '',
+    experience_level: initialData?.experience_level || '',
+    skills: initialData?.skills || [],
+  })
+
+  const [skillInput, setSkillInput] = useState('')
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const addSkill = () => {
+    if (skillInput.trim() && !formData.skills.includes(skillInput.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        skills: [...prev.skills, skillInput.trim()]
+      }))
+      setSkillInput('')
+    }
+  }
+
+  const removeSkill = (skillToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      skills: prev.skills.filter(skill => skill !== skillToRemove)
+    }))
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    onSubmit(formData)
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="title">Job Title *</Label>
+          <Input
+            id="title"
+            value={formData.title}
+            onChange={(e) => handleInputChange('title', e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="company">Company *</Label>
+          <Input
+            id="company"
+            value={formData.company}
+            onChange={(e) => handleInputChange('company', e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="location">Location *</Label>
+          <Input
+            id="location"
+            value={formData.location}
+            onChange={(e) => handleInputChange('location', e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="type">Job Type *</Label>
+          <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select job type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="full-time">Full Time</SelectItem>
+              <SelectItem value="part-time">Part Time</SelectItem>
+              <SelectItem value="contract">Contract</SelectItem>
+              <SelectItem value="freelance">Freelance</SelectItem>
+              <SelectItem value="internship">Internship</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="salary_range">Salary Range</Label>
+          <Input
+            id="salary_range"
+            value={formData.salary_range}
+            onChange={(e) => handleInputChange('salary_range', e.target.value)}
+            placeholder="e.g., 50,000 - 70,000 SEK"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="experience_level">Experience Level</Label>
+          <Select value={formData.experience_level} onValueChange={(value) => handleInputChange('experience_level', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select experience level" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="entry">Entry Level</SelectItem>
+              <SelectItem value="mid">Mid Level</SelectItem>
+              <SelectItem value="senior">Senior Level</SelectItem>
+              <SelectItem value="lead">Lead</SelectItem>
+              <SelectItem value="executive">Executive</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="description">Job Description *</Label>
+        <Textarea
+          id="description"
+          value={formData.description}
+          onChange={(e) => handleInputChange('description', e.target.value)}
+          rows={4}
+          required
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="requirements">Requirements *</Label>
+        <Textarea
+          id="requirements"
+          value={formData.requirements}
+          onChange={(e) => handleInputChange('requirements', e.target.value)}
+          rows={4}
+          required
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Skills</Label>
+        <div className="flex space-x-2">
+          <Input
+            value={skillInput}
+            onChange={(e) => setSkillInput(e.target.value)}
+            placeholder="Add a skill"
+            onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
+          />
+          <Button type="button" onClick={addSkill}>Add</Button>
+        </div>
+        {formData.skills.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-2">
+            {formData.skills.map((skill, index) => (
+              <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                {skill}
+                <X 
+                  className="h-3 w-3 cursor-pointer" 
+                  onClick={() => removeSkill(skill)}
+                />
+              </Badge>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="flex space-x-4">
+        <Button type="submit" className="flex-1">
+          {initialData ? 'Update Job' : 'Post Job'}
+        </Button>
+        <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
+          Cancel
+        </Button>
+      </div>
+    </form>
+  )
+}

@@ -1,159 +1,132 @@
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/auth-context";
+import { Database } from "@/integrations/supabase/types";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '@/integrations/supabase/client'
-import { TablesInsert, TablesUpdate } from '@/integrations/supabase/types'
+type Profile = Database['public']['Tables']['profiles']['Row'];
+type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
+type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
 
-export interface Profile {
-  id: string
-  updated_at: string | null
-  expected_salary_sek: number | null
-  preferred_cities: string[] | null
-  availability: string | null
-  skills: string[] | null
-  portfolio_url: string | null
-  certifications: string[] | null
-  linkedin_url: string | null
-  github_url: string | null
-  email: string | null
-  role: string | null
-  phone: string | null
-  first_name: string | null
-  last_name: string | null
-  current_location: string | null
-  job_seeking_status: string | null
-  cv_url: string | null
-  bio: string | null
-  experience_years: number | null
-  created_at: string | null
-  willing_to_relocate: boolean | null
-}
+export const useProfile = () => {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
 
-type ProfileInsert = TablesInsert<'profiles'>
-type ProfileUpdate = TablesUpdate<'profiles'>
-
-export const useProfile = (userId?: string) => {
-  return useQuery({
-    queryKey: ['profile', userId],
+  // Get current user's profile
+  const {
+    data: profile,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["profile", user?.id],
     queryFn: async () => {
-      if (!userId) return null
+      if (!user?.id) throw new Error("No user");
 
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single()
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
 
-      if (error) throw error
-      return data as Profile
+      if (error) throw error;
+      return data as Profile;
     },
-    enabled: !!userId,
-  })
-}
+    enabled: !!user?.id,
+  });
 
-export const useUpdateProfile = () => {
-  const queryClient = useQueryClient()
+  // Create or update profile
+  const updateProfileMutation = useMutation({
+    mutationFn: async (profileData: Partial<ProfileUpdate>) => {
+      if (!user?.id) throw new Error("No user");
 
-  return useMutation({
-    mutationFn: async ({ id, updates }: { id: string; updates: ProfileUpdate }) => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single()
+      // Check if profile exists
+      const { data: existingProfile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("id", user.id)
+        .single();
 
-      if (error) throw error
-      return data
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['profile', data.id] })
-    },
-  })
-}
+      if (existingProfile) {
+        // Update existing profile
+        const { data, error } = await supabase
+          .from("profiles")
+          .update({
+            ...profileData,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", user.id)
+          .select()
+          .single();
 
-export const useUploadCV = () => {
-  const queryClient = useQueryClient()
+        if (error) throw error;
+        return data;
+      } else {
+        // Create new profile
+        const { data, error } = await supabase
+          .from("profiles")
+          .insert({
+            id: user.id,
+            email: user.email!,
+            ...profileData,
+            created_at: new Date().toISOString(),
+          })
+          .select()
+          .single();
 
-  return useMutation({
-    mutationFn: async ({ id, file }: { id: string; file: File }) => {
-      // For now, we'll simulate file upload since storage isn't configured
-      // In a real implementation, this would upload to Supabase storage
-      const fileName = `cv_${id}_${Date.now()}.${file.name.split('.').pop()}`
-      const mockUrl = `https://example.com/uploads/${fileName}`
-      
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      return mockUrl
-    },
-    onSuccess: (url, { id }) => {
-      queryClient.invalidateQueries({ queryKey: ['profile', id] })
-    },
-  })
-}
-
-export const useDeleteUserData = () => {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async (userId: string) => {
-      const { data, error } = await supabase.rpc('delete_user_data', {
-        user_id_to_delete: userId
-      })
-
-      if (error) throw error
-      return data
+        if (error) throw error;
+        return data;
+      }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile'] })
-      queryClient.invalidateQueries({ queryKey: ['candidates'] })
+      queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
+      toast.success("Profile updated successfully");
     },
-  })
-}
-
-export const useAllCandidates = (filters?: any) => {
-  return useQuery({
-    queryKey: ['candidates', filters],
-    queryFn: async () => {
-      let query = supabase
-        .from('profiles')
-        .select('*', { count: 'exact' })
-
-      if (filters?.search) {
-        query = query.or(`first_name.ilike.%${filters.search}%,last_name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`)
-      }
-
-      if (filters?.skills && filters.skills.length > 0) {
-        query = query.contains('skills', filters.skills)
-      }
-
-      if (filters?.experience_years) {
-        query = query.gte('experience_years', filters.experience_years)
-      }
-
-      if (filters?.location) {
-        query = query.ilike('current_location', `%${filters.location}%`)
-      }
-
-      if (filters?.job_seeking_status) {
-        query = query.eq('job_seeking_status', filters.job_seeking_status)
-      }
-
-      const page = filters?.page || 1
-      const limit = filters?.limit || 10
-      const from = (page - 1) * limit
-      const to = from + limit - 1
-
-      query = query.range(from, to)
-
-      const { data, error, count } = await query
-
-      if (error) throw error
-
-      return {
-        data: data as Profile[],
-        total: count || 0,
-      }
+    onError: (error) => {
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile");
     },
-  })
-}
+  });
+
+  // Upload CV file
+  const uploadCVMutation = useMutation({
+    mutationFn: async (file: File) => {
+      if (!user?.id) throw new Error("No user");
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/cv.${fileExt}`;
+
+      const { data, error } = await supabase.storage
+        .from('documents')
+        .upload(fileName, file, { upsert: true });
+
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from('documents')
+        .getPublicUrl(fileName);
+
+      // Update profile with CV URL
+      await updateProfileMutation.mutateAsync({ cv_url: urlData.publicUrl });
+
+      return urlData.publicUrl;
+    },
+    onSuccess: () => {
+      toast.success("CV uploaded successfully");
+    },
+    onError: (error) => {
+      console.error("Error uploading CV:", error);
+      toast.error("Failed to upload CV");
+    },
+  });
+
+  return {
+    profile,
+    isLoading,
+    error,
+    updateProfile: updateProfileMutation.mutate,
+    updateProfileAsync: updateProfileMutation.mutateAsync,
+    isUpdating: updateProfileMutation.isPending,
+    uploadCV: uploadCVMutation.mutate,
+    isUploadingCV: uploadCVMutation.isPending,
+  };
+};
