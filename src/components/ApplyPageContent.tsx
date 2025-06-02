@@ -126,10 +126,6 @@ function ApplyPageContent() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div>
-                  <h3 className="text-2xl font-bold">{job.title}</h3>
-                  <p className="text-gray-600">{job.company} • {job.location}</p>
-                </div>
                 
                 <div className="flex items-center gap-4 text-sm text-gray-600">
                   <div className="flex items-center gap-1">
@@ -140,12 +136,6 @@ function ApplyPageContent() {
                     <Clock className="h-4 w-4" />
                     {job.type}
                   </div>
-                  {job.salary && (
-                    <div className="flex items-center gap-1">
-                      <DollarSign className="h-4 w-4" />
-                      {job.salary}
-                    </div>
-                  )}
                 </div>
 
                 <div>

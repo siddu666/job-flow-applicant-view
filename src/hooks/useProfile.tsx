@@ -61,32 +61,44 @@ export function useUploadCV() {
 
   return useMutation({
     mutationFn: async ({ userId, file }: { userId: string; file: File }) => {
-      // Upload file to Supabase storage
       const fileExt = file.name.split('.').pop()
       const fileName = `${userId}/cv.${fileExt}`
 
+      // Upload file to Supabase storage
       const { error: uploadError } = await supabase.storage
-        .from('documents')
-        .upload(fileName, file, {
-          upsert: true
-        })
+          .from('documents')
+          .upload(fileName, file, {
+            upsert: true,
+          })
 
-      if (uploadError) throw uploadError
+      if (uploadError) {
+        console.error('Upload error:', uploadError)
+        throw uploadError
+      }
+      
+      const response = await supabase.storage
+          .from('documents')
+          .createSignedUrl(fileName, 3600)
+      
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('documents')
-        .getPublicUrl(fileName)
+      if (response.error || !response.data?.signedUrl) {
+        console.error('Error generating signed URL:', response.error)
+        throw new Error(`Failed to generate signed URL: ${response.error?.message}`)
+      }
 
       // Update profile with CV URL
       const { data, error } = await supabase
-        .from('profiles')
-        .update({ cv_url: publicUrl })
-        .eq('id', userId)
-        .select()
-        .single()
+          .from('profiles')
+          .update({ cv_url: response.data?.signedUrl })
+          .eq('id', userId)
+          .select()
+          .single()
 
-      if (error) throw error
+      if (error) {
+        console.error('Profile update error:', error)
+        throw error
+      }
+
       return data as Profile
     },
     onSuccess: (data) => {
@@ -97,7 +109,7 @@ export function useUploadCV() {
     onError: (error) => {
       console.error('CV upload error:', error)
       toast.error('Failed to upload CV')
-    }
+    },
   })
 }
 
@@ -106,6 +118,7 @@ export function useDeleteCV() {
 
   return useMutation({
     mutationFn: async (userId: string) => {
+      
       // Remove CV URL from profile
       const { data, error } = await supabase
         .from('profiles')

@@ -185,45 +185,47 @@ const CandidateProfile = () => {
     if (!user?.id) return;
 
     await updateProfile.mutateAsync({
-      id: user.id,
+      userId: user.id, // ✅ Correct key
       updates: formData,
     });
+
     setIsEditing(false);
   };
-
+  
   const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!user?.id || !file) return;
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error("File size must be less than 10MB");
-        return;
-      }
 
-      const allowedTypes = [
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      ];
-      if (!allowedTypes.includes(file.type)) {
-        toast.error("Only PDF and Word documents are allowed");
-        return;
-      }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size must be less than 10MB");
+      return;
+    }
 
-      try {
-        const url = await uploadCV.mutateAsync({ id: user.id, file });
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
 
-        await updateProfile.mutateAsync({
-          id: user.id,
-          updates: {
-            ...formData,
-            cv_url: url,
-          },
-        });
-      } catch (error) {
-        console.error("Error uploading CV:", error);
-        toast.error("Failed to upload CV. Please try again.");
-      }
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Only PDF and Word documents are allowed");
+      return;
+    }
+
+    try {
+      const updatedProfile = await uploadCV.mutateAsync({ userId: user.id, file });
+
+
+      await updateProfile.mutateAsync({
+        userId:user.id,
+        updates: {
+          ...formData,
+          cv_url: updatedProfile.cv_url,
+        },
+      });
+    } catch (error) {
+      console.error("Error uploading CV:", error);
+      toast.error("Failed to upload CV. Please try again.");
     }
   };
 

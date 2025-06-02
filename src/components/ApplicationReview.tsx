@@ -10,38 +10,38 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, User, Phone, FileText, ExternalLink, Mail } from "lucide-react";
 
-// Define a type for the application data
+// Define types based on the database schema
 interface Application {
-  id: string;
-  full_name: string;
-  email: string;
-  phone: string | null;
-  availability: string | null;
-  skills: string[] | null;
-  status: string | null;
-  cv_url: string | null;
-  cover_letter: string | null;
-  // Add other fields as necessary
+  job_id: string;
+  applicant_id: string;
+  cover_letter?: string | null;
+  created_at?: string | null;
+  cv_url?: string | null;
+  status?: string | null;
+  // Extended fields that would come from joins with applicants/users table
+  applicant?: {
+    id: string;
+    full_name?: string;
+    email?: string;
+    phone?: string;
+    availability?: string;
+    skills?: string[];
+  };
 }
 
-export const ApplicationReview = () => {
-  const { applications = [], isLoading, updateApplicationStatus } = useApplications();
-  const [selectedApp, setSelectedApp] = useState<Application | null>(null);
-  const [statusFilter, setStatusFilter] = useState("all");
+// Define status type for better type safety
+type ApplicationStatus = "pending" | "under_review" | "interview_scheduled" | "accepted" | "rejected";
 
-  const filteredApplications = applications.filter(app =>
+export const ApplicationReview = () => {
+  const { applications = [], isLoading } = useApplications();
+  const [selectedApp, setSelectedApp] = useState<Application | null>(null);
+  const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all');
+
+  const filteredApplications = applications.filter((app: Application) =>
       statusFilter === "all" || app.status === statusFilter
   );
 
-  const handleStatusUpdate = async (applicationId: string, newStatus: string) => {
-    try {
-      await updateApplicationStatus({ applicationId, status: newStatus });
-    } catch (error) {
-      console.error("Error updating application status:", error);
-    }
-  };
-
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): string => {
     switch (status) {
       case "pending": return "bg-yellow-100 text-yellow-800";
       case "under_review": return "bg-blue-100 text-blue-800";
@@ -52,27 +52,51 @@ export const ApplicationReview = () => {
     }
   };
 
+  const formatStatus = (status: string): string => {
+    return status?.replace('_', ' ').toUpperCase() || "PENDING";
+  };
+
+  const handleViewDetails = (application: Application) => {
+    setSelectedApp(application);
+    // Auto-switch to detail tab when viewing details
+    const detailTab = document.querySelector('[data-value="detail"]') as HTMLElement;
+    if (detailTab) {
+      detailTab.click();
+    }
+  };
+
   if (isLoading) {
-    return <div className="flex items-center justify-center p-8">Loading applications...</div>;
+    return (
+        <div className="flex items-center justify-center p-8">
+          <div className="text-center">
+            <div className="animate-pulse text-gray-500">Loading applications...</div>
+          </div>
+        </div>
+    );
   }
 
   return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Application Reviews</h2>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Applications</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="under_review">Under Review</SelectItem>
-              <SelectItem value="interview_scheduled">Interview Scheduled</SelectItem>
-              <SelectItem value="accepted">Accepted</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600">
+              {filteredApplications.length} application{filteredApplications.length !== 1 ? 's' : ''}
+            </span>
+            <Select value={statusFilter} onValueChange={(value: string) => setStatusFilter(value as ApplicationStatus | 'all')}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Applications</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="under_review">Under Review</SelectItem>
+                <SelectItem value="interview_scheduled">Interview Scheduled</SelectItem>
+                <SelectItem value="accepted">Accepted</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <Tabs defaultValue="list" className="w-full">
@@ -85,55 +109,76 @@ export const ApplicationReview = () => {
             {filteredApplications.length === 0 ? (
                 <Card>
                   <CardContent className="p-8 text-center">
-                    <p className="text-gray-500">No applications found.</p>
+                    <p className="text-gray-500">
+                      {statusFilter === "all"
+                          ? "No applications found."
+                          : `No applications with status "${formatStatus(statusFilter)}".`
+                      }
+                    </p>
                   </CardContent>
                 </Card>
             ) : (
-                filteredApplications.map((application) => (
-                    <Card key={application.id} className="cursor-pointer hover:shadow-md transition-shadow">
+                filteredApplications.map((application: Application) => (
+                    <Card key={`${application.job_id}-${application.applicant_id}`} className="cursor-pointer hover:shadow-md transition-shadow">
                       <CardContent className="p-6">
                         <div className="flex items-start justify-between">
                           <div className="flex items-start space-x-4">
                             <Avatar>
-                              <AvatarImage src={`https://avatar.vercel.sh/${application.email}.png`} />
+                              <AvatarImage src={`https://avatar.vercel.sh/${application.applicant?.email}.png`} />
                               <AvatarFallback>
-                                {`${application.full_name?.[0] || ''}`.toUpperCase()}
+                                {application.applicant?.full_name?.[0]?.toUpperCase() || 'A'}
                               </AvatarFallback>
                             </Avatar>
 
                             <div className="space-y-2">
+                              <h3 className="font-semibold text-lg">
+                                {application.applicant?.full_name || 'Anonymous Applicant'}
+                              </h3>
+
                               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                                {application.phone && (
+                                {application.applicant?.email && (
                                     <div className="flex items-center gap-1">
-                                      <Phone className="h-3 w-3" />
-                                      {application.phone}
+                                      <Mail className="h-3 w-3" />
+                                      {application.applicant.email}
                                     </div>
                                 )}
-                                {application.availability && (
+                                {application.applicant?.phone && (
+                                    <div className="flex items-center gap-1">
+                                      <Phone className="h-3 w-3" />
+                                      {application.applicant.phone}
+                                    </div>
+                                )}
+                                {application.applicant?.availability && (
                                     <div className="flex items-center gap-1">
                                       <Calendar className="h-3 w-3" />
-                                      Available: {application.availability}
+                                      Available: {application.applicant.availability}
+                                    </div>
+                                )}
+                                {application.created_at && (
+                                    <div className="flex items-center gap-1">
+                                      <Calendar className="h-3 w-3" />
+                                      Applied: {new Date(application.created_at).toLocaleDateString()}
                                     </div>
                                 )}
                               </div>
 
-                              {application.skills && application.skills.length > 0 && (
-                                  <div className="flex flex-wrap gap-1">
-                                    {application.skills.slice(0, 3).map((skill, index) => (
+                              {application.applicant?.skills && application.applicant.skills.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mt-2">
+                                    {application.applicant.skills.slice(0, 3).map((skill, index) => (
                                         <Badge key={index} variant="secondary" className="text-xs">
                                           {skill}
                                         </Badge>
                                     ))}
-                                    {application.skills.length > 3 && (
+                                    {application.applicant.skills.length > 3 && (
                                         <Badge variant="outline" className="text-xs">
-                                          +{application.skills.length - 3} more
+                                          +{application.applicant.skills.length - 3} more
                                         </Badge>
                                     )}
                                   </div>
                               )}
 
                               {application.cv_url && (
-                                  <div className="flex items-center gap-1">
+                                  <div className="flex items-center gap-1 mt-2">
                                     <FileText className="h-4 w-4 text-blue-600" />
                                     <a
                                         href={application.cv_url}
@@ -152,7 +197,7 @@ export const ApplicationReview = () => {
 
                           <div className="space-y-3">
                             <Badge className={getStatusColor(application.status || "pending")}>
-                              {application.status?.replace('_', ' ').toUpperCase() || "PENDING"}
+                              {formatStatus(application.status || "pending")}
                             </Badge>
 
                             <div className="flex gap-2">
@@ -161,7 +206,7 @@ export const ApplicationReview = () => {
                                   size="sm"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    setSelectedApp(application);
+                                    handleViewDetails(application);
                                   }}
                               >
                                 View Details
@@ -179,61 +224,57 @@ export const ApplicationReview = () => {
               <TabsContent value="detail">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Application Details</CardTitle>
+                    <CardTitle className="flex items-center justify-between">
+                      <span>Application Details</span>
+                      <Badge className={getStatusColor(selectedApp.status || "pending")}>
+                        {formatStatus(selectedApp.status || "pending")}
+                      </Badge>
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <h4 className="font-semibold mb-3">Applicant Information</h4>
                         <div className="space-y-2 text-sm">
-                          <div className="flex items-center gap-2">
-                            <User className="h-4 w-4" />
-                            {selectedApp.full_name}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Mail className="h-4 w-4" />
-                            {selectedApp.email}
-                          </div>
-                          {selectedApp.phone && (
+                          {selectedApp.applicant?.full_name && (
                               <div className="flex items-center gap-2">
-                                <Phone className="h-4 w-4" />
-                                {selectedApp.phone}
+                                <User className="h-4 w-4" />
+                                {selectedApp.applicant.full_name}
                               </div>
                           )}
-                          {selectedApp.availability && (
+                          {selectedApp.applicant?.email && (
+                              <div className="flex items-center gap-2">
+                                <Mail className="h-4 w-4" />
+                                {selectedApp.applicant.email}
+                              </div>
+                          )}
+                          {selectedApp.applicant?.phone && (
+                              <div className="flex items-center gap-2">
+                                <Phone className="h-4 w-4" />
+                                {selectedApp.applicant.phone}
+                              </div>
+                          )}
+                          {selectedApp.applicant?.availability && (
                               <div className="flex items-center gap-2">
                                 <Calendar className="h-4 w-4" />
-                                Available: {selectedApp.availability}
+                                Available: {selectedApp.applicant.availability}
+                              </div>
+                          )}
+                          {selectedApp.created_at && (
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4" />
+                                Applied: {new Date(selectedApp.created_at).toLocaleDateString()}
                               </div>
                           )}
                         </div>
                       </div>
-
-                      <div>
-                        <h4 className="font-semibold mb-3">Application Status</h4>
-                        <Select
-                            value={selectedApp.status || "pending"}
-                            onValueChange={(value) => handleStatusUpdate(selectedApp.id, value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="under_review">Under Review</SelectItem>
-                            <SelectItem value="interview_scheduled">Interview Scheduled</SelectItem>
-                            <SelectItem value="accepted">Accepted</SelectItem>
-                            <SelectItem value="rejected">Rejected</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
                     </div>
 
-                    {selectedApp.skills && selectedApp.skills.length > 0 && (
+                    {selectedApp.applicant?.skills && selectedApp.applicant.skills.length > 0 && (
                         <div>
                           <h4 className="font-semibold mb-3">Skills</h4>
                           <div className="flex flex-wrap gap-2">
-                            {selectedApp.skills.map((skill, index) => (
+                            {selectedApp.applicant.skills.map((skill, index) => (
                                 <Badge key={index} variant="secondary">
                                   {skill}
                                 </Badge>
