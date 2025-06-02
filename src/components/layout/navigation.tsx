@@ -24,9 +24,9 @@ export function Navigation() {
   if (loading) return null
 
   return (
-    <nav className="bg-white shadow-sm border-b fixed w-full top-0 z-50">
+    <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex justify-between items-center h-16">
           <Link href="/" className="text-2xl font-bold text-blue-600">
             JobFlow
           </Link>
@@ -35,12 +35,12 @@ export function Navigation() {
             <Link href="/jobs" className="text-gray-700 hover:text-blue-600 transition-colors">
               Jobs
             </Link>
-            <Link href="/profile" className="text-gray-700 hover:text-blue-600 transition-colors">
-              Profile
+            <Link href="/apply" className="text-gray-700 hover:text-blue-600 transition-colors">
+              Apply
             </Link>
-            {user?.user_metadata?.role === 'admin' && (
-              <Link href="/admin" className="text-gray-700 hover:text-blue-600 transition-colors">
-                Admin
+            {user && (
+              <Link href="/profile" className="text-gray-700 hover:text-blue-600 transition-colors">
+                Profile
               </Link>
             )}
           </div>
@@ -48,16 +48,18 @@ export function Navigation() {
           <div className="flex items-center space-x-4">
             {user ? (
               <>
-                <span className="text-gray-700 hidden sm:inline">
-                  {user.email}
+                <span className="text-sm text-gray-600">
+                  Welcome, {user.email}
                 </span>
-                <Button onClick={handleSignOut} variant="outline">
+                <Button variant="outline" onClick={handleSignOut}>
                   Sign Out
                 </Button>
               </>
             ) : (
               <Link href="/auth">
-                <Button>Sign In</Button>
+                <Button className="bg-blue-600 hover:bg-blue-700">
+                  Sign In
+                </Button>
               </Link>
             )}
           </div>

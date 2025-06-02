@@ -19,22 +19,22 @@ export function ServicesSection() {
     {
       icon: FileText,
       title: 'Application Support',
-      description: 'Receive personalized support throughout the application process, from resume tips to interview preparation.'
+      description: 'Comprehensive support throughout the application process, from initial submission to final interview.'
     },
     {
       icon: Award,
       title: 'Career Development',
-      description: 'Access resources and tools to help you grow your skills and advance in your chosen career path.'
+      description: 'Access to training resources and career development tools to help you grow professionally.'
     }
   ]
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Services</h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Comprehensive career support designed to help you succeed at every step of your professional journey.
+            Comprehensive job search solutions designed to help you succeed in the Swedish job market
           </p>
         </div>
         
@@ -44,8 +44,10 @@ export function ServicesSection() {
             return (
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                 <CardHeader>
-                  <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <IconComponent className="h-8 w-8 text-blue-600" />
+                  <div className="flex justify-center mb-4">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <IconComponent className="h-6 w-6 text-blue-600" />
+                    </div>
                   </div>
                   <CardTitle className="text-xl">{service.title}</CardTitle>
                 </CardHeader>
