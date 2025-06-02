@@ -1,9 +1,11 @@
+
 import { Badge } from '@/components/ui/badge'
 
 export function IndustriesSection() {
   const industries = [
-    'Technology', 'Healthcare', 'Finance', 'Education', 'Marketing',
-    'Engineering', 'Design', 'Sales', 'Operations', 'HR'
+    'Technology', 'Healthcare', 'Finance', 'Education', 'Manufacturing',
+    'Retail', 'Consulting', 'Media', 'Real Estate', 'Transportation',
+    'Energy', 'Government', 'Non-Profit', 'Hospitality', 'Agriculture'
   ]
 
   return (
@@ -11,11 +13,18 @@ export function IndustriesSection() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Industries We Serve</h2>
-          <p className="text-xl text-gray-600">Find opportunities across various sectors</p>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Find opportunities across diverse industries and sectors
+          </p>
         </div>
-        <div className="flex flex-wrap gap-4 justify-center">
+        
+        <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
           {industries.map((industry, index) => (
-            <Badge key={index} variant="secondary" className="text-lg py-2 px-4">
+            <Badge
+              key={index}
+              variant="secondary"
+              className="text-sm py-2 px-4 hover:bg-blue-100 hover:text-blue-800 transition-colors cursor-pointer"
+            >
               {industry}
             </Badge>
           ))}
