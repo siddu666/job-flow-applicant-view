@@ -1,0 +1,106 @@
+~/workspace$ npm run  build
+
+> nextjs-job-flow-app@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.29
+
+   Creating an optimized production build ...
+Failed to compile.
+
+./src/components/providers.tsx
+Module not found: Can't resolve '@tanstack/react-query-devtools'
+
+https://nextjs.org/docs/messages/module-not-found
+
+./src/components/ui/tabs.tsx
+Error: 
+  x Expected 'as', got '*'
+   ,-[/home/runner/workspace/src/components/ui/tabs.tsx:1:1]
+ 1 | "use client"
+ 2 | 
+ 3 | import * as React from "react"
+ 4 | import * * as TabsPrimitive from "@radix-ui/react-tabs"
+   :          ^
+ 5 | 
+ 6 | import { cn } from "@/lib/utils"
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/ui/tabs.tsx
+./src/app/admin/page.tsx
+
+
+> Build failed because of webpack errors
+~/workspace$ npm install
+
+up to date, audited 631 packages in 4s
+
+159 packages are looking for funding
+  run `npm fund` for details
+
+3 vulnerabilities (1 low, 2 moderate)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+~/workspace$ npm install
+
+up to date, audited 631 packages in 4s
+
+159 packages are looking for funding
+  run `npm fund` for details
+
+3 vulnerabilities (1 low, 2 moderate)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+~/workspace$ npm run  build 
+
+> nextjs-job-flow-app@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.29
+
+   Creating an optimized production build ...
+Failed to compile.
+
+./src/components/providers.tsx
+Module not found: Can't resolve '@tanstack/react-query-devtools'
+
+https://nextjs.org/docs/messages/module-not-found
+
+./src/components/ui/tabs.tsx
+Error: 
+  x Expected 'as', got '*'
+   ,-[/home/runner/workspace/src/components/ui/tabs.tsx:1:1]
+ 1 | "use client"
+ 2 | 
+ 3 | import * as React from "react"
+ 4 | import * * as TabsPrimitive from "@radix-ui/react-tabs"
+   :          ^
+ 5 | 
+ 6 | import { cn } from "@/lib/utils"
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/ui/tabs.tsx
+./src/app/admin/page.tsx
+
+
+> Build failed because of webpack errors
