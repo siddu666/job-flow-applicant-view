@@ -1,0 +1,425 @@
+    :       ^^^^^|^^^^^
+    :            `-- previous definition of `TabsTrigger` here
+ 27 |   React.ElementRef<typeof TabsPrimitive.Trigger>,
+ 28 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
+ 29 | >(({ className, ...props }, ref) => (
+ 30 |   <TabsPrimitive.Trigger
+ 31 |     ref={ref}
+ 32 |     className={cn(
+ 33 |       "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+ 34 |       className
+ 35 |     )}
+ 36 |     {...props}
+ 37 |   />
+ 38 | ))
+ 39 | TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+ 40 | 
+ 41 | const TabsContent = React.forwardRef<
+ 42 |   React.ElementRef<typeof TabsPrimitive.Content>,
+ 43 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+ 44 | >(({ className, ...props }, ref) => (
+ 45 |   <TabsPrimitive.Content
+ 46 |     ref={ref}
+ 47 |     className={cn(
+ 48 |       "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+ 49 |       className
+ 50 |     )}
+ 51 |     {...props}
+ 52 |   />
+ 53 | ))
+ 54 | TabsContent.displayName = TabsPrimitive.Content.displayName
+ 55 | 
+ 56 | export { Tabs, TabsList, TabsTrigger, TabsContent }
+ 57 | "use client"
+ 58 | 
+ 59 | import * as React from "react"
+ 60 | import * as TabsPrimitive from "@radix-ui/react-tabs"
+ 61 | 
+ 62 | import { cn } from "@/lib/utils"
+ 63 | 
+ 64 | const Tabs = TabsPrimitive.Root
+ 65 | 
+ 66 | const TabsList = React.forwardRef<
+ 67 |   React.ElementRef<typeof TabsPrimitive.List>,
+ 68 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
+ 69 | >(({ className, ...props }, ref) => (
+ 70 |   <TabsPrimitive.List
+ 71 |     ref={ref}
+ 72 |     className={cn(
+ 73 |       "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+ 74 |       className
+ 75 |     )}
+ 76 |     {...props}
+ 77 |   />
+ 78 | ))
+ 79 | TabsList.displayName = TabsPrimitive.List.displayName
+ 80 | 
+ 81 | const TabsTrigger = React.forwardRef<
+    :       ^^^^^|^^^^^
+    :            `-- `TabsTrigger` redefined here
+ 82 |   React.ElementRef<typeof TabsPrimitive.Trigger>,
+ 83 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
+ 84 | >(({ className, ...props }, ref) => (
+    `----
+
+  x the name `TabsContent` is defined multiple times
+    ,-[/home/runner/workspace/src/components/ui/tabs.tsx:38:1]
+ 38 | ))
+ 39 | TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+ 40 | 
+ 41 | const TabsContent = React.forwardRef<
+    :       ^^^^^|^^^^^
+    :            `-- previous definition of `TabsContent` here
+ 42 |   React.ElementRef<typeof TabsPrimitive.Content>,
+ 43 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+ 44 | >(({ className, ...props }, ref) => (
+ 45 |   <TabsPrimitive.Content
+ 46 |     ref={ref}
+ 47 |     className={cn(
+ 48 |       "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+ 49 |       className
+ 50 |     )}
+ 51 |     {...props}
+ 52 |   />
+ 53 | ))
+ 54 | TabsContent.displayName = TabsPrimitive.Content.displayName
+ 55 | 
+ 56 | export { Tabs, TabsList, TabsTrigger, TabsContent }
+ 57 | "use client"
+ 58 | 
+ 59 | import * as React from "react"
+ 60 | import * as TabsPrimitive from "@radix-ui/react-tabs"
+ 61 | 
+ 62 | import { cn } from "@/lib/utils"
+ 63 | 
+ 64 | const Tabs = TabsPrimitive.Root
+ 65 | 
+ 66 | const TabsList = React.forwardRef<
+ 67 |   React.ElementRef<typeof TabsPrimitive.List>,
+ 68 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
+ 69 | >(({ className, ...props }, ref) => (
+ 70 |   <TabsPrimitive.List
+ 71 |     ref={ref}
+ 72 |     className={cn(
+ 73 |       "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+ 74 |       className
+ 75 |     )}
+ 76 |     {...props}
+ 77 |   />
+ 78 | ))
+ 79 | TabsList.displayName = TabsPrimitive.List.displayName
+ 80 | 
+ 81 | const TabsTrigger = React.forwardRef<
+ 82 |   React.ElementRef<typeof TabsPrimitive.Trigger>,
+ 83 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
+ 84 | >(({ className, ...props }, ref) => (
+ 85 |   <TabsPrimitive.Trigger
+ 86 |     ref={ref}
+ 87 |     className={cn(
+ 88 |       "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+ 89 |       className
+ 90 |     )}
+ 91 |     {...props}
+ 92 |   />
+ 93 | ))
+ 94 | TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+ 95 | 
+ 96 | const TabsContent = React.forwardRef<
+    :       ^^^^^|^^^^^
+    :            `-- `TabsContent` redefined here
+ 97 |   React.ElementRef<typeof TabsPrimitive.Content>,
+ 98 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+ 99 | >(({ className, ...props }, ref) => (
+    `----
+
+  x the name `Tabs` is exported multiple times
+     ,-[/home/runner/workspace/src/components/ui/tabs.tsx:53:1]
+  53 | ))
+  54 | TabsContent.displayName = TabsPrimitive.Content.displayName
+  55 | 
+  56 | export { Tabs, TabsList, TabsTrigger, TabsContent }
+     :          ^^|^
+     :            `-- previous exported here
+  57 | "use client"
+  58 | 
+  59 | import * as React from "react"
+  60 | import * as TabsPrimitive from "@radix-ui/react-tabs"
+  61 | 
+  62 | import { cn } from "@/lib/utils"
+  63 | 
+  64 | const Tabs = TabsPrimitive.Root
+  65 | 
+  66 | const TabsList = React.forwardRef<
+  67 |   React.ElementRef<typeof TabsPrimitive.List>,
+  68 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
+  69 | >(({ className, ...props }, ref) => (
+  70 |   <TabsPrimitive.List
+  71 |     ref={ref}
+  72 |     className={cn(
+  73 |       "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+  74 |       className
+  75 |     )}
+  76 |     {...props}
+  77 |   />
+  78 | ))
+  79 | TabsList.displayName = TabsPrimitive.List.displayName
+  80 | 
+  81 | const TabsTrigger = React.forwardRef<
+  82 |   React.ElementRef<typeof TabsPrimitive.Trigger>,
+  83 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
+  84 | >(({ className, ...props }, ref) => (
+  85 |   <TabsPrimitive.Trigger
+  86 |     ref={ref}
+  87 |     className={cn(
+  88 |       "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+  89 |       className
+  90 |     )}
+  91 |     {...props}
+  92 |   />
+  93 | ))
+  94 | TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+  95 | 
+  96 | const TabsContent = React.forwardRef<
+  97 |   React.ElementRef<typeof TabsPrimitive.Content>,
+  98 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+  99 | >(({ className, ...props }, ref) => (
+ 100 |   <TabsPrimitive.Content
+ 101 |     ref={ref}
+ 102 |     className={cn(
+ 103 |       "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+ 104 |       className
+ 105 |     )}
+ 106 |     {...props}
+ 107 |   />
+ 108 | ))
+ 109 | TabsContent.displayName = TabsPrimitive.Content.displayName
+ 110 | 
+ 111 | export { Tabs, TabsList, TabsTrigger, TabsContent }
+     :          ^^|^
+     :            `-- exported more than once
+     `----
+
+Error: 
+  > Exported identifiers must be unique
+
+  x the name `TabsList` is exported multiple times
+     ,-[/home/runner/workspace/src/components/ui/tabs.tsx:53:1]
+  53 | ))
+  54 | TabsContent.displayName = TabsPrimitive.Content.displayName
+  55 | 
+  56 | export { Tabs, TabsList, TabsTrigger, TabsContent }
+     :                ^^^^|^^^
+     :                    `-- previous exported here
+  57 | "use client"
+  58 | 
+  59 | import * as React from "react"
+  60 | import * as TabsPrimitive from "@radix-ui/react-tabs"
+  61 | 
+  62 | import { cn } from "@/lib/utils"
+  63 | 
+  64 | const Tabs = TabsPrimitive.Root
+  65 | 
+  66 | const TabsList = React.forwardRef<
+  67 |   React.ElementRef<typeof TabsPrimitive.List>,
+  68 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
+  69 | >(({ className, ...props }, ref) => (
+  70 |   <TabsPrimitive.List
+  71 |     ref={ref}
+  72 |     className={cn(
+  73 |       "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+  74 |       className
+  75 |     )}
+  76 |     {...props}
+  77 |   />
+  78 | ))
+  79 | TabsList.displayName = TabsPrimitive.List.displayName
+  80 | 
+  81 | const TabsTrigger = React.forwardRef<
+  82 |   React.ElementRef<typeof TabsPrimitive.Trigger>,
+  83 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
+  84 | >(({ className, ...props }, ref) => (
+  85 |   <TabsPrimitive.Trigger
+  86 |     ref={ref}
+  87 |     className={cn(
+  88 |       "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+  89 |       className
+  90 |     )}
+  91 |     {...props}
+  92 |   />
+  93 | ))
+  94 | TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+  95 | 
+  96 | const TabsContent = React.forwardRef<
+  97 |   React.ElementRef<typeof TabsPrimitive.Content>,
+  98 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+  99 | >(({ className, ...props }, ref) => (
+ 100 |   <TabsPrimitive.Content
+ 101 |     ref={ref}
+ 102 |     className={cn(
+ 103 |       "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+ 104 |       className
+ 105 |     )}
+ 106 |     {...props}
+ 107 |   />
+ 108 | ))
+ 109 | TabsContent.displayName = TabsPrimitive.Content.displayName
+ 110 | 
+ 111 | export { Tabs, TabsList, TabsTrigger, TabsContent }
+     :                ^^^^|^^^
+     :                    `-- exported more than once
+     `----
+
+Error: 
+  > Exported identifiers must be unique
+
+  x the name `TabsTrigger` is exported multiple times
+     ,-[/home/runner/workspace/src/components/ui/tabs.tsx:53:1]
+  53 | ))
+  54 | TabsContent.displayName = TabsPrimitive.Content.displayName
+  55 | 
+  56 | export { Tabs, TabsList, TabsTrigger, TabsContent }
+     :                          ^^^^^|^^^^^
+     :                               `-- previous exported here
+  57 | "use client"
+  58 | 
+  59 | import * as React from "react"
+  60 | import * as TabsPrimitive from "@radix-ui/react-tabs"
+  61 | 
+  62 | import { cn } from "@/lib/utils"
+  63 | 
+  64 | const Tabs = TabsPrimitive.Root
+  65 | 
+  66 | const TabsList = React.forwardRef<
+  67 |   React.ElementRef<typeof TabsPrimitive.List>,
+  68 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
+  69 | >(({ className, ...props }, ref) => (
+  70 |   <TabsPrimitive.List
+  71 |     ref={ref}
+  72 |     className={cn(
+  73 |       "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+  74 |       className
+  75 |     )}
+  76 |     {...props}
+  77 |   />
+  78 | ))
+  79 | TabsList.displayName = TabsPrimitive.List.displayName
+  80 | 
+  81 | const TabsTrigger = React.forwardRef<
+  82 |   React.ElementRef<typeof TabsPrimitive.Trigger>,
+  83 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
+  84 | >(({ className, ...props }, ref) => (
+  85 |   <TabsPrimitive.Trigger
+  86 |     ref={ref}
+  87 |     className={cn(
+  88 |       "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+  89 |       className
+  90 |     )}
+  91 |     {...props}
+  92 |   />
+  93 | ))
+  94 | TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+  95 | 
+  96 | const TabsContent = React.forwardRef<
+  97 |   React.ElementRef<typeof TabsPrimitive.Content>,
+  98 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+  99 | >(({ className, ...props }, ref) => (
+ 100 |   <TabsPrimitive.Content
+ 101 |     ref={ref}
+ 102 |     className={cn(
+ 103 |       "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+ 104 |       className
+ 105 |     )}
+ 106 |     {...props}
+ 107 |   />
+ 108 | ))
+ 109 | TabsContent.displayName = TabsPrimitive.Content.displayName
+ 110 | 
+ 111 | export { Tabs, TabsList, TabsTrigger, TabsContent }
+     :                          ^^^^^|^^^^^
+     :                               `-- exported more than once
+     `----
+
+Error: 
+  > Exported identifiers must be unique
+
+  x the name `TabsContent` is exported multiple times
+     ,-[/home/runner/workspace/src/components/ui/tabs.tsx:53:1]
+  53 | ))
+  54 | TabsContent.displayName = TabsPrimitive.Content.displayName
+  55 | 
+  56 | export { Tabs, TabsList, TabsTrigger, TabsContent }
+     :                                       ^^^^^|^^^^^
+     :                                            `-- previous exported here
+  57 | "use client"
+  58 | 
+  59 | import * as React from "react"
+  60 | import * as TabsPrimitive from "@radix-ui/react-tabs"
+  61 | 
+  62 | import { cn } from "@/lib/utils"
+  63 | 
+  64 | const Tabs = TabsPrimitive.Root
+  65 | 
+  66 | const TabsList = React.forwardRef<
+  67 |   React.ElementRef<typeof TabsPrimitive.List>,
+  68 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
+  69 | >(({ className, ...props }, ref) => (
+  70 |   <TabsPrimitive.List
+  71 |     ref={ref}
+  72 |     className={cn(
+  73 |       "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+  74 |       className
+  75 |     )}
+  76 |     {...props}
+  77 |   />
+  78 | ))
+  79 | TabsList.displayName = TabsPrimitive.List.displayName
+  80 | 
+  81 | const TabsTrigger = React.forwardRef<
+  82 |   React.ElementRef<typeof TabsPrimitive.Trigger>,
+  83 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
+  84 | >(({ className, ...props }, ref) => (
+  85 |   <TabsPrimitive.Trigger
+  86 |     ref={ref}
+  87 |     className={cn(
+  88 |       "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+  89 |       className
+  90 |     )}
+  91 |     {...props}
+  92 |   />
+  93 | ))
+  94 | TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+  95 | 
+  96 | const TabsContent = React.forwardRef<
+  97 |   React.ElementRef<typeof TabsPrimitive.Content>,
+  98 |   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+  99 | >(({ className, ...props }, ref) => (
+ 100 |   <TabsPrimitive.Content
+ 101 |     ref={ref}
+ 102 |     className={cn(
+ 103 |       "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+ 104 |       className
+ 105 |     )}
+ 106 |     {...props}
+ 107 |   />
+ 108 | ))
+ 109 | TabsContent.displayName = TabsPrimitive.Content.displayName
+ 110 | 
+ 111 | export { Tabs, TabsList, TabsTrigger, TabsContent }
+     :                                       ^^^^^|^^^^^
+     :                                            `-- exported more than once
+     `----
+
+Error: 
+  > Exported identifiers must be unique
+
+  x The "use client" directive must be placed before other expressions. Move it to the top of the file to resolve this issue.
+    ,-[/home/runner/workspace/src/components/ui/tabs.tsx:54:1]
+ 54 | TabsContent.displayName = TabsPrimitive.Content.displayName
+ 55 | 
+ 56 | export { Tabs, TabsList, TabsTrigger, TabsContent }
+ 57 | "use client"
+    : ^^^^^^^^^^^^
+ 58 | 
+ 59 | import * as React from "react"
+ 60 | import * as TabsPrimitive from "@radix-ui/react-tabs"
+    `----
