@@ -1,8 +1,10 @@
+
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/integrations/supabase/client'
 import { Database } from '@/integrations/supabase/types'
+import { toast } from 'sonner'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
@@ -45,7 +47,12 @@ export function useUpdateProfile() {
     onSuccess: (data) => {
       queryClient.setQueryData(['profile', data.id], data)
       queryClient.invalidateQueries({ queryKey: ['profile'] })
+      toast.success('Profile updated successfully')
     },
+    onError: (error) => {
+      console.error('Profile update error:', error)
+      toast.error('Failed to update profile')
+    }
   })
 }
 
@@ -85,7 +92,12 @@ export function useUploadCV() {
     onSuccess: (data) => {
       queryClient.setQueryData(['profile', data.id], data)
       queryClient.invalidateQueries({ queryKey: ['profile'] })
+      toast.success('CV uploaded successfully')
     },
+    onError: (error) => {
+      console.error('CV upload error:', error)
+      toast.error('Failed to upload CV')
+    }
   })
 }
 
@@ -115,6 +127,11 @@ export function useDeleteCV() {
     onSuccess: (data) => {
       queryClient.setQueryData(['profile', data.id], data)
       queryClient.invalidateQueries({ queryKey: ['profile'] })
+      toast.success('CV deleted successfully')
     },
+    onError: (error) => {
+      console.error('CV deletion error:', error)
+      toast.error('Failed to delete CV')
+    }
   })
 }

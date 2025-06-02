@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -8,10 +9,13 @@ type JobInsert = Database['public']['Tables']['jobs']['Insert'];
 type JobUpdate = Database['public']['Tables']['jobs']['Update'];
 
 interface JobFilters {
+  search?: string;
   location?: string;
   type?: string;
   experience_level?: string;
   skills?: string[];
+  page?: number;
+  limit?: number;
 }
 
 export const useJobs = (filters: JobFilters = {}) => {
@@ -29,6 +33,10 @@ export const useJobs = (filters: JobFilters = {}) => {
         .from("jobs")
         .select("*")
         .order("created_at", { ascending: false });
+
+      if (filters.search) {
+        query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%,company.ilike.%${filters.search}%`);
+      }
 
       if (filters.location) {
         query = query.ilike("location", `%${filters.location}%`);
@@ -155,6 +163,57 @@ export const useJobs = (filters: JobFilters = {}) => {
     isUpdating: updateJobMutation.isPending,
     isDeleting: deleteJobMutation.isPending,
   };
+};
+
+export const useAllJobs = (filters: JobFilters = {}) => {
+  const { page = 1, limit = 10, ...otherFilters } = filters;
+  
+  return useQuery({
+    queryKey: ["allJobs", filters],
+    queryFn: async () => {
+      let query = supabase
+        .from("jobs")
+        .select("*", { count: 'exact' })
+        .order("created_at", { ascending: false });
+
+      if (otherFilters.search) {
+        query = query.or(`title.ilike.%${otherFilters.search}%,description.ilike.%${otherFilters.search}%,company.ilike.%${otherFilters.search}%`);
+      }
+
+      if (otherFilters.location) {
+        query = query.ilike("location", `%${otherFilters.location}%`);
+      }
+
+      if (otherFilters.type) {
+        query = query.eq("type", otherFilters.type);
+      }
+
+      if (otherFilters.experience_level) {
+        query = query.eq("experience_level", otherFilters.experience_level);
+      }
+
+      if (otherFilters.skills && otherFilters.skills.length > 0) {
+        query = query.overlaps("skills", otherFilters.skills);
+      }
+
+      const from = (page - 1) * limit;
+      const to = from + limit - 1;
+      
+      query = query.range(from, to);
+
+      const { data, error, count } = await query;
+
+      if (error) throw error;
+      
+      return {
+        data: data as Job[],
+        total: count || 0,
+        page,
+        limit,
+        totalPages: Math.ceil((count || 0) / limit)
+      };
+    },
+  });
 };
 
 export type { Job, JobInsert, JobUpdate };
