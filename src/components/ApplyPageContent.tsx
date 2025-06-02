@@ -123,6 +123,54 @@ function ApplyPageContent() {
                 <Briefcase className="h-5 w-5" />
                 Job Details
               </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-2xl font-bold">{job.title}</h3>
+                  <p className="text-gray-600">{job.company} • {job.location}</p>
+                </div>
+                
+                <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    {job.location}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-4 w-4" />
+                    {job.type}
+                  </div>
+                  {job.salary && (
+                    <div className="flex items-center gap-1">
+                      <DollarSign className="h-4 w-4" />
+                      {job.salary}
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-2">Job Description</h4>
+                  <p className="text-gray-700">{job.description}</p>
+                </div>
+
+                {job.requirements && (
+                  <div>
+                    <h4 className="font-semibold mb-2">Requirements</h4>
+                    <p className="text-gray-700">{job.requirements}</p>
+                  </div>
+                )}
+
+                {job.skills && job.skills.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold mb-2">Required Skills</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {job.skills.map((skill, index) => (
+                        <Badge key={index} variant="outline">{skill}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 
