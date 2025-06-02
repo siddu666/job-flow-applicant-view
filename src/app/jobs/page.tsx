@@ -18,7 +18,7 @@ export default function JobsPage() {
 
   const filteredJobs = jobs?.filter(job =>
     job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    job.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
     job.location?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
@@ -93,12 +93,15 @@ export default function JobsPage() {
                         <div className="flex items-center gap-4 text-sm text-gray-600">
                           <div className="flex items-center gap-1">
                             <Building className="h-4 w-4" />
-                            {job.company || "Company Name"}
+                            Justera Group AB
                           </div>
                           <div className="flex items-center gap-1">
                             <MapPin className="h-4 w-4" />
-                            {job.location || "Location"}
+                            {job.location}
                           </div>
+                          {job.type && (
+                            <Badge variant="secondary">{job.type}</Badge>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -107,6 +110,22 @@ export default function JobsPage() {
                     <p className="text-gray-600 mb-4 line-clamp-3">
                       {job.description}
                     </p>
+                    
+                    {job.skills && job.skills.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {job.skills.slice(0, 5).map((skill, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {skill}
+                          </Badge>
+                        ))}
+                        {job.skills.length > 5 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{job.skills.length - 5} more
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+                    
                     <div className="flex justify-between items-center">
                       <div className="text-sm text-gray-500">
                         Posted: {new Date(job.created_at).toLocaleDateString()}

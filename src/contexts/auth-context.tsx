@@ -5,14 +5,14 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session, AuthError } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
 import { useRouter } from 'next/navigation'
-import { toast } from '@/components/ui/use-toast'
+import { toast } from 'sonner'
 
 interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
-  signUp: (email: string, password: string, metadata?: any) => Promise<void>
-  signIn: (email: string, password: string) => Promise<void>
+  signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error?: AuthError, data?: any }>
+  signIn: (email: string, password: string) => Promise<{ error?: AuthError }>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<void>
 }
@@ -49,22 +49,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           if (profile) {
             setUser({ ...session.user, profile })
-          } else if (profileError && profileError.code === 'PGRST116') {
-            // Profile doesn't exist, create one
-            const { data: newProfile } = await supabase
-              .from('profiles')
-              .insert({
-                id: session.user.id,
-                email: session.user.email,
-                full_name: session.user.user_metadata?.full_name || '',
-                role: session.user.user_metadata?.role || 'applicant'
-              })
-              .select()
-              .single()
-            
-            if (newProfile) {
-              setUser({ ...session.user, profile: newProfile })
-            }
           }
         }
       } catch (error) {
@@ -84,8 +68,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false)
 
         if (event === 'SIGNED_IN' && session?.user) {
-          // Get user profile
-          const { data: profile, error: profileError } = await supabase
+          // Check if user has a complete profile
+          const { data: profile } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
@@ -93,22 +77,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           if (profile) {
             setUser({ ...session.user, profile })
-          } else if (profileError && profileError.code === 'PGRST116') {
-            // Profile doesn't exist, create one
-            const { data: newProfile } = await supabase
-              .from('profiles')
-              .insert({
-                id: session.user.id,
-                email: session.user.email,
-                full_name: session.user.user_metadata?.full_name || '',
-                role: session.user.user_metadata?.role || 'applicant'
-              })
-              .select()
-              .single()
             
-            if (newProfile) {
-              setUser({ ...session.user, profile: newProfile })
+            // Check if profile is complete
+            if (!profile.first_name || !profile.phone || !profile.current_location) {
+              router.push('/onboarding')
+            } else {
+              router.push('/profile')
             }
+          } else {
+            // No profile exists, redirect to onboarding
+            router.push('/onboarding')
           }
         }
 
@@ -121,32 +99,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [router])
 
-  const signUp = async (email: string, password: string, metadata?: any) => {
+  const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: metadata
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            full_name: `${firstName || ''} ${lastName || ''}`.trim()
+          }
         }
       })
 
       if (error) throw error
 
       if (data.user && !data.session) {
-        toast({
-          title: "Check your email",
-          description: "We've sent you a confirmation link.",
-        })
+        toast.success('Check your email for a confirmation link.')
       }
+
+      return { data, error }
     } catch (error) {
       const authError = error as AuthError
-      toast({
-        title: "Sign up failed",
-        description: authError.message,
-        variant: "destructive",
-      })
-      throw error
+      toast.error(authError.message)
+      return { error: authError }
     }
   }
 
@@ -159,19 +136,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error
 
-      toast({
-        title: "Welcome back!",
-        description: "You've been signed in successfully.",
-      })
-
+      toast.success('Welcome back!')
+      return { error }
     } catch (error) {
       const authError = error as AuthError
-      toast({
-        title: "Sign in failed",
-        description: authError.message,
-        variant: "destructive",
-      })
-      throw error
+      toast.error(authError.message)
+      return { error: authError }
     }
   }
 
@@ -180,17 +150,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signOut()
       if (error) throw error
 
-      toast({
-        title: "Signed out",
-        description: "You've been signed out successfully.",
-      })
+      toast.success('Signed out successfully')
     } catch (error) {
       const authError = error as AuthError
-      toast({
-        title: "Error signing out",
-        description: authError.message,
-        variant: "destructive",
-      })
+      toast.error(authError.message)
       throw error
     }
   }
@@ -203,17 +166,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error
 
-      toast({
-        title: "Password reset email sent",
-        description: "Check your email for reset instructions.",
-      })
+      toast.success('Password reset email sent')
     } catch (error) {
       const authError = error as AuthError
-      toast({
-        title: "Password reset failed",
-        description: authError.message,
-        variant: "destructive",
-      })
+      toast.error(authError.message)
       throw error
     }
   }

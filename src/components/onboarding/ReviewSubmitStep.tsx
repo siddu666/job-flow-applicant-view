@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChevronLeft, Edit, CheckCircle, FileText } from 'lucide-react';
 import { OnboardingData } from './OnboardingSteps';
 import { useAuth } from '@/contexts/auth-context';
-import { useUpdateProfile } from '@/hooks/useProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -30,77 +29,68 @@ const visaStatusLabels: Record<string, string> = {
 
 const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({ data, onPrev, goToStep }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { signUp } = useAuth();
-  const updateProfile = useUpdateProfile();
+  const { user } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async () => {
+    if (!user) {
+      toast.error('User not authenticated');
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
-      // First, create the user account
-      const { error: signUpError, data: authData } = await signUp(
-        data.email,
-        data.password,
-        data.firstName, 
-        data.lastName
-      );
-
-      if (signUpError) {
-        toast.error(`Account creation failed: ${signUpError.message}`);
-        setIsSubmitting(false);
-        return;
-      }
-
-      if (authData?.user) {
-        let cvUrl = '';
+      let cvUrl = '';
+      
+      // Upload CV if provided
+      if (data.cvFile) {
+        const fileExt = data.cvFile.name.split('.').pop();
+        const fileName = `${user.id}/cv.${fileExt}`;
         
-        // Upload CV if provided
-        if (data.cvFile) {
-          const fileExt = data.cvFile.name.split('.').pop();
-          const fileName = `${authData.user.id}/cv.${fileExt}`;
-          
-          const { error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
+          .from('documents')
+          .upload(fileName, data.cvFile);
+        
+        if (uploadError) {
+          console.error('CV upload error:', uploadError);
+        } else {
+          const { data: { publicUrl } } = supabase.storage
             .from('documents')
-            .upload(fileName, data.cvFile);
-          
-          if (uploadError) {
-            console.error('CV upload error:', uploadError);
-          } else {
-            const { data: { publicUrl } } = supabase.storage
-              .from('documents')
-              .getPublicUrl(fileName);
-            cvUrl = publicUrl;
-          }
+            .getPublicUrl(fileName);
+          cvUrl = publicUrl;
         }
-
-        // Update the user profile with all the collected data
-        await updateProfile.mutateAsync({
-          id: authData.user.id,
-          updates: {
-            first_name: data.firstName,
-            last_name: data.lastName,
-            email: data.email,
-            phone: data.phone,
-            current_location: `${data.address}, ${data.city}`,
-            skills: data.skills,
-            experience_years: data.experience,
-            bio: data.education,
-            cv_url: cvUrl || null,
-            linkedin_url: data.linkedinUrl || null,
-            portfolio_url: data.portfolioUrl || null,
-            job_seeking_status: 'actively_looking',
-            willing_to_relocate: false,
-            availability: data.availability || 'immediately',
-          }
-        });
-
-        toast.success('Profile created successfully! Please check your email to verify your account.');
-        router.push('/');
       }
+
+      // Update the user profile with all the collected data
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          first_name: data.firstName,
+          last_name: data.lastName,
+          phone: data.phone,
+          current_location: `${data.address}, ${data.city}`,
+          skills: data.skills,
+          experience_years: data.experience,
+          bio: data.education,
+          cv_url: cvUrl || null,
+          linkedin_url: data.linkedinUrl || null,
+          portfolio_url: data.portfolioUrl || null,
+          job_seeking_status: 'actively_looking',
+          willing_to_relocate: false,
+          availability: data.availability || 'immediately',
+        })
+        .eq('id', user.id);
+
+      if (profileError) {
+        throw profileError;
+      }
+
+      toast.success('Profile completed successfully!');
+      router.push('/profile');
     } catch (error) {
       console.error('Submission error:', error);
-      toast.error('An error occurred while creating your profile. Please try again.');
+      toast.error('An error occurred while updating your profile. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -221,8 +211,8 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({ data, onPrev, goToS
 
       <div className="bg-green-50 p-4 rounded-lg">
         <p className="text-sm text-green-800">
-          <strong>Ready to submit!</strong> Your profile will be created and you'll receive an email 
-          verification link. You can start applying for jobs once your email is verified.
+          <strong>Ready to submit!</strong> Your profile will be updated and you can start 
+          applying for jobs immediately.
         </p>
       </div>
 
@@ -236,7 +226,7 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({ data, onPrev, goToS
           disabled={isSubmitting}
           className="bg-green-600 hover:bg-green-700"
         >
-          {isSubmitting ? 'Creating Profile...' : 'Create Profile'}
+          {isSubmitting ? 'Updating Profile...' : 'Complete Profile'}
         </Button>
       </div>
     </div>
