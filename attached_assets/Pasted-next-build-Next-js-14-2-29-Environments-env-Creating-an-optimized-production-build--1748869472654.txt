@@ -1,0 +1,2521 @@
+next build
+
+  ▲ Next.js 14.2.29
+  - Environments: .env
+
+   Creating an optimized production build ...
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ Compiled successfully
+
+Failed to compile.
+
+./src/app/auth/page.tsx
+33:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/jobs/page.tsx
+14:10  Warning: 'Briefcase' is defined but never used.  @typescript-eslint/no-unused-vars
+20:17  Warning: 'profile' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/profile/page.tsx
+39:6  Warning: React Hook useEffect has a missing dependency: 'fetchProfile'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/components/AdminCandidates.tsx
+8:34  Warning: 'AvatarImage' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ApplicationReview.tsx
+9:10  Warning: 'Textarea' is defined but never used.  @typescript-eslint/no-unused-vars
+16:3  Warning: 'MapPin' is defined but never used.  @typescript-eslint/no-unused-vars
+18:3  Warning: 'Briefcase' is defined but never used.  @typescript-eslint/no-unused-vars
+19:3  Warning: 'Clock' is defined but never used.  @typescript-eslint/no-unused-vars
+26:11  Warning: 'user' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+35:52  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/ApplyPageContent.tsx
+81:9  Warning: 'addSkill' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+108:58  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+108:87  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/CandidateProfile.tsx
+18:54  Warning: 'MapPin' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/DeleteUserDialog.tsx
+5:3  Warning: 'AlertDialogAction' is defined but never used.  @typescript-eslint/no-unused-vars
+73:78  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/JobPostForm.tsx
+16:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+19:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/JobRecommendations.tsx
+8:18  Warning: 'Calendar' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/admin/EnhancedCandidateSearch.tsx
+28:9  Warning: 'handleLocationChange' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+40:9  Warning: 'handleJobTypeChange' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/layout/navigation.tsx
+19:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/onboarding/ResumeLinksStep.tsx
+23:10  Warning: 'uploading' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+23:21  Warning: 'setUploading' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/onboarding/ReviewSubmitStep.tsx
+105:21  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/sections/contact-section.tsx
+18:31  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/ui/calendar.tsx
+55:25  Warning: '_props' is defined but never used.  @typescript-eslint/no-unused-vars
+56:26  Warning: '_props' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/chart.tsx
+70:7  Warning: '_' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/command.tsx
+24:11  Error: An interface declaring no members is equivalent to its supertype.  @typescript-eslint/no-empty-object-type
+
+./src/components/ui/input.tsx
+6:18  Error: An interface declaring no members is equivalent to its supertype.  @typescript-eslint/no-empty-object-type
+
+./src/components/ui/textarea.tsx
+6:18  Error: An interface declaring no members is equivalent to its supertype.  @typescript-eslint/no-empty-object-type
+
+./src/components/ui/use-toast.ts
+21:7  Warning: 'actionTypes' is assigned a value but only used as a type.  @typescript-eslint/no-unused-vars
+
+./src/contexts/auth-context.tsx
+14:55  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+52:27  Warning: 'profile' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+77:68  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/hooks/use-toast.ts
+18:7  Warning: 'actionTypes' is assigned a value but only used as a type.  @typescript-eslint/no-unused-vars
+
+./src/hooks/useApplications.tsx
+44:45  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+170:47  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+170:62  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/hooks/useGDPR.tsx
+17:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+43:24  Warning: 'request' is defined but never used.  @typescript-eslint/no-unused-vars
+61:7  Warning: 'id' is defined but never used.  @typescript-eslint/no-unused-vars
+62:7  Warning: 'action' is defined but never used.  @typescript-eslint/no-unused-vars
+63:7  Warning: 'processedBy' is defined but never used.  @typescript-eslint/no-unused-vars
+64:7  Warning: 'completionDetails' is defined but never used.  @typescript-eslint/no-unused-vars
+65:7  Warning: 'rejectionReason' is defined but never used.  @typescript-eslint/no-unused-vars
+70:27  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+92:49  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/hooks/useProfile.tsx
+68:21  Warning: 'uploadData' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/security.ts
+10:7  Warning: 'MAX_LOGIN_ATTEMPTS' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+11:7  Warning: 'LOCKOUT_DURATION_MINUTES' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+12:7  Warning: 'SESSION_EXPIRY_DAYS' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+82:46  Warning: 'allowedMimeTypes' is defined but never used.  @typescript-eslint/no-unused-vars
+141:28  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+157:7  Error: 'result' is never reassigned. Use 'const' instead.  prefer-const
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+~/workspace$ 
+~/workspace$ npm run build
+
+> nextjs-job-flow-app@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.29
+  - Environments: .env
+
+   Creating an optimized production build ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (119kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (119kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (119kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (119kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+Failed to compile.
+
+./src/app/auth/page.tsx
+Error: 
+  x the name `useState` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:1:1]
+   1 | 'use client'
+   2 | 
+   3 | import { useState } from 'react'
+     :          ^^^^|^^^
+     :              `-- previous definition of `useState` here
+   4 | import { useAuth } from '@/contexts/auth-context'
+   5 | import { useRouter } from 'next/navigation'
+   6 | import { Button } from '@/components/ui/button'
+   7 | import { Input } from '@/components/ui/input'
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+     :          ^^^^|^^^
+     :              `-- `useState` redefined here
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+     `----
+
+  x the name `useAuth` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:1:1]
+   1 | 'use client'
+   2 | 
+   3 | import { useState } from 'react'
+   4 | import { useAuth } from '@/contexts/auth-context'
+     :          ^^^|^^^
+     :             `-- previous definition of `useAuth` here
+   5 | import { useRouter } from 'next/navigation'
+   6 | import { Button } from '@/components/ui/button'
+   7 | import { Input } from '@/components/ui/input'
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+     :          ^^^|^^^
+     :             `-- `useAuth` redefined here
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+     `----
+
+  x the name `useRouter` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:2:1]
+   2 | 
+   3 | import { useState } from 'react'
+   4 | import { useAuth } from '@/contexts/auth-context'
+   5 | import { useRouter } from 'next/navigation'
+     :          ^^^^|^^^^
+     :              `-- previous definition of `useRouter` here
+   6 | import { Button } from '@/components/ui/button'
+   7 | import { Input } from '@/components/ui/input'
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+     :          ^^^^|^^^^
+     :              `-- `useRouter` redefined here
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+     `----
+
+  x the name `Button` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:3:1]
+   3 | import { useState } from 'react'
+   4 | import { useAuth } from '@/contexts/auth-context'
+   5 | import { useRouter } from 'next/navigation'
+   6 | import { Button } from '@/components/ui/button'
+     :          ^^^|^^
+     :             `-- previous definition of `Button` here
+   7 | import { Input } from '@/components/ui/input'
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+     :          ^^^|^^
+     :             `-- `Button` redefined here
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     `----
+
+  x the name `Input` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:4:1]
+   4 | import { useAuth } from '@/contexts/auth-context'
+   5 | import { useRouter } from 'next/navigation'
+   6 | import { Button } from '@/components/ui/button'
+   7 | import { Input } from '@/components/ui/input'
+     :          ^^|^^
+     :            `-- previous definition of `Input` here
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+     :          ^^|^^
+     :            `-- `Input` redefined here
+ 113 | import { Label } from '@/components/ui/label'
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+ 115 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+     `----
+
+  x the name `Label` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:5:1]
+   5 | import { useRouter } from 'next/navigation'
+   6 | import { Button } from '@/components/ui/button'
+   7 | import { Input } from '@/components/ui/input'
+   8 | import { Label } from '@/components/ui/label'
+     :          ^^|^^
+     :            `-- previous definition of `Label` here
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+     :          ^^|^^
+     :            `-- `Label` redefined here
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+ 115 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+ 116 | import { toast } from 'sonner'
+     `----
+
+  x the name `Card` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:6:1]
+   6 | import { Button } from '@/components/ui/button'
+   7 | import { Input } from '@/components/ui/input'
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     :          ^^|^
+     :            `-- previous definition of `Card` here
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     :          ^^|^
+     :            `-- `Card` redefined here
+ 115 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+ 116 | import { toast } from 'sonner'
+ 117 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+     `----
+
+  x the name `CardContent` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:6:1]
+   6 | import { Button } from '@/components/ui/button'
+   7 | import { Input } from '@/components/ui/input'
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     :                ^^^^^|^^^^^
+     :                     `-- previous definition of `CardContent` here
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     :                ^^^^^|^^^^^
+     :                     `-- `CardContent` redefined here
+ 115 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+ 116 | import { toast } from 'sonner'
+ 117 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+     `----
+
+  x the name `CardDescription` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:6:1]
+   6 | import { Button } from '@/components/ui/button'
+   7 | import { Input } from '@/components/ui/input'
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     :                             ^^^^^^^|^^^^^^^
+     :                                    `-- previous definition of `CardDescription` here
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     :                             ^^^^^^^|^^^^^^^
+     :                                    `-- `CardDescription` redefined here
+ 115 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+ 116 | import { toast } from 'sonner'
+ 117 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+     `----
+
+  x the name `CardHeader` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:6:1]
+   6 | import { Button } from '@/components/ui/button'
+   7 | import { Input } from '@/components/ui/input'
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     :                                              ^^^^^|^^^^
+     :                                                   `-- previous definition of `CardHeader` here
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     :                                              ^^^^^|^^^^
+     :                                                   `-- `CardHeader` redefined here
+ 115 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+ 116 | import { toast } from 'sonner'
+ 117 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+     `----
+
+  x the name `CardTitle` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:6:1]
+   6 | import { Button } from '@/components/ui/button'
+   7 | import { Input } from '@/components/ui/input'
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     :                                                          ^^^^|^^^^
+     :                                                              `-- previous definition of `CardTitle` here
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+     :                                                          ^^^^|^^^^
+     :                                                              `-- `CardTitle` redefined here
+ 115 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+ 116 | import { toast } from 'sonner'
+ 117 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+     `----
+
+  x the name `Tabs` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:7:1]
+   7 | import { Input } from '@/components/ui/input'
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+     :          ^^|^
+     :            `-- previous definition of `Tabs` here
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+ 115 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+     :          ^^|^
+     :            `-- `Tabs` redefined here
+ 116 | import { toast } from 'sonner'
+ 117 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+     `----
+
+  x the name `TabsContent` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:7:1]
+   7 | import { Input } from '@/components/ui/input'
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+     :                ^^^^^|^^^^^
+     :                     `-- previous definition of `TabsContent` here
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+ 115 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+     :                ^^^^^|^^^^^
+     :                     `-- `TabsContent` redefined here
+ 116 | import { toast } from 'sonner'
+ 117 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+     `----
+
+  x the name `TabsList` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:7:1]
+   7 | import { Input } from '@/components/ui/input'
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+     :                             ^^^^|^^^
+     :                                 `-- previous definition of `TabsList` here
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+ 115 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+     :                             ^^^^|^^^
+     :                                 `-- `TabsList` redefined here
+ 116 | import { toast } from 'sonner'
+ 117 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+     `----
+
+  x the name `TabsTrigger` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:7:1]
+   7 | import { Input } from '@/components/ui/input'
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+     :                                       ^^^^^|^^^^^
+     :                                            `-- previous definition of `TabsTrigger` here
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+ 115 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+     :                                       ^^^^^|^^^^^
+     :                                            `-- `TabsTrigger` redefined here
+ 116 | import { toast } from 'sonner'
+ 117 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+     `----
+
+  x the name `toast` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:8:1]
+   8 | import { Label } from '@/components/ui/label'
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+  11 | import { toast } from 'sonner'
+     :          ^^|^^
+     :            `-- previous definition of `toast` here
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+ 115 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+ 116 | import { toast } from 'sonner'
+     :          ^^|^^
+     :            `-- `toast` redefined here
+ 117 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+ 118 | 
+ 119 | export default function AuthPage() {
+     `----
+
+  x the name `OnboardingSteps` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:9:1]
+   9 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+  10 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+     :        ^^^^^^^|^^^^^^^
+     :               `-- previous definition of `OnboardingSteps` here
+  13 | 
+  14 | export default function AuthPage() {
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+ 115 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+ 116 | import { toast } from 'sonner'
+ 117 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+     :        ^^^^^^^|^^^^^^^
+     :               `-- `OnboardingSteps` redefined here
+ 118 | 
+ 119 | export default function AuthPage() {
+ 120 |   const [isLoading, setIsLoading] = useState(false)
+     `----
+
+  x the name `AuthPage` is defined multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:11:1]
+  11 | import { toast } from 'sonner'
+  12 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 | 
+  14 | export default function AuthPage() {
+     :                         ^^^^|^^^
+     :                             `-- previous definition of `AuthPage` here
+  15 |   const [isLoading, setIsLoading] = useState(false)
+  16 |   const { signIn } = useAuth()
+  17 |   const router = useRouter()
+  18 | 
+  19 |   const [loginForm, setLoginForm] = useState({
+  20 |     email: '',
+  21 |     password: ''
+  22 |   })
+  23 | 
+  24 |   const handleLogin = async (e: React.FormEvent) => {
+  25 |     e.preventDefault()
+  26 |     setIsLoading(true)
+  27 | 
+  28 |     try {
+  29 |       await signIn(loginForm.email, loginForm.password)
+  30 |       toast.success('Successfully signed in!')
+  31 |       router.push('/profile')
+  32 |     } catch (error) {
+  33 |       toast.error('Failed to sign in. Please check your credentials.')
+  34 |     } finally {
+  35 |       setIsLoading(false)
+  36 |     }
+  37 |   }
+  38 | 
+  39 |   return (
+  40 |     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 |       <div className="max-w-md w-full space-y-8">
+  42 |         <div className="text-center">
+  43 |           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 |             Job Application System
+  45 |           </h2>
+  46 |           <p className="mt-2 text-sm text-gray-600">
+  47 |             Sign in to your account or create a new one
+  48 |           </p>
+  49 |         </div>
+  50 | 
+  51 |         <Tabs defaultValue="login" className="w-full">
+  52 |           <TabsList className="grid w-full grid-cols-2">
+  53 |             <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 |             <TabsTrigger value="register">Register</TabsTrigger>
+  55 |           </TabsList>
+  56 | 
+  57 |           <TabsContent value="login">
+  58 |             <Card>
+  59 |               <CardHeader>
+  60 |                 <CardTitle>Sign In</CardTitle>
+  61 |                 <CardDescription>
+  62 |                   Enter your email and password to access your account
+  63 |                 </CardDescription>
+  64 |               </CardHeader>
+  65 |               <CardContent>
+  66 |                 <form onSubmit={handleLogin} className="space-y-4">
+  67 |                   <div>
+  68 |                     <Label htmlFor="login-email">Email</Label>
+  69 |                     <Input
+  70 |                       id="login-email"
+  71 |                       type="email"
+  72 |                       value={loginForm.email}
+  73 |                       onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 |                       required
+  75 |                     />
+  76 |                   </div>
+  77 |                   <div>
+  78 |                     <Label htmlFor="login-password">Password</Label>
+  79 |                     <Input
+  80 |                       id="login-password"
+  81 |                       type="password"
+  82 |                       value={loginForm.password}
+  83 |                       onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 |                       required
+  85 |                     />
+  86 |                   </div>
+  87 |                   <Button type="submit" className="w-full" disabled={isLoading}>
+  88 |                     {isLoading ? 'Signing In...' : 'Sign In'}
+  89 |                   </Button>
+  90 |                 </form>
+  91 |               </CardContent>
+  92 |             </Card>
+  93 |           </TabsContent>
+  94 | 
+  95 |           <TabsContent value="register">
+  96 |             <OnboardingSteps></OnboardingSteps>
+  97 |           </TabsContent>
+  98 |         </Tabs>
+  99 |       </div>
+ 100 |     </div>
+ 101 |   )
+ 102 | }
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+ 110 | import { useRouter } from 'next/navigation'
+ 111 | import { Button } from '@/components/ui/button'
+ 112 | import { Input } from '@/components/ui/input'
+ 113 | import { Label } from '@/components/ui/label'
+ 114 | import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+ 115 | import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+ 116 | import { toast } from 'sonner'
+ 117 | import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+ 118 | 
+ 119 | export default function AuthPage() {
+     :                         ^^^^|^^^
+     :                             `-- `AuthPage` redefined here
+ 120 |   const [isLoading, setIsLoading] = useState(false)
+ 121 |   const { user, loading, signIn, signUp, signOut } = useAuth()
+ 122 |   const router = useRouter()
+     `----
+
+  x the name `default` is exported multiple times
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:11:1]
+  11 |     import { toast } from 'sonner'
+  12 |     import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+  13 |     
+  14 | ,-> export default function AuthPage() {
+  15 | |     const [isLoading, setIsLoading] = useState(false)
+  16 | |     const { signIn } = useAuth()
+  17 | |     const router = useRouter()
+  18 | |   
+  19 | |     const [loginForm, setLoginForm] = useState({
+  20 | |       email: '',
+  21 | |       password: ''
+  22 | |     })
+  23 | |   
+  24 | |     const handleLogin = async (e: React.FormEvent) => {
+  25 | |       e.preventDefault()
+  26 | |       setIsLoading(true)
+  27 | |   
+  28 | |       try {
+  29 | |         await signIn(loginForm.email, loginForm.password)
+  30 | |         toast.success('Successfully signed in!')
+  31 | |         router.push('/profile')
+  32 | |       } catch (error) {
+  33 | |         toast.error('Failed to sign in. Please check your credentials.')
+  34 | |       } finally {
+  35 | |         setIsLoading(false)
+  36 | |       }
+  37 | |     }
+  38 | |   
+  39 | |     return (
+  40 | |       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  41 | |         <div className="max-w-md w-full space-y-8">
+  42 | |           <div className="text-center">
+  43 | |             <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+  44 | |               Job Application System
+  45 | |             </h2>
+  46 | |             <p className="mt-2 text-sm text-gray-600">
+  47 | |               Sign in to your account or create a new one
+  48 | |             </p>
+  49 | |           </div>
+  50 | |   
+  51 | |           <Tabs defaultValue="login" className="w-full">
+  52 | |             <TabsList className="grid w-full grid-cols-2">
+  53 | |               <TabsTrigger value="login">Sign In</TabsTrigger>
+  54 | |               <TabsTrigger value="register">Register</TabsTrigger>
+  55 | |             </TabsList>
+  56 | |   
+  57 | |             <TabsContent value="login">
+  58 | |               <Card>
+  59 | |                 <CardHeader>
+  60 | |                   <CardTitle>Sign In</CardTitle>
+  61 | |                   <CardDescription>
+  62 | |                     Enter your email and password to access your account
+  63 | |                   </CardDescription>
+  64 | |                 </CardHeader>
+  65 | |                 <CardContent>
+  66 | |                   <form onSubmit={handleLogin} className="space-y-4">
+  67 | |                     <div>
+  68 | |                       <Label htmlFor="login-email">Email</Label>
+  69 | |                       <Input
+  70 | |                         id="login-email"
+  71 | |                         type="email"
+  72 | |                         value={loginForm.email}
+  73 | |                         onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+  74 | |                         required
+  75 | |                       />
+  76 | |                     </div>
+  77 | |                     <div>
+  78 | |                       <Label htmlFor="login-password">Password</Label>
+  79 | |                       <Input
+  80 | |                         id="login-password"
+  81 | |                         type="password"
+  82 | |                         value={loginForm.password}
+  83 | |                         onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+  84 | |                         required
+  85 | |                       />
+  86 | |                     </div>
+  87 | |                     <Button type="submit" className="w-full" disabled={isLoading}>
+  88 | |                       {isLoading ? 'Signing In...' : 'Sign In'}
+  89 | |                     </Button>
+  90 | |                   </form>
+  91 | |                 </CardContent>
+  92 | |               </Card>
+  93 | |             </TabsContent>
+  94 | |   
+  95 | |             <TabsContent value="register">
+  96 | |               <OnboardingSteps></OnboardingSteps>
+  97 | |             </TabsContent>
+  98 | |           </Tabs>
+  99 | |         </div>
+ 100 | |       </div>
+ 101 | |     )
+ 102 | |-> }
+     : `---- previous exported here
+ 103 |     ```
+ 104 |     
+ 105 |     ```
+ 106 |     'use client'
+ 107 |     
+ 108 |     import { useState } from 'react'
+ 109 |     import { useAuth } from '@/contexts/auth-context'
+ 110 |     import { useRouter } from 'next/navigation'
+ 111 |     import { Button } from '@/components/ui/button'
+ 112 |     import { Input } from '@/components/ui/input'
+ 113 |     import { Label } from '@/components/ui/label'
+ 114 |     import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+ 115 |     import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+ 116 |     import { toast } from 'sonner'
+ 117 |     import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
+ 118 |     
+ 119 | ,-> export default function AuthPage() {
+ 120 | |     const [isLoading, setIsLoading] = useState(false)
+ 121 | |     const { user, loading, signIn, signUp, signOut } = useAuth()
+ 122 | |     const router = useRouter()
+ 123 | |   
+ 124 | |     const [loginForm, setLoginForm] = useState({
+ 125 | |       email: '',
+ 126 | |       password: ''
+ 127 | |     })
+ 128 | |   
+ 129 | |     const handleLogin = async (e: React.FormEvent) => {
+ 130 | |       e.preventDefault()
+ 131 | |       setIsLoading(true)
+ 132 | |   
+ 133 | |       try {
+ 134 | |         await signIn(loginForm.email, loginForm.password)
+ 135 | |         toast.success('Successfully signed in!')
+ 136 | |         router.push('/profile')
+ 137 | |       } catch (error) {
+ 138 | |         toast.error('Failed to sign in. Please check your credentials.')
+ 139 | |       } finally {
+ 140 | |         setIsLoading(false)
+ 141 | |       }
+ 142 | |     }
+ 143 | |   
+ 144 | |     return (
+ 145 | |       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+ 146 | |         <div className="max-w-md w-full space-y-8">
+ 147 | |           <div className="text-center">
+ 148 | |             <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+ 149 | |               Job Application System
+ 150 | |             </h2>
+ 151 | |             <p className="mt-2 text-sm text-gray-600">
+ 152 | |               Sign in to your account or create a new one
+ 153 | |             </p>
+ 154 | |           </div>
+ 155 | |   
+ 156 | |           <Tabs defaultValue="login" className="w-full">
+ 157 | |             <TabsList className="grid w-full grid-cols-2">
+ 158 | |               <TabsTrigger value="login">Sign In</TabsTrigger>
+ 159 | |               <TabsTrigger value="register">Register</TabsTrigger>
+ 160 | |             </TabsList>
+ 161 | |   
+ 162 | |             <TabsContent value="login">
+ 163 | |               <Card>
+ 164 | |                 <CardHeader>
+ 165 | |                   <CardTitle>Sign In</CardTitle>
+ 166 | |                   <CardDescription>
+ 167 | |                     Enter your email and password to access your account
+ 168 | |                   </CardDescription>
+ 169 | |                 </CardHeader>
+ 170 | |                 <CardContent>
+ 171 | |                   <form onSubmit={handleLogin} className="space-y-4">
+ 172 | |                     <div>
+ 173 | |                       <Label htmlFor="login-email">Email</Label>
+ 174 | |                       <Input
+ 175 | |                         id="login-email"
+ 176 | |                         type="email"
+ 177 | |                         value={loginForm.email}
+ 178 | |                         onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+ 179 | |                         required
+ 180 | |                       />
+ 181 | |                     </div>
+ 182 | |                     <div>
+ 183 | |                       <Label htmlFor="login-password">Password</Label>
+ 184 | |                       <Input
+ 185 | |                         id="login-password"
+ 186 | |                         type="password"
+ 187 | |                         value={loginForm.password}
+ 188 | |                         onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+ 189 | |                         required
+ 190 | |                       />
+ 191 | |                     </div>
+ 192 | |                     <Button type="submit" className="w-full" disabled={isLoading}>
+ 193 | |                       {isLoading ? 'Signing In...' : 'Sign In'}
+ 194 | |                     </Button>
+ 195 | |                   </form>
+ 196 | |                 </CardContent>
+ 197 | |               </Card>
+ 198 | |             </TabsContent>
+ 199 | |   
+ 200 | |             <TabsContent value="register">
+ 201 | |               <OnboardingSteps></OnboardingSteps>
+ 202 | |             </TabsContent>
+ 203 | |           </Tabs>
+ 204 | |         </div>
+ 205 | |       </div>
+ 206 | |     )
+ 207 | |-> }
+     : `---- exported more than once
+     `----
+
+Error: 
+  > Exported identifiers must be unique
+
+  x The "use client" directive must be placed before other expressions. Move it to the top of the file to resolve this issue.
+     ,-[/home/runner/workspace/src/app/auth/page.tsx:103:1]
+ 103 | ```
+ 104 | 
+ 105 | ```
+ 106 | 'use client'
+     : ^^^^^^^^^^^^
+ 107 | 
+ 108 | import { useState } from 'react'
+ 109 | import { useAuth } from '@/contexts/auth-context'
+     `----
+
+Import trace for requested module:
+./src/app/auth/page.tsx
+
+
+> Build failed because of webpack errors
