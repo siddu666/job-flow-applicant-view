@@ -8,19 +8,25 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Calendar,
-  User,
-  Phone,
-  FileText,
-  ExternalLink,
-  Mail
-} from "lucide-react";
+import { Calendar, User, Phone, FileText, ExternalLink, Mail } from "lucide-react";
 
+// Define a type for the application data
+interface Application {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  availability: string | null;
+  skills: string[] | null;
+  status: string | null;
+  cv_url: string | null;
+  cover_letter: string | null;
+  // Add other fields as necessary
+}
 
 export const ApplicationReview = () => {
   const { applications = [], isLoading, updateApplicationStatus } = useApplications();
-  const [selectedApp, setSelectedApp] = useState(null);
+  const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [statusFilter, setStatusFilter] = useState("all");
 
   const filteredApplications = applications.filter(app =>
@@ -35,7 +41,7 @@ export const ApplicationReview = () => {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "pending": return "bg-yellow-100 text-yellow-800";
       case "under_review": return "bg-blue-100 text-blue-800";
@@ -91,16 +97,11 @@ export const ApplicationReview = () => {
                             <Avatar>
                               <AvatarImage src={`https://avatar.vercel.sh/${application.email}.png`} />
                               <AvatarFallback>
-                                {`${application.first_name?.[0] || ''}${application.last_name?.[0] || ''}`.toUpperCase()}
+                                {`${application.full_name?.[0] || ''}`.toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
 
                             <div className="space-y-2">
-                              <div>
-                                <h3 className="font-semibold text-lg">{application.first_name} {application.last_name}</h3>
-                                <p className="text-sm text-gray-600">{application.email}</p>
-                              </div>
-
                               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                                 {application.phone && (
                                     <div className="flex items-center gap-1">
@@ -187,7 +188,7 @@ export const ApplicationReview = () => {
                         <div className="space-y-2 text-sm">
                           <div className="flex items-center gap-2">
                             <User className="h-4 w-4" />
-                            {selectedApp.first_name} {selectedApp.last_name}
+                            {selectedApp.full_name}
                           </div>
                           <div className="flex items-center gap-2">
                             <Mail className="h-4 w-4" />

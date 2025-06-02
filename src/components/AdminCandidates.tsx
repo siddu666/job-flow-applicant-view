@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import {Profile, useAllCandidates} from "@/hooks/useProfile";
+import {Profile} from "@/hooks/useProfile";
+import {useAllCandidates} from "@/hooks/useAllCandidates";
 import { Card as UICard, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,8 +28,8 @@ const AdminCandidates = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: candidatesResult } = useAllCandidates(filters);
-  const candidates = candidatesResult?.data || [];
-  const total = candidatesResult?.total || 0;
+  const candidates = candidatesResult || [];
+  const total = candidatesResult?.length || 0;
 
   const handleSearch = () => {
     setFilters(prev => ({ ...prev, search: searchTerm }));

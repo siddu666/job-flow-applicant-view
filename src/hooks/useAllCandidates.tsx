@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
@@ -14,7 +13,6 @@ export interface CandidateSearchFilters {
   skills?: string[]
   visaStatus?: string
   availability?: string
-  jobType?: string
 }
 
 export function useAllCandidates(filters?: CandidateSearchFilters) {
@@ -22,26 +20,27 @@ export function useAllCandidates(filters?: CandidateSearchFilters) {
     queryKey: ['all-candidates', filters],
     queryFn: async () => {
       let query = supabase
-        .from('profiles')
-        .select('*')
-        .neq('role', 'admin')
-        .order('created_at', { ascending: false })
+          .from('profiles')
+          .select('*')
+          .neq('role', 'admin')
+          .order('created_at', { ascending: false })
 
       // Apply filters
       if (filters?.searchTerm) {
-        query = query.or(`first_name.ilike.%${filters.searchTerm}%,last_name.ilike.%${filters.searchTerm}%,email.ilike.%${filters.searchTerm}%`)
+        const searchTerm = `%${filters.searchTerm}%`
+        query = query.or(`first_name.ilike.${searchTerm},last_name.ilike.${searchTerm},email.ilike.${searchTerm}`)
       }
 
       if (filters?.experienceLevel && filters.experienceLevel !== 'any') {
         const exp = parseInt(filters.experienceLevel)
         if (exp === 0) {
-          query = query.gte('experience', 0).lte('experience', 1)
+          query = query.gte('experience_years', 0).lte('experience_years', 1)
         } else if (exp === 2) {
-          query = query.gte('experience', 2).lte('experience', 3)
+          query = query.gte('experience_years', 2).lte('experience_years', 3)
         } else if (exp === 4) {
-          query = query.gte('experience', 4).lte('experience', 6)
+          query = query.gte('experience_years', 4).lte('experience_years', 6)
         } else if (exp === 7) {
-          query = query.gte('experience', 7)
+          query = query.gte('experience_years', 7)
         }
       }
 
@@ -55,10 +54,6 @@ export function useAllCandidates(filters?: CandidateSearchFilters) {
 
       if (filters?.availability && filters.availability !== 'any') {
         query = query.eq('availability', filters.availability)
-      }
-
-      if (filters?.jobType && filters.jobType !== 'any') {
-        query = query.eq('preferred_job_type', filters.jobType)
       }
 
       if (filters?.skills && filters.skills.length > 0) {
@@ -78,9 +73,9 @@ export function useCandidateStats() {
     queryKey: ['candidate-stats'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('profiles')
-        .select('visa_status, experience, availability, preferred_job_type, current_location, skills')
-        .neq('role', 'admin')
+          .from('profiles')
+          .select('visa_status, experience_years, availability, current_location, skills')
+          .neq('role', 'admin')
 
       if (error) throw error
 
@@ -89,7 +84,6 @@ export function useCandidateStats() {
         byVisaStatus: {} as Record<string, number>,
         byExperience: {} as Record<string, number>,
         byAvailability: {} as Record<string, number>,
-        byJobType: {} as Record<string, number>,
         byLocation: {} as Record<string, number>,
         topSkills: {} as Record<string, number>
       }
@@ -101,21 +95,16 @@ export function useCandidateStats() {
         }
 
         // Experience stats
-        if (profile.experience !== null) {
-          const expRange = profile.experience <= 1 ? '0-1' :
-                          profile.experience <= 3 ? '2-3' :
-                          profile.experience <= 6 ? '4-6' : '7+'
+        if (profile.experience_years !== null) {
+          const expRange = profile.experience_years <= 1 ? '0-1' :
+              profile.experience_years <= 3 ? '2-3' :
+                  profile.experience_years <= 6 ? '4-6' : '7+'
           stats.byExperience[expRange] = (stats.byExperience[expRange] || 0) + 1
         }
 
         // Availability stats
         if (profile.availability) {
           stats.byAvailability[profile.availability] = (stats.byAvailability[profile.availability] || 0) + 1
-        }
-
-        // Job type stats
-        if (profile.preferred_job_type) {
-          stats.byJobType[profile.preferred_job_type] = (stats.byJobType[profile.preferred_job_type] || 0) + 1
         }
 
         // Location stats

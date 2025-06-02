@@ -11,7 +11,7 @@ export function useJobCategories() {
       // Get unique job types from jobs table
       const { data, error } = await supabase
         .from('jobs')
-        .select('type, department')
+        .select('type')
         .not('type', 'is', null)
 
       if (error) throw error
@@ -21,7 +21,6 @@ export function useJobCategories() {
 
       data.forEach(job => {
         if (job.type) types.add(job.type)
-        if (job.department) departments.add(job.department)
       })
 
       return {

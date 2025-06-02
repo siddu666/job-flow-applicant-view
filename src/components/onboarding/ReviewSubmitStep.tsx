@@ -34,11 +34,7 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({
 
       // If no user (signup flow), create account first
       if (!userId) {
-        await signUp(data.email, data.password, {
-          role: 'applicant',
-          first_name: data.firstName,
-          last_name: data.lastName
-        });
+        await signUp(data);
 
         // Get the newly created user
         const { data: { user: newUser } } = await supabase.auth.getUser();

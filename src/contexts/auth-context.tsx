@@ -4,13 +4,14 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 import type { User, Session } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
+import {OnboardingData} from "@/components/onboarding/OnboardingSteps";
 
 interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string, userData?: Record<string, unknown>) => Promise<void>
+  signUp: (onboardingData : OnboardingData ) => Promise<void>
   signOut: () => Promise<void>
   updateProfile: (data: Record<string, unknown>) => Promise<void>
   resetPassword: (email: string) => Promise<void>
@@ -68,29 +69,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error
   }
 
-  const signUp = async (email: string, password: string, userData?: Record<string, unknown>) => {
+  const signUp = async (onboardingData: OnboardingData) => {
     const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
+      email: onboardingData.email,
+      password: onboardingData.password,
       options: {
-        data: userData
-      }
-    })
-    if (error) throw error
+        data: {
+          role: 'applicant',
+          first_name: onboardingData.firstName,
+          last_name: onboardingData.lastName,
+        },
+      },
+    });
+
+    if (error) throw error;
 
     // Create profile record
     if (data.user) {
+      const profileData = {
+        id: data.user.id,
+        email: data.user.email || '',
+        role: 'applicant',
+        first_name: onboardingData.firstName,
+        last_name: onboardingData.lastName,
+        phone: onboardingData.phone,
+        current_location: onboardingData.city,
+        skills: onboardingData.skills,
+        experience_years: onboardingData.experience,
+        job_seeking_status: onboardingData.preferredJobType,
+        availability: onboardingData.availability,
+        linkedin_url: onboardingData.linkedinUrl,
+        portfolio_url: onboardingData.portfolioUrl,
+        willing_to_relocate: onboardingData.authorizedToWork,
+      };
+
       const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: data.user.id,
-          email: data.user.email || '',
-          role: userData?.role || 'user',
-          ...userData
-        })
-      if (profileError) throw profileError
+          .from('profiles')
+          .insert(profileData);
+
+      if (profileError) throw profileError;
     }
-  }
+  };
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()

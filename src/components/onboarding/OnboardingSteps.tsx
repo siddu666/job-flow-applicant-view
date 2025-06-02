@@ -14,7 +14,7 @@ export interface OnboardingData {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
+    password: string;
   
   // Personal Info
   phone: string;

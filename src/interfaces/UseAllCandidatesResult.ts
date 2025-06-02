@@ -1,6 +1,5 @@
 
 // interfaces/UseAllCandidatesResult.ts
-import { Profile } from '../hooks/useProfile';
 
 export type UseAllCandidatesResult = {
     data: Profile[];
@@ -8,3 +7,4 @@ export type UseAllCandidatesResult = {
     isLoading: boolean;
     error?: Error;
 };
+

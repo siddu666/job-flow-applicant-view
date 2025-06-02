@@ -150,7 +150,7 @@ export default function AdminPage() {
                             <div>
                               <CardTitle>{job.title}</CardTitle>
                               <CardDescription>
-                                {job.company} • {job.location} • {job.type}
+                                {job.location} • {job.type}
                               </CardDescription>
                             </div>
                             <div className="flex space-x-2">
@@ -210,16 +210,16 @@ export default function AdminPage() {
                                 Applied for: {application.jobs?.title} at {application.jobs?.company}
                               </CardDescription>
                             </div>
-                            <Badge className={getStatusBadgeColor(application.status)}>
+                            {/*<Badge className={getStatusBadgeColor(application.status)}>
                               {application.status}
-                            </Badge>
+                            </Badge>*/}
                           </div>
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-2">
                             <p><strong>Email:</strong> {application.profiles?.email}</p>
                             <p><strong>Phone:</strong> {application.profiles?.phone}</p>
-                            <p><strong>Applied:</strong> {new Date(application.applied_at).toLocaleDateString()}</p>
+                            {/*<p><strong>Applied:</strong> {new Date(application.applied_at).toLocaleDateString()}</p>*/}
                             {application.cover_letter && (
                                 <div>
                                   <strong>Cover Letter:</strong>

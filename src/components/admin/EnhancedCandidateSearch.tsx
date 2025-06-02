@@ -48,7 +48,7 @@ export default function EnhancedCandidateSearch() {
         candidate.email,
         candidate.phone || '',
         candidate.current_location || '',
-        candidate.experience?.toString() || '',
+        candidate.experience_years?.toString() || '',
         candidate.visa_status || '',
         candidate.availability || '',
         candidate.skills?.join('; ') || ''
@@ -186,10 +186,10 @@ export default function EnhancedCandidateSearch() {
                         {candidate.current_location}
                       </div>
                     )}
-                    {candidate.experience !== null && (
+                    {candidate.experience_years !== null && (
                       <div className="flex items-center">
                         <Briefcase className="mr-2 h-4 w-4" />
-                        {candidate.experience} years experience
+                        {candidate.experience_years} years experience
                       </div>
                     )}
                   </div>
@@ -211,7 +211,7 @@ export default function EnhancedCandidateSearch() {
 
                   <div className="flex items-center text-xs text-gray-500">
                     <Calendar className="mr-1 h-3 w-3" />
-                    Joined {new Date(candidate.created_at).toLocaleDateString()}
+                    Joined {candidate.created_at}
                   </div>
                 </div>
               </div>

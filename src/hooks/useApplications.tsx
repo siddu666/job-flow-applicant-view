@@ -8,40 +8,26 @@ import { Database } from "@/integrations/supabase/types";
 
 type Application = Database['public']['Tables']['applications']['Row'];
 type ApplicationUpdate = Database['public']['Tables']['applications']['Update'];
-
-type ApplicationInsert = Database['public']['Tables']['applications']['Insert']
+type ApplicationInsert = Database['public']['Tables']['applications']['Insert'];
 
 export const useApplications = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
   // Get user's applications
-  const {
-    data: applications = [],
-    isLoading,
-    error,
-  } = useQuery({
+  const { data: applications = [], isLoading, error } = useQuery({
     queryKey: ["applications", user?.id],
     queryFn: async () => {
       if (!user?.id) throw new Error("No user");
 
       const { data, error } = await supabase
-        .from("applications")
-        .select(`
-          *,
-          jobs (
-            id,
-            title,
-            company,
-            location,
-            type
-          )
-        `)
-        .eq("applicant_id", user.id)
-        .order("applied_at", { ascending: false });
+          .from("applications")
+          .select('*, jobs(*)')
+          .eq("applicant_id", user.id)
+          .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as (Application & { jobs: { id: string; title: string; company: string; location: string; type: string } })[];
+      return data as (Application & { jobs: Database['public']['Tables']['jobs']['Row'] })[];
     },
     enabled: !!user?.id,
   });
@@ -54,11 +40,11 @@ export const useApplications = () => {
         if (!user?.id || !jobId) return false;
 
         const { data, error } = await supabase
-          .from("applications")
-          .select("id")
-          .eq("job_id", jobId)
-          .eq("applicant_id", user.id)
-          .single();
+            .from("applications")
+            .select("id")
+            .eq("job_id", jobId)
+            .eq("applicant_id", user.id)
+            .single();
 
         if (error && error.code !== 'PGRST116') throw error;
         return !!data;
@@ -69,29 +55,21 @@ export const useApplications = () => {
 
   // Apply to job mutation
   const applyToJobMutation = useMutation({
-    mutationFn: async ({
-      jobId,
-      coverLetter,
-      cvUrl,
-    }: {
-      jobId: string;
-      coverLetter?: string;
-      cvUrl?: string;
-    }) => {
+    mutationFn: async ({ jobId, coverLetter, cvUrl }: { jobId: string; coverLetter?: string; cvUrl?: string }) => {
       if (!user?.id) throw new Error("No user");
 
       const { data, error } = await supabase
-        .from("applications")
-        .insert({
-          job_id: jobId,
-          applicant_id: user.id,
-          cover_letter: coverLetter,
-          cv_url: cvUrl,
-          status: "pending",
-          applied_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
+          .from("applications")
+          .insert({
+            job_id: jobId,
+            applicant_id: user.id,
+            cover_letter: coverLetter,
+            cv_url: cvUrl,
+            status: "pending",
+            created_at: new Date().toISOString()
+          })
+          .select()
+          .single();
 
       if (error) throw error;
       return data;
@@ -108,23 +86,16 @@ export const useApplications = () => {
   });
 
   // Update application status (for admin)
-  const updateApplicationMutation = useMutation({
-    mutationFn: async ({
-      applicationId,
-      status,
-    }: {
-      applicationId: string;
-      status: string;
-    }) => {
+  /*const updateApplicationMutation = useMutation({
+    mutationFn: async ({ applicationId, status }: { applicationId: string; status: string }) => {
       const { data, error } = await supabase
-        .from("applications")
-        .update({
-          status,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", applicationId)
-        .select()
-        .single();
+          .from("applications")
+          .update({
+            status
+          })
+          .eq("id", applicationId)
+          .select()
+          .single();
 
       if (error) throw error;
       return data;
@@ -137,7 +108,7 @@ export const useApplications = () => {
       console.error("Error updating application:", error);
       toast.error("Failed to update application");
     },
-  });
+  });*/
 
   // Get all applications (for admin)
   const useAllApplications = () => {
@@ -145,31 +116,14 @@ export const useApplications = () => {
       queryKey: ["all-applications"],
       queryFn: async () => {
         const { data, error } = await supabase
-          .from("applications")
-          .select(`
-            *,
-            jobs (
-              id,
-              title,
-              company,
-              location,
-              type
-            ),
-            profiles (
-              id,
-              first_name,
-              last_name,
-              email,
-              phone,
-              cv_url
-            )
-          `)
-          .order("applied_at", { ascending: false });
+            .from("applications")
+            .select('*, jobs(*), profiles(*)')
+            .order("created_at", { ascending: false });
 
         if (error) throw error;
-        return data as (Application & { 
-          jobs: { id: string; title: string; company: string; location: string; type: string }; 
-          profiles: { id: string; first_name: string; last_name: string; email: string; phone: string; cv_url: string } 
+        return data as (Application & {
+          jobs: Database['public']['Tables']['jobs']['Row'];
+          profiles: Database['public']['Tables']['profiles']['Row'];
         })[];
       },
     });
@@ -183,9 +137,9 @@ export const useApplications = () => {
     useAllApplications,
     applyToJob: applyToJobMutation.mutate,
     applyToJobAsync: applyToJobMutation.mutateAsync,
-    updateApplicationStatus: updateApplicationMutation.mutate,
+    //updateApplicationStatus: updateApplicationMutation.mutate,
     isApplying: applyToJobMutation.isPending,
-    isUpdating: updateApplicationMutation.isPending,
+    //isUpdating: updateApplicationMutation.isPending,
   };
 };
 
