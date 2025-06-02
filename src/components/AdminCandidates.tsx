@@ -87,6 +87,18 @@ const AdminCandidates = () => {
     "Kubernetes",
   ];
 
+  // Helper function to get full name
+  const getFullName = (candidate: Profile) => {
+    return `${candidate.first_name || ''} ${candidate.last_name || ''}`.trim() || 'Unknown Name';
+  };
+
+  // Helper function to get initials
+  const getInitials = (candidate: Profile) => {
+    const firstName = candidate.first_name?.[0] || '';
+    const lastName = candidate.last_name?.[0] || '';
+    return firstName + lastName || 'U';
+  };
+
   return (
     <div className="space-y-6">
       <UICard>
@@ -161,24 +173,23 @@ const AdminCandidates = () => {
             <CardContent className="p-6">
               <div className="flex items-start space-x-4">
                 <Avatar>
-                  <AvatarImage src={candidate.avatar_url || undefined} />
                   <AvatarFallback>
-                    {candidate.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
+                    {getInitials(candidate)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-lg truncate">
-                    {candidate.full_name || 'Unknown Name'}
+                    {getFullName(candidate)}
                   </h3>
                   <p className="text-sm text-gray-600 mb-2">
-                    {candidate.current_position || 'Position not specified'}
+                    Professional
                   </p>
                   
                   <div className="space-y-1 text-sm text-gray-500">
-                    {candidate.location && (
+                    {candidate.current_location && (
                       <div className="flex items-center">
                         <MapPin className="h-3 w-3 mr-1" />
-                        {candidate.location}
+                        {candidate.current_location}
                       </div>
                     )}
                     
@@ -189,10 +200,10 @@ const AdminCandidates = () => {
                       </div>
                     )}
                     
-                    {candidate.salary_expectation && (
+                    {candidate.expected_salary_sek && (
                       <div className="flex items-center">
                         <DollarSign className="h-3 w-3 mr-1" />
-                        {candidate.salary_expectation} SEK
+                        {candidate.expected_salary_sek} SEK
                       </div>
                     )}
                   </div>
@@ -271,20 +282,18 @@ const AdminCandidates = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={closeCandidateModal}
-        title={selectedCandidate?.full_name || 'Candidate Profile'}
       >
         {selectedCandidate && (
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
               <Avatar className="h-16 w-16">
-                <AvatarImage src={selectedCandidate.avatar_url || undefined} />
                 <AvatarFallback className="text-lg">
-                  {selectedCandidate.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
+                  {getInitials(selectedCandidate)}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h2 className="text-xl font-semibold">{selectedCandidate.full_name}</h2>
-                <p className="text-gray-600">{selectedCandidate.current_position}</p>
+                <h2 className="text-xl font-semibold">{getFullName(selectedCandidate)}</h2>
+                <p className="text-gray-600">Professional</p>
               </div>
             </div>
 
@@ -308,10 +317,10 @@ const AdminCandidates = () => {
                       </a>
                     </div>
                   )}
-                  {selectedCandidate.location && (
+                  {selectedCandidate.current_location && (
                     <div className="flex items-center">
                       <MapPin className="h-4 w-4 mr-2" />
-                      {selectedCandidate.location}
+                      {selectedCandidate.current_location}
                     </div>
                   )}
                 </div>
@@ -326,10 +335,10 @@ const AdminCandidates = () => {
                       {selectedCandidate.experience_years} years experience
                     </div>
                   )}
-                  {selectedCandidate.salary_expectation && (
+                  {selectedCandidate.expected_salary_sek && (
                     <div className="flex items-center">
                       <DollarSign className="h-4 w-4 mr-2" />
-                      {selectedCandidate.salary_expectation} SEK expected salary
+                      {selectedCandidate.expected_salary_sek} SEK expected salary
                     </div>
                   )}
                 </div>
@@ -357,9 +366,9 @@ const AdminCandidates = () => {
             )}
 
             <div className="flex space-x-2 pt-4">
-              {selectedCandidate.resume_url && (
+              {selectedCandidate.cv_url && (
                 <Button variant="outline" asChild>
-                  <a href={selectedCandidate.resume_url} target="_blank" rel="noopener noreferrer">
+                  <a href={selectedCandidate.cv_url} target="_blank" rel="noopener noreferrer">
                     <FileText className="h-4 w-4 mr-2" />
                     View Resume
                   </a>

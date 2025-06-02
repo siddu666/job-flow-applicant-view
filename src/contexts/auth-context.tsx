@@ -48,7 +48,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             .single()
           
           if (profile) {
-            setUser({ ...session.user, profile })
+            // Store profile data separately if needed
+            console.log('User profile loaded:', profile)
           }
         }
       } catch (error) {
@@ -76,8 +77,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             .single()
           
           if (profile) {
-            setUser({ ...session.user, profile })
-            
             // Check if profile is complete
             if (!profile.first_name || !profile.phone || !profile.current_location) {
               router.push('/onboarding')
@@ -119,7 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.success('Check your email for a confirmation link.')
       }
 
-      return { data, error }
+      return { data, error: undefined }
     } catch (error) {
       const authError = error as AuthError
       toast.error(authError.message)
@@ -137,7 +136,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error
 
       toast.success('Welcome back!')
-      return { error }
+      return { error: undefined }
     } catch (error) {
       const authError = error as AuthError
       toast.error(authError.message)

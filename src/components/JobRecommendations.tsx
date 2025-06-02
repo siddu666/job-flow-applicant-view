@@ -80,9 +80,9 @@ const JobRecommendations = () => {
                 {job.description}
               </p>
 
-              {job.requirements && job.requirements.length > 0 && (
+              {job.requirements && Array.isArray(job.requirements) && job.requirements.length > 0 && (
                 <div className="flex flex-wrap gap-1">
-                  {job.requirements.slice(0, 3).map((skill, index) => (
+                  {job.requirements.slice(0, 3).map((skill: string, index: number) => (
                     <Badge key={index} variant="outline" className="text-xs">
                       {skill}
                     </Badge>

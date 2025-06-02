@@ -1,3 +1,4 @@
+
 'use client'
 
 import React, { useState, useEffect } from "react";
@@ -23,9 +24,9 @@ const Profile = () => {
     first_name: "",
     last_name: "",
     phone: "",
-    location: "",
+    current_location: "",
     bio: "",
-    experience_level: "",
+    experience_years: 0,
     job_seeking_status: "",
   });
 
@@ -35,9 +36,9 @@ const Profile = () => {
         first_name: profile.first_name || "",
         last_name: profile.last_name || "",
         phone: profile.phone || "",
-        location: profile.location || "",
+        current_location: profile.current_location || "",
         bio: profile.bio || "",
-        experience_level: profile.experience_level || "",
+        experience_years: profile.experience_years || 0,
         job_seeking_status: profile.job_seeking_status || "",
       });
     }
@@ -47,7 +48,7 @@ const Profile = () => {
     try {
       await updateProfile.mutateAsync({
         id: user!.id,
-        ...formData,
+        updates: formData,
       });
       setIsEditing(false);
       toast.success("Profile updated successfully!");
@@ -62,9 +63,9 @@ const Profile = () => {
         first_name: profile.first_name || "",
         last_name: profile.last_name || "",
         phone: profile.phone || "",
-        location: profile.location || "",
+        current_location: profile.current_location || "",
         bio: profile.bio || "",
-        experience_level: profile.experience_level || "",
+        experience_years: profile.experience_years || 0,
         job_seeking_status: profile.job_seeking_status || "",
       });
     }
@@ -185,12 +186,12 @@ const Profile = () => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="location">Location</Label>
+                    <Label htmlFor="current_location">Location</Label>
                     <Input
-                      id="location"
-                      value={formData.location}
+                      id="current_location"
+                      value={formData.current_location}
                       onChange={(e) =>
-                        setFormData((prev) => ({ ...prev, location: e.target.value }))
+                        setFormData((prev) => ({ ...prev, current_location: e.target.value }))
                       }
                       disabled={!isEditing}
                     />
@@ -212,24 +213,16 @@ const Profile = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="experience_level">Experience Level</Label>
-                    <Select
-                      value={formData.experience_level}
-                      onValueChange={(value) =>
-                        setFormData((prev) => ({ ...prev, experience_level: value }))
+                    <Label htmlFor="experience_years">Years of Experience</Label>
+                    <Input
+                      id="experience_years"
+                      type="number"
+                      value={formData.experience_years}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, experience_years: parseInt(e.target.value) || 0 }))
                       }
                       disabled={!isEditing}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select experience level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="entry">Entry Level</SelectItem>
-                        <SelectItem value="mid">Mid Level</SelectItem>
-                        <SelectItem value="senior">Senior Level</SelectItem>
-                        <SelectItem value="executive">Executive</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    />
                   </div>
                   <div>
                     <Label htmlFor="job_seeking_status">Job Seeking Status</Label>
