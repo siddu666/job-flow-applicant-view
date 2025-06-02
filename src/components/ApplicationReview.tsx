@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from "react";
-import { useApplications, useUpdateApplication } from "@/hooks/useApplications";
+import { useApplications } from "@/hooks/useApplications";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,31 +21,26 @@ import {
   ExternalLink
 } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
-import type { Application } from "@/hooks/useApplications";
 
 export const ApplicationReview = () => {
   const { user } = useAuth();
-  const { data: applications = [], isLoading } = useApplications();
-  const updateApplication = useUpdateApplication();
-  const [selectedApp, setSelectedApp] = useState<Application | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const { applications = [], isLoading, updateApplicationStatus } = useApplications();
+  const [selectedApp, setSelectedApp] = useState(null);
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const filteredApplications = applications.filter(app =>
       statusFilter === "all" || app.status === statusFilter
   );
 
-  const handleStatusUpdate = async (applicationId: string, newStatus: string) => {
+  const handleStatusUpdate = async (applicationId: any, newStatus: string) => {
     try {
-      await updateApplication.mutateAsync({
-        id: applicationId,
-        updates: { status: newStatus }
-      });
+      await updateApplicationStatus({ applicationId, status: newStatus });
     } catch (error) {
       console.error("Error updating application status:", error);
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status) => {
     switch (status) {
       case "pending": return "bg-yellow-100 text-yellow-800";
       case "under_review": return "bg-blue-100 text-blue-800";
@@ -62,7 +57,6 @@ export const ApplicationReview = () => {
 
   return (
       <div className="space-y-6">
-        {/* Filter Controls */}
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Application Reviews</h2>
           <Select value={statusFilter} onValueChange={setStatusFilter}>

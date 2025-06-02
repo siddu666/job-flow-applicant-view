@@ -54,12 +54,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               .select('first_name, last_name')
               .eq('id', session.user.id)
               .single()
-
-            if (!profile?.first_name || !profile?.last_name) {
-              router.push('/onboarding')
-            } else {
+            
               router.push('/profile')
-            }
           }
         } else if (event === 'SIGNED_OUT') {
           router.push('/auth')

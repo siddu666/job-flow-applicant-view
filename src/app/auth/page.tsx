@@ -10,22 +10,16 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
+import OnboardingSteps from "@/components/onboarding/OnboardingSteps";
 
 export default function AuthPage() {
   const [isLoading, setIsLoading] = useState(false)
-  const { signIn, signUp } = useAuth()
+  const { signIn } = useAuth()
   const router = useRouter()
 
   const [loginForm, setLoginForm] = useState({
     email: '',
     password: ''
-  })
-
-  const [registerForm, setRegisterForm] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    fullName: ''
   })
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -38,29 +32,6 @@ export default function AuthPage() {
       router.push('/profile')
     } catch (error) {
       toast.error('Failed to sign in. Please check your credentials.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (registerForm.password !== registerForm.confirmPassword) {
-      toast.error('Passwords do not match')
-      return
-    }
-
-    setIsLoading(true)
-
-    try {
-      await signUp(registerForm.email, registerForm.password, {
-        full_name: registerForm.fullName
-      })
-      toast.success('Account created successfully! Please check your email to verify your account.')
-      router.push('/profile')
-    } catch (error) {
-      toast.error('Failed to create account. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -123,61 +94,7 @@ export default function AuthPage() {
           </TabsContent>
 
           <TabsContent value="register">
-            <Card>
-              <CardHeader>
-                <CardTitle>Create Account</CardTitle>
-                <CardDescription>
-                  Create a new account to get started
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleRegister} className="space-y-4">
-                  <div>
-                    <Label htmlFor="register-name">Full Name</Label>
-                    <Input
-                      id="register-name"
-                      type="text"
-                      value={registerForm.fullName}
-                      onChange={(e) => setRegisterForm({...registerForm, fullName: e.target.value})}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="register-email">Email</Label>
-                    <Input
-                      id="register-email"
-                      type="email"
-                      value={registerForm.email}
-                      onChange={(e) => setRegisterForm({...registerForm, email: e.target.value})}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="register-password">Password</Label>
-                    <Input
-                      id="register-password"
-                      type="password"
-                      value={registerForm.password}
-                      onChange={(e) => setRegisterForm({...registerForm, password: e.target.value})}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="register-confirm">Confirm Password</Label>
-                    <Input
-                      id="register-confirm"
-                      type="password"
-                      value={registerForm.confirmPassword}
-                      onChange={(e) => setRegisterForm({...registerForm, confirmPassword: e.target.value})}
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Creating Account...' : 'Create Account'}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+            <OnboardingSteps></OnboardingSteps>
           </TabsContent>
         </Tabs>
       </div>

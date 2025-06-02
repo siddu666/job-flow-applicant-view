@@ -28,7 +28,7 @@ export default function JobsPage() {
     limit: 10,
   })
 
-  const { data: jobsData, isLoading, error } = useAllJobs(filters)
+  const { data: jobsData, isLoading, error } = useAllJobs()
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -129,7 +129,7 @@ export default function JobsPage() {
         <div className="text-center py-8 text-red-600">Error loading jobs: {error.message}</div>
       ) : (
         <div className="space-y-4">
-          {jobsData?.data.map((job) => (
+          {jobsData?.map((job) => (
             <Card key={job.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex justify-between items-start">
@@ -191,7 +191,7 @@ export default function JobsPage() {
             </Card>
           ))}
           
-          {jobsData?.data.length === 0 && (
+          {jobsData?.length === 0 && (
             <div className="text-center py-8">
               <p className="text-gray-600">No jobs found matching your criteria.</p>
             </div>
@@ -199,7 +199,7 @@ export default function JobsPage() {
         </div>
       )}
 
-      {/* Pagination */}
+      {/* Pagination 
       {jobsData && jobsData.total > filters.limit && (
         <div className="flex justify-center gap-2 mt-8">
           <Button
@@ -220,7 +220,7 @@ export default function JobsPage() {
             Next
           </Button>
         </div>
-      )}
+      )}*/}
     </div>
   )
 }
