@@ -16,7 +16,7 @@ import { useProfile } from '@/hooks/useProfile'
 export default function JobsPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const { data: profile } = useProfile(user?.id)
+  
 
   const [filters, setFilters] = useState({
     search: '',

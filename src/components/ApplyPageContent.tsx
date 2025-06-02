@@ -82,7 +82,7 @@ function ApplyPageContent() {
     setFormData(prev => ({ ...prev, skills: prev.skills.filter(s => s !== skill) }));
   };
 
-  const [addSkill] = useState('')
+  
 
   if (authLoading || profileLoading || jobLoading) {
     return (
@@ -123,48 +123,6 @@ function ApplyPageContent() {
                 <Briefcase className="h-5 w-5" />
                 Job Details
               </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h3 className="text-xl font-semibold">{job.title}</h3>
-                <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-600">
-                <span className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
-                  {job.location}
-                </span>
-                  <span className="flex items-center gap-1">
-                  <Clock className="h-4 w-4" />
-                    {job.type}
-                </span>
-                  {job.salary_range && (
-                      <span className="flex items-center gap-1">
-                    <DollarSign className="h-4 w-4" />
-                        {job.salary_range}
-                  </span>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-medium mb-2">Description</h4>
-                <p className="text-gray-600 text-sm">{job.description}</p>
-              </div>
-
-              <div>
-                <h4 className="font-medium mb-2">Requirements</h4>
-                <p className="text-gray-600 text-sm">{job.requirements}</p>
-              </div>
-
-              {job.skills && job.skills.length > 0 && (
-                  <div>
-                    <h4 className="font-medium mb-2">Required Skills</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {job.skills.map((skill, index) => (
-                          <Badge key={index} variant="secondary">{skill}</Badge>
-                      ))}
-                    </div>
-                  </div>
-              )}
             </CardContent>
           </Card>
 
@@ -249,7 +207,7 @@ function ApplyPageContent() {
                       id="coverLetter"
                       value={formData.cover_letter}
                       onChange={(e) => setFormData(prev => ({ ...prev, cover_letter: e.target.value }))}
-                      placeholder="Tell us why you're interested in this position..."
+                      placeholder="Tell us why you&apos;re interested in this position and what makes you a great fit..."
                       rows={6}
                       required
                   />

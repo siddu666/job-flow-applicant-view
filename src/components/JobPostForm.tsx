@@ -24,15 +24,15 @@ export function JobPostForm({ onSubmit, onCancel, onClose, initialData }: JobPos
   const createJobMutation = useCreateJob()
 
   const [formData, setFormData] = useState<{
-    title: string
-    company: string
-    location: string
-    type: string
-    description: string
-    requirements: string
-    skills: string[]
-    salary_min?: number
-    salary_max?: number
+    title: string;
+    company: string;
+    location: string;
+    type: string;
+    description: string;
+    requirements: string;
+    skills: string[];
+    salary_min?: number;
+    salary_max?: number;
     experience_level?: string
   }>({
     title: initialData?.title || '',

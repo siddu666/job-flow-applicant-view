@@ -16,7 +16,7 @@ import {
   ExternalLink,
   Mail
 } from "lucide-react";
-import { useAuth } from "@/contexts/auth-context";
+
 
 export const ApplicationReview = () => {
   const { applications = [], isLoading, updateApplicationStatus } = useApplications();

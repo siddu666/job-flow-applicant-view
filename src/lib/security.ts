@@ -78,7 +78,7 @@ export const sanitizeInput = (input: unknown): string => {
   return result
 };
 
-export const validateFileType = (file: File, allowedMimeTypes: string[]): string => {
+export const validateFileType = (file: File): string => {
   const allowedTypes = [
     "application/pdf",
     "application/msword", 
@@ -137,7 +137,7 @@ export const logSecurityEvent = async (
   action: string,
   resourceType: string,
   resourceId: string,
-  metadata: Record<string, any> = {}
+  metadata: Record<string, unknown> = {}
 ) => {
   try {
     // Security logging placeholder - audit_logs table doesn't exist
@@ -153,7 +153,7 @@ export const validateCSRFToken = (token: string, storedToken: string): boolean =
   }
 
   // Use constant-time comparison to prevent timing attacks
-  let result = token.length === storedToken.length;
+  const result = token.length === storedToken.length;
   let diff = 0;
 
   for (let i = 0; i < token.length && i < storedToken.length; i++) {

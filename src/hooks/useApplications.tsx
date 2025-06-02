@@ -8,8 +8,7 @@ import { Database } from "@/integrations/supabase/types";
 
 type Application = Database['public']['Tables']['applications']['Row'];
 type ApplicationUpdate = Database['public']['Tables']['applications']['Update'];
-type Job = Database['public']['Tables']['jobs']['Row']
-type JobInsert = Database['public']['Tables']['jobs']['Insert']
+
 type ApplicationInsert = Database['public']['Tables']['applications']['Insert']
 
 export const useApplications = () => {
@@ -42,7 +41,7 @@ export const useApplications = () => {
         .order("applied_at", { ascending: false });
 
       if (error) throw error;
-      return data as (Application & { jobs: any })[];
+      return data as (Application & { jobs: { id: string; title: string; company: string; location: string; type: string } })[];
     },
     enabled: !!user?.id,
   });
@@ -168,7 +167,10 @@ export const useApplications = () => {
           .order("applied_at", { ascending: false });
 
         if (error) throw error;
-        return data as (Application & { jobs: any; profiles: any })[];
+        return data as (Application & { 
+          jobs: { id: string; title: string; company: string; location: string; type: string }; 
+          profiles: { id: string; first_name: string; last_name: string; email: string; phone: string; cv_url: string } 
+        })[];
       },
     });
   };
