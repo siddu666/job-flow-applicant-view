@@ -1,0 +1,38 @@
+TypeError: Cannot read properties of undefined (reading 'call')
+    at Object.__webpack_require__ [as require] (/home/runner/workspace/.next/server/webpack-runtime.js:33:43)
+    at require (/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:20088)
+    at /home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108280
+    at eo (/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108465)
+    at /home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110694
+    at Object._fromJSON (/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111250)
+    at JSON.parse (<anonymous>)
+    at eu (/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108959)
+    at en (/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108027)
+    at /home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115169
+    at /home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115186
+    at /home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115219
+    at /home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115236
+    at t (/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115459)
+ ⨯ TypeError: Cannot read properties of undefined (reading 'call')
+    at Object.__webpack_require__ [as require] (/home/runner/workspace/.next/server/webpack-runtime.js:33:43)
+digest: "1762901351"
+ ⨯ TypeError: Cannot read properties of undefined (reading 'call')
+    at Object.__webpack_require__ [as require] (/home/runner/workspace/.next/server/webpack-runtime.js:33:43)
+    at require (/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:20088)
+    at /home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108280
+    at eo (/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108465)
+    at /home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110694
+    at Object._fromJSON (/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111250)
+    at JSON.parse (<anonymous>)
+    at eu (/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108959)
+    at en (/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108027)
+    at /home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115169
+    at /home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115186
+    at /home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115219
+    at /home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115236
+    at t (/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115459) {
+  page: '/'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 21s (1051 modules)
+ GET / 500 in 54667ms
