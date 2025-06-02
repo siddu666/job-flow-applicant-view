@@ -11,9 +11,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Calendar,
   User,
-  FileText,
-  CheckCircle,
-  XCircle
+  Download,
+  X,
+  Check
 } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 

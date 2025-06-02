@@ -142,6 +142,8 @@ const CommandShortcut = ({
 }
 CommandShortcut.displayName = "CommandShortcut"
 
+type CommandProps = React.ComponentProps<typeof CommandPrimitive.Root>
+
 export {
   Command,
   CommandDialog,

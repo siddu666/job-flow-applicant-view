@@ -25,9 +25,7 @@ export default function EnhancedCandidateSearch() {
     setFilters(prev => ({ ...prev, experienceLevel: value }))
   }
 
-  const handleLocationChange = (value: string) => {
-    setFilters(prev => ({ ...prev, location: value }))
-  }
+  // Location and job type filtering will be implemented later
 
   const handleVisaStatusChange = (value: string) => {
     setFilters(prev => ({ ...prev, visaStatus: value }))
@@ -35,10 +33,6 @@ export default function EnhancedCandidateSearch() {
 
   const handleAvailabilityChange = (value: string) => {
     setFilters(prev => ({ ...prev, availability: value }))
-  }
-
-  const handleJobTypeChange = (value: string) => {
-    setFilters(prev => ({ ...prev, jobType: value }))
   }
 
   const clearFilters = () => {

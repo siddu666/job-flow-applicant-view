@@ -1,0 +1,85 @@
+
+Failed to compile.
+
+./src/app/jobs/page.tsx
+10:10  Warning: 'Briefcase' is defined but never used.  @typescript-eslint/no-unused-vars
+19:17  Warning: 'profile' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/profile/page.tsx
+41:9  Warning: The 'fetchProfile' function makes the dependencies of useEffect Hook (at line 39) change on every render. Move it inside the useEffect callback. Alternatively, wrap the definition of 'fetchProfile' in its own useCallback() Hook.  react-hooks/exhaustive-deps
+
+./src/components/ApplicationReview.tsx
+14:3  Warning: 'Download' is defined but never used.  @typescript-eslint/no-unused-vars
+15:3  Warning: 'X' is defined but never used.  @typescript-eslint/no-unused-vars
+16:3  Warning: 'Check' is defined but never used.  @typescript-eslint/no-unused-vars
+21:11  Warning: 'user' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+30:52  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+107:40  Error: 'Phone' is not defined.  react/jsx-no-undef
+136:38  Error: 'FileText' is not defined.  react/jsx-no-undef
+145:40  Error: 'ExternalLink' is not defined.  react/jsx-no-undef
+193:30  Error: 'Mail' is not defined.  react/jsx-no-undef
+198:34  Error: 'Phone' is not defined.  react/jsx-no-undef
+253:30  Error: 'FileText' is not defined.  react/jsx-no-undef
+255:30  Error: 'ExternalLink' is not defined.  react/jsx-no-undef
+
+./src/components/ApplyPageContent.tsx
+85:12  Warning: 'setAddSkill' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+104:58  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+104:87  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/DeleteUserDialog.tsx
+71:78  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/JobPostForm.tsx
+16:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+19:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/JobRecommendations.tsx
+7:18  Warning: 'Calendar' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/layout/navigation.tsx
+18:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/onboarding/ResumeLinksStep.tsx
+23:12  Warning: 'setUploading' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/onboarding/ReviewSubmitStep.tsx
+105:21  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/sections/contact-section.tsx
+17:31  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/ui/chart.tsx
+70:7  Warning: '_' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/command.tsx
+145:6  Warning: 'CommandProps' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/use-toast.ts
+21:7  Warning: 'actionTypes' is assigned a value but only used as a type.  @typescript-eslint/no-unused-vars
+
+./src/contexts/auth-context.tsx
+14:55  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+52:27  Warning: 'profile' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+77:68  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/hooks/use-toast.ts
+18:7  Warning: 'actionTypes' is assigned a value but only used as a type.  @typescript-eslint/no-unused-vars
+
+./src/hooks/useApplications.tsx
+44:45  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+170:47  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+170:62  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/hooks/useGDPR.tsx
+16:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+42:24  Warning: 'request' is defined but never used.  @typescript-eslint/no-unused-vars
+60:7  Warning: 'action' is defined but never used.  @typescript-eslint/no-unused-vars
+87:49  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/security.ts
+79:46  Warning: 'allowedMimeTypes' is defined but never used.  @typescript-eslint/no-unused-vars
+138:28  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+154:7  Error: 'result' is never reassigned. Use 'const' instead.  prefer-const
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
