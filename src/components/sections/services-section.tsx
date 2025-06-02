@@ -18,24 +18,23 @@ export function ServicesSection() {
     },
     {
       icon: FileText,
-      title: 'Application Tracking',
-      description: 'Keep track of all your applications in one place with real-time status updates and notifications.'
+      title: 'Application Support',
+      description: 'Receive personalized support throughout the application process, from resume tips to interview preparation.'
     },
     {
       icon: Award,
-      title: 'Skill Assessment',
-      description: 'Validate your skills with our comprehensive assessment tools and showcase your expertise to employers.'
+      title: 'Career Development',
+      description: 'Access resources and tools to help you grow your skills and advance in your chosen career path.'
     }
   ]
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Services</h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Comprehensive tools and services designed to accelerate your career growth 
-            and connect you with the right opportunities.
+            Comprehensive career support designed to help you succeed at every step of your professional journey.
           </p>
         </div>
         
@@ -43,7 +42,7 @@ export function ServicesSection() {
           {services.map((service, index) => {
             const IconComponent = service.icon
             return (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow duration-300">
+              <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                     <IconComponent className="h-8 w-8 text-blue-600" />

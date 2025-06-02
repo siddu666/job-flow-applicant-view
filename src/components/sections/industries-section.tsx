@@ -1,4 +1,6 @@
 
+'use client'
+
 import { Badge } from '@/components/ui/badge'
 
 export function IndustriesSection() {
@@ -14,17 +16,16 @@ export function IndustriesSection() {
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Industries We Serve</h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Find opportunities across diverse industries and sectors, from emerging startups 
-            to established Fortune 500 companies.
+            Find opportunities across a wide range of industries and sectors.
           </p>
         </div>
         
-        <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
+        <div className="flex flex-wrap justify-center gap-3">
           {industries.map((industry, index) => (
             <Badge 
               key={index} 
-              variant="secondary" 
-              className="text-sm px-4 py-2 hover:bg-blue-100 hover:text-blue-700 transition-colors cursor-pointer"
+              variant="outline" 
+              className="text-lg py-2 px-4 hover:bg-blue-50 hover:border-blue-300 transition-colors cursor-pointer"
             >
               {industry}
             </Badge>
