@@ -1,3 +1,4 @@
+
 'use client'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -17,42 +18,46 @@ export function ServicesSection() {
     },
     {
       icon: FileText,
-      title: 'Resume Builder',
-      description: 'Create professional resumes with our advanced builder tools and templates designed for success.'
+      title: 'Application Tracking',
+      description: 'Keep track of all your applications in one place with real-time status updates and notifications.'
     },
     {
       icon: Award,
-      title: 'Career Coaching',
-      description: 'Personalized career coaching sessions to help you navigate your career path and achieve your goals.'
+      title: 'Skill Assessment',
+      description: 'Validate your skills with our comprehensive assessment tools and showcase your expertise to employers.'
     }
   ]
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Services</h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Comprehensive tools and services to accelerate your job search and career growth.
+            Comprehensive tools and services designed to accelerate your career growth 
+            and connect you with the right opportunities.
           </p>
         </div>
-
+        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {services.map((service, index) => (
-            <Card key={index} className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="mx-auto mb-4 p-3 bg-blue-100 rounded-full w-fit">
-                  <service.icon className="h-8 w-8 text-blue-600" />
-                </div>
-                <CardTitle className="text-xl">{service.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-gray-600">
-                  {service.description}
-                </CardDescription>
-              </CardContent>
-            </Card>
-          ))}
+          {services.map((service, index) => {
+            const IconComponent = service.icon
+            return (
+              <Card key={index} className="text-center hover:shadow-lg transition-shadow duration-300">
+                <CardHeader>
+                  <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <IconComponent className="h-8 w-8 text-blue-600" />
+                  </div>
+                  <CardTitle className="text-xl">{service.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-gray-600">
+                    {service.description}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            )
+          })}
         </div>
       </div>
     </section>
