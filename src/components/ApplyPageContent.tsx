@@ -82,7 +82,7 @@ function ApplyPageContent() {
     setFormData(prev => ({ ...prev, skills: prev.skills.filter(s => s !== skill) }));
   };
 
-  const [, setAddSkill] = useState('')
+  const [addSkill] = useState('')
 
   if (authLoading || profileLoading || jobLoading) {
     return (

@@ -19,7 +19,6 @@ import {
 import { useAuth } from "@/contexts/auth-context";
 
 export const ApplicationReview = () => {
-  const { user } = useAuth();
   const { applications = [], isLoading, updateApplicationStatus } = useApplications();
   const [selectedApp, setSelectedApp] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
@@ -28,7 +27,7 @@ export const ApplicationReview = () => {
       statusFilter === "all" || app.status === statusFilter
   );
 
-  const handleStatusUpdate = async (applicationId: any, newStatus: string) => {
+  const handleStatusUpdate = async (applicationId: string, newStatus: string) => {
     try {
       await updateApplicationStatus({ applicationId, status: newStatus });
     } catch (error) {

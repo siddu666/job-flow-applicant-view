@@ -4,7 +4,7 @@ import { useJobRecommendations } from "@/hooks/useJobRecommendations";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, Building2, Star } from "lucide-react";
+import { MapPin, Building2, Star } from "lucide-react";
 import Link from "next/link";
 
 const JobRecommendations = () => {

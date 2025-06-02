@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -8,8 +7,10 @@ import { useAuth } from "@/contexts/auth-context";
 import { Database } from "@/integrations/supabase/types";
 
 type Application = Database['public']['Tables']['applications']['Row'];
-type ApplicationInsert = Database['public']['Tables']['applications']['Insert'];
 type ApplicationUpdate = Database['public']['Tables']['applications']['Update'];
+type Job = Database['public']['Tables']['jobs']['Row']
+type JobInsert = Database['public']['Tables']['jobs']['Insert']
+type ApplicationInsert = Database['public']['Tables']['applications']['Insert']
 
 export const useApplications = () => {
   const { user } = useAuth();
@@ -114,7 +115,7 @@ export const useApplications = () => {
       status,
     }: {
       applicationId: string;
-      status: Application['status'];
+      status: string;
     }) => {
       const { data, error } = await supabase
         .from("applications")

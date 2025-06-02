@@ -34,40 +34,39 @@ export default function ProfilePage() {
     }
 
     if (user) {
+      const fetchProfile = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user?.id)
+            .single()
+
+          if (error && error.code !== 'PGRST116') {
+            console.error('Error fetching profile:', error)
+            return
+          }
+
+          if (data) {
+            setProfile({
+              full_name: data.full_name || '',
+              phone: data.phone || '',
+              location: data.location || '',
+              bio: data.bio || '',
+              skills: data.skills || '',
+              experience_level: data.experience_level || '',
+              linkedin_url: data.linkedin_url || '',
+              github_url: data.github_url || '',
+              portfolio_url: data.portfolio_url || ''
+            })
+          }
+        } catch (error) {
+          console.error('Error fetching profile:', error)
+        }
+      }
       fetchProfile()
     }
-  }, [user, loading, router, fetchProfile])
-
-  const fetchProfile = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user?.id)
-        .single()
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching profile:', error)
-        return
-      }
-
-      if (data) {
-        setProfile({
-          full_name: data.full_name || '',
-          phone: data.phone || '',
-          location: data.location || '',
-          bio: data.bio || '',
-          skills: data.skills || '',
-          experience_level: data.experience_level || '',
-          linkedin_url: data.linkedin_url || '',
-          github_url: data.github_url || '',
-          portfolio_url: data.portfolio_url || ''
-        })
-      }
-    } catch (error) {
-      console.error('Error fetching profile:', error)
-    }
-  }
+  }, [user, loading, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

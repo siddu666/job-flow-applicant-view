@@ -33,6 +33,7 @@ export function JobPostForm({ onSubmit, onCancel, onClose, initialData }: JobPos
     skills: string[]
     salary_min?: number
     salary_max?: number
+    experience_level?: string
   }>({
     title: initialData?.title || '',
     company: initialData?.company || '',
@@ -69,7 +70,10 @@ export function JobPostForm({ onSubmit, onCancel, onClose, initialData }: JobPos
     'Internship'
   ]
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleSelectChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
+  const handleInputChange = (field: string, value: string | number) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
@@ -153,7 +157,7 @@ export function JobPostForm({ onSubmit, onCancel, onClose, initialData }: JobPos
 
         <div className="space-y-2">
           <Label htmlFor="location">Location *</Label>
-          <Select value={formData.location} onValueChange={(value) => handleInputChange('location', value)}>
+          <Select value={formData.location} onValueChange={(value) => handleSelectChange('location', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select location in Sweden" />
             </SelectTrigger>
@@ -167,7 +171,7 @@ export function JobPostForm({ onSubmit, onCancel, onClose, initialData }: JobPos
 
         <div className="space-y-2">
           <Label htmlFor="type">Employment Type *</Label>
-          <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
+          <Select value={formData.type} onValueChange={(value) => handleSelectChange('type', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select employment type" />
             </SelectTrigger>
@@ -183,7 +187,7 @@ export function JobPostForm({ onSubmit, onCancel, onClose, initialData }: JobPos
           <Label htmlFor="salary_range">Salary Range</Label>
           <Input
             id="salary_range"
-            value={formData.salary_range}
+            value={formData.salary_range as string}
             onChange={(e) => handleInputChange('salary_range', e.target.value)}
             placeholder="e.g., 50,000 - 70,000 SEK"
           />
@@ -191,7 +195,7 @@ export function JobPostForm({ onSubmit, onCancel, onClose, initialData }: JobPos
 
         <div className="space-y-2">
           <Label htmlFor="experience_level">Experience Level</Label>
-          <Select value={formData.experience_level} onValueChange={(value) => handleInputChange('experience_level', value)}>
+          <Select value={formData.experience_level} onValueChange={(value) => handleSelectChange('experience_level', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select experience level" />
             </SelectTrigger>

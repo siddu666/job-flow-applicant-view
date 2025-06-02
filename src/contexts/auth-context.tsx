@@ -1,9 +1,8 @@
-
 'use client'
 
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { User, Session } from '@supabase/supabase-js'
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { supabase } from '@/integrations/supabase/client'
+import type { User, Session } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 
 interface AuthContextType {
@@ -11,8 +10,9 @@ interface AuthContextType {
   session: Session | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string, userData: any) => Promise<void>
+  signUp: (email: string, password: string, userData?: Record<string, unknown>) => Promise<void>
   signOut: () => Promise<void>
+  updateProfile: (data: Record<string, unknown>) => Promise<void>
   resetPassword: (email: string) => Promise<void>
 }
 
@@ -49,12 +49,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (event === 'SIGNED_IN') {
           // Check if user has completed onboarding
           if (session?.user) {
-            const { data: profile } = await supabase
-              .from('profiles')
-              .select('first_name, last_name')
-              .eq('id', session.user.id)
-              .single()
-            
               router.push('/profile')
           }
         } else if (event === 'SIGNED_OUT') {
@@ -74,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error
   }
 
-  const signUp = async (email: string, password: string, userData: any) => {
+  const signUp = async (email: string, password: string, userData?: Record<string, unknown>) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -91,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .insert({
           id: data.user.id,
           email: data.user.email || '',
-          role: userData.role || 'user',
+          role: userData?.role || 'user',
           ...userData
         })
       if (profileError) throw profileError
@@ -110,6 +104,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error
   }
 
+  const updateProfile = async (data: Record<string, unknown>) => {
+    // Add your update profile logic here, e.g., using supabase.from('profiles').update()
+    // Example:
+    if (user) {
+        const { error } = await supabase
+            .from('profiles')
+            .update(data)
+            .eq('id', user.id);
+
+        if (error) {
+            console.error("Error updating profile:", error);
+            throw error;
+        }
+    }
+  }
+
   const value = {
     user,
     session,
@@ -118,6 +128,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signOut,
     resetPassword,
+    updateProfile
   }
 
   return (

@@ -1,4 +1,3 @@
-
 'use client'
 
 import React, { useState } from 'react';
@@ -29,10 +28,10 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    
+
     try {
       let userId = user?.id;
-      
+
       // If no user (signup flow), create account first
       if (!userId) {
         await signUp(data.email, data.password, {
@@ -40,12 +39,12 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({
           first_name: data.firstName,
           last_name: data.lastName
         });
-        
+
         // Get the newly created user
         const { data: { user: newUser } } = await supabase.auth.getUser();
         userId = newUser?.id;
       }
-      
+
       if (!userId) {
         throw new Error('Failed to get user ID');
       }
@@ -65,7 +64,7 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({
         const { data: { publicUrl } } = supabase.storage
           .from('documents')
           .getPublicUrl(fileName);
-        
+
         cvUrl = publicUrl;
       }
 
@@ -101,7 +100,7 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({
 
       toast.success('Profile completed successfully!');
       router.push('/profile');
-      
+
     } catch (error: any) {
       console.error('Submission error:', error);
       toast.error(error.message || 'Failed to complete profile');

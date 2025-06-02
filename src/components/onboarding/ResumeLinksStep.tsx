@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,7 +19,7 @@ const ResumeLinksStep: React.FC<ResumeLinksStepProps> = ({
   onPrev 
 }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [, setUploading] = useState(false);
+  const [uploading] = useState(false);
 
   const validateStep = () => {
     const newErrors: Record<string, string> = {};
