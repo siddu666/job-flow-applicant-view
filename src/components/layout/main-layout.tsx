@@ -1,17 +1,16 @@
 
-import { Navigation } from '@/components/layout/navigation'
-import { Footer } from '@/components/layout/footer'
+import { Navigation } from './navigation'
+import { Footer } from './footer'
 
 interface MainLayoutProps {
   children: React.ReactNode
-  className?: string
 }
 
-export function MainLayout({ children, className = '' }: MainLayoutProps) {
+export function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className={`min-h-screen flex flex-col gradient-bg ${className}`}>
+    <div className="min-h-screen flex flex-col">
       <Navigation />
-      <main className="flex-1">
+      <main className="flex-1 pt-16">
         {children}
       </main>
       <Footer />

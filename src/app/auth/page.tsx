@@ -1,111 +1,141 @@
+
 'use client'
 
-import React, { useState } from "react";
-import { useAuth } from "@/contexts/auth-context";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Building } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { supabase } from '@/integrations/supabase/client'
+import { useRouter } from 'next/navigation'
 
 export default function AuthPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const router = useRouter()
 
-  const { signIn } = useAuth();
-  const router = useRouter();
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
 
-    try {
-      const { error } = await signIn(email, password);
-      if (error) throw error;
-    } catch (error: any) {
-      console.error("Login error:", error);
-      toast.error(error.message || "An error occurred during login");
-    } finally {
-      setLoading(false);
+    if (error) {
+      alert(error.message)
+    } else {
+      router.push('/profile')
     }
-  };
+    setLoading(false)
+  }
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    })
+
+    if (error) {
+      alert(error.message)
+    } else {
+      alert('Check your email for the confirmation link!')
+    }
+    setLoading(false)
+  }
 
   return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center p-4">
-        {/* Header */}
-        <div className="absolute top-4 left-4">
-          <Link href="/" className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition-colors">
-            <Building className="h-6 w-6" />
-            <span className="font-semibold">Justera Group AB</span>
-          </Link>
-        </div>
-
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">
-              Welcome back
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-              </div>
-
-              <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={loading}
-              >
-                {loading ? "Loading..." : "Sign In"}
-              </Button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                Don't have an account?{" "}
-                <Button
-                    variant="link"
-                    className="text-blue-600 hover:text-blue-700 font-medium p-0"
-                    onClick={() => router.push('/onboarding')}
-                >
-                  Sign up
-                </Button>
-              </p>
-            </div>
-
-            <div className="mt-4 text-center">
-              <Link
-                  href="/jobs"
-                  className="text-sm text-blue-600 hover:text-blue-700"
-              >
-                Browse jobs without signing in
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+      <div className="max-w-md w-full">
+        <Tabs defaultValue="signin" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="signin">Sign In</TabsTrigger>
+            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="signin">
+            <Card>
+              <CardHeader>
+                <CardTitle>Sign In</CardTitle>
+                <CardDescription>
+                  Enter your email and password to access your account.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSignIn} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? 'Signing in...' : 'Sign In'}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="signup">
+            <Card>
+              <CardHeader>
+                <CardTitle>Sign Up</CardTitle>
+                <CardDescription>
+                  Create a new account to get started.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? 'Creating account...' : 'Sign Up'}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
-  );
+    </div>
+  )
 }
