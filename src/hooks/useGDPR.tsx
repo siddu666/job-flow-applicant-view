@@ -13,7 +13,7 @@ export type GDPRRequest = {
   processed_by?: string;
   verification_token: string;
   requested_by_email: string;
-  completion_details?: any;
+  completion_details?: Record<string, unknown>;
   rejection_reason?: string;
 };
 
@@ -39,7 +39,7 @@ export const useCreateGDPRRequest = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (request: Omit<GDPRRequestInsert, 'verification_token'>): Promise<GDPRRequest> => {
+    mutationFn: async (_request: Omit<GDPRRequestInsert, 'verification_token'>): Promise<GDPRRequest> => {
       throw new Error("GDPR functionality not implemented yet - tables don't exist");
     },
     onSuccess: () => {
@@ -67,7 +67,7 @@ export const useProcessGDPRRequest = () => {
     }) => {
       throw new Error("GDPR functionality not implemented yet - tables don't exist");
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['gdpr-requests'] });
       const actionMessage = {
         approve: 'approved',
@@ -84,7 +84,7 @@ export const useProcessGDPRRequest = () => {
 
 export const useExportUserData = () => {
   return useMutation({
-    mutationFn: async (userId: string): Promise<any> => {
+    mutationFn: async (userId: string): Promise<Record<string, unknown>> => {
       try {
         // Fetch all user data for export using existing tables
         const [profileData, applicationsData] = await Promise.all([

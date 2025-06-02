@@ -13,28 +13,32 @@ import { useAuth } from '@/contexts/auth-context'
 import { toast } from 'sonner'
 
 interface JobPostFormProps {
-  onSubmit?: (jobData: any) => void
+  onSubmit?: (jobData: JobFormData) => void
   onCancel?: () => void
   onClose?: () => void
-  initialData?: any
+  initialData?: JobFormData
+}
+
+interface JobFormData {
+  title: string;
+  company: string;
+  location: string;
+  type: string;
+  description: string;
+  requirements: string;
+  skills: string[];
+  salary_min?: number;
+  salary_max?: number;
+  salary_range?: string;
+  experience_level?: string;
+  posted_by?: string;
 }
 
 export function JobPostForm({ onSubmit, onCancel, onClose, initialData }: JobPostFormProps) {
   const { user } = useAuth()
   const createJobMutation = useCreateJob()
 
-  const [formData, setFormData] = useState<{
-    title: string;
-    company: string;
-    location: string;
-    type: string;
-    description: string;
-    requirements: string;
-    skills: string[];
-    salary_min?: number;
-    salary_max?: number;
-    experience_level?: string
-  }>({
+  const [formData, setFormData] = useState<JobFormData>({
     title: initialData?.title || '',
     company: initialData?.company || '',
     location: initialData?.location || '',

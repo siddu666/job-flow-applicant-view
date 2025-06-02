@@ -11,7 +11,7 @@ import { MapPin, Clock, DollarSign, Building, Search, Filter } from 'lucide-reac
 import Link from 'next/link'
 import { useAuth } from '@/contexts/auth-context'
 import { useAllJobs } from '@/hooks/useJobs'
-import { useProfile } from '@/hooks/useProfile'
+
 
 export default function JobsPage() {
   const { user, loading: authLoading } = useAuth()

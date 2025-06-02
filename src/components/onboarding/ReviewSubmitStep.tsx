@@ -101,9 +101,9 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({
       toast.success('Profile completed successfully!');
       router.push('/profile');
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Submission error:', error);
-      toast.error(error.message || 'Failed to complete profile');
+      toast.error(error instanceof Error ? error.message : 'Failed to complete profile');
     } finally {
       setIsSubmitting(false);
     }
