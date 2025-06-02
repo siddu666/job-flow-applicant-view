@@ -106,3 +106,63 @@ export function ContactSection() {
     </section>
   )
 }
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Mail, Phone, MapPin } from 'lucide-react'
+
+export function ContactSection() {
+  return (
+    <section className="py-20">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4">Get In Touch</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Have questions or need assistance? We're here to help you succeed.
+          </p>
+        </div>
+        <div className="grid lg:grid-cols-2 gap-12">
+          <Card>
+            <CardHeader>
+              <CardTitle>Send us a message</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <Input placeholder="First Name" />
+                <Input placeholder="Last Name" />
+              </div>
+              <Input placeholder="Email Address" type="email" />
+              <Input placeholder="Subject" />
+              <Textarea placeholder="Your message..." rows={4} />
+              <Button className="w-full">Send Message</Button>
+            </CardContent>
+          </Card>
+          <div className="space-y-8">
+            <div className="flex items-start space-x-4">
+              <Mail className="w-6 h-6 text-blue-600 mt-1" />
+              <div>
+                <h3 className="font-semibold mb-1">Email</h3>
+                <p className="text-gray-600">support@jobplatform.com</p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-4">
+              <Phone className="w-6 h-6 text-blue-600 mt-1" />
+              <div>
+                <h3 className="font-semibold mb-1">Phone</h3>
+                <p className="text-gray-600">+1 (555) 123-4567</p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-4">
+              <MapPin className="w-6 h-6 text-blue-600 mt-1" />
+              <div>
+                <h3 className="font-semibold mb-1">Address</h3>
+                <p className="text-gray-600">123 Business St, Suite 100<br />City, State 12345</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}

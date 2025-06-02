@@ -82,3 +82,30 @@ export function HeroSection() {
     </section>
   )
 }
+'use client'
+
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+
+export function HeroSection() {
+  return (
+    <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
+      <div className="container mx-auto px-4 text-center">
+        <h1 className="text-5xl font-bold mb-6">
+          Find Your Dream Career
+        </h1>
+        <p className="text-xl mb-8 max-w-2xl mx-auto">
+          Connect with top employers and discover opportunities that match your skills and aspirations.
+        </p>
+        <div className="space-x-4">
+          <Button asChild size="lg">
+            <Link href="/jobs">Browse Jobs</Link>
+          </Button>
+          <Button asChild variant="outline" size="lg" className="text-white border-white hover:bg-white hover:text-blue-600">
+            <Link href="/auth">Sign Up</Link>
+          </Button>
+        </div>
+      </div>
+    </section>
+  )
+}

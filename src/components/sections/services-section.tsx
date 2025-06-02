@@ -60,3 +60,56 @@ export function ServicesSection() {
     </section>
   )
 }
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Briefcase, Users, Target, Award } from 'lucide-react'
+
+export function ServicesSection() {
+  const services = [
+    {
+      icon: Briefcase,
+      title: 'Job Matching',
+      description: 'Our AI-powered algorithm matches you with the perfect job opportunities based on your skills and preferences.'
+    },
+    {
+      icon: Users,
+      title: 'Career Guidance',
+      description: 'Get personalized career advice and mentorship from industry experts to accelerate your professional growth.'
+    },
+    {
+      icon: Target,
+      title: 'Skill Assessment',
+      description: 'Comprehensive skill evaluations to help you identify strengths and areas for improvement.'
+    },
+    {
+      icon: Award,
+      title: 'Certification Programs',
+      description: 'Access industry-recognized certification programs to enhance your qualifications and marketability.'
+    }
+  ]
+
+  return (
+    <section className="py-20 bg-gray-50">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4">Our Services</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            We provide comprehensive career solutions to help you succeed in your professional journey.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {services.map((service, index) => (
+            <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <service.icon className="w-12 h-12 mx-auto text-blue-600 mb-4" />
+                <CardTitle>{service.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">{service.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

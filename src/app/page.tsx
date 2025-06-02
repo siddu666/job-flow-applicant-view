@@ -3,6 +3,7 @@
 import { useAuth } from '@/contexts/auth-context'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { Navigation } from '@/components/layout/navigation'
 import { HeroSection } from '@/components/sections/hero-section'
 import { ServicesSection } from '@/components/sections/services-section'
 import { IndustriesSection } from '@/components/sections/industries-section'
@@ -40,6 +41,7 @@ export default function HomePage() {
   // Show landing page for non-authenticated users
   return (
     <div className="min-h-screen">
+      <Navigation />
       <HeroSection />
       <ServicesSection />
       <IndustriesSection />

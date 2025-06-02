@@ -33,3 +33,36 @@ export function IndustriesSection() {
     </section>
   )
 }
+import { Badge } from '@/components/ui/badge'
+
+export function IndustriesSection() {
+  const industries = [
+    'Technology', 'Healthcare', 'Finance', 'Education', 'Manufacturing',
+    'Retail', 'Construction', 'Transportation', 'Energy', 'Media',
+    'Government', 'Non-Profit', 'Consulting', 'Real Estate', 'Hospitality'
+  ]
+
+  return (
+    <section className="py-20">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4">Industries We Serve</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            We connect talent with opportunities across diverse industries and sectors.
+          </p>
+        </div>
+        <div className="flex flex-wrap justify-center gap-4">
+          {industries.map((industry) => (
+            <Badge
+              key={industry}
+              variant="secondary"
+              className="text-lg py-2 px-4 hover:bg-blue-100 hover:text-blue-800 transition-colors cursor-pointer"
+            >
+              {industry}
+            </Badge>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
