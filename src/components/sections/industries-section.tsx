@@ -1,3 +1,4 @@
+'use client'
 
 import { Badge } from '@/components/ui/badge'
 
@@ -17,7 +18,7 @@ export function IndustriesSection() {
             Find opportunities across diverse industries and sectors
           </p>
         </div>
-        
+
         <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
           {industries.map((industry, index) => (
             <Badge
@@ -33,7 +34,6 @@ export function IndustriesSection() {
     </section>
   )
 }
-import { Badge } from '@/components/ui/badge'
 
 export function IndustriesSection() {
   const industries = [

@@ -1,4 +1,6 @@
 
+'use client'
+
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/auth-context'
 import Link from 'next/link'
