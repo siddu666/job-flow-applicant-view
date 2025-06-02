@@ -1,0 +1,58 @@
+Failed to compile.
+
+./src/app/jobs/page.tsx
+19:17  Warning: 'profile' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ApplicationReview.tsx
+19:10  Warning: 'useAuth' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ApplyPageContent.tsx
+85:10  Warning: 'addSkill' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+104:58  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+104:87  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/DeleteUserDialog.tsx
+71:78  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/JobPostForm.tsx
+16:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+19:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/onboarding/ResumeLinksStep.tsx
+22:10  Warning: 'uploading' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/onboarding/ReviewSubmitStep.tsx
+104:21  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/sections/contact-section.tsx
+17:31  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/ui/chart.tsx
+70:7  Warning: '_' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/use-toast.ts
+20:7  Warning: 'actionTypes' is assigned a value but only used as a type.  @typescript-eslint/no-unused-vars
+
+./src/contexts/auth-context.tsx
+3:65  Warning: 'ReactNode' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/hooks/use-toast.ts
+18:7  Warning: 'actionTypes' is assigned a value but only used as a type.  @typescript-eslint/no-unused-vars
+
+./src/hooks/useApplications.tsx
+11:6  Warning: 'Job' is defined but never used.  @typescript-eslint/no-unused-vars
+12:6  Warning: 'JobInsert' is defined but never used.  @typescript-eslint/no-unused-vars
+45:45  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+171:47  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+171:62  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/hooks/useGDPR.tsx
+16:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+42:24  Warning: 'request' is defined but never used.  @typescript-eslint/no-unused-vars
+60:7  Warning: 'action' is defined but never used.  @typescript-eslint/no-unused-vars
+87:49  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/security.ts
+81:46  Warning: 'allowedMimeTypes' is defined but never used.  @typescript-eslint/no-unused-vars
+140:28  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+156:7  Error: 'result' is never reassigned. Use 'const' instead.  prefer-const
