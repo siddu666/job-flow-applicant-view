@@ -11,9 +11,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Calendar,
   User,
-  Download,
-  X,
-  Check
+  Phone,
+  FileText,
+  ExternalLink,
+  Mail
 } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 
@@ -91,13 +92,13 @@ export const ApplicationReview = () => {
                             <Avatar>
                               <AvatarImage src={`https://avatar.vercel.sh/${application.email}.png`} />
                               <AvatarFallback>
-                                {application.full_name?.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                {`${application.first_name?.[0] || ''}${application.last_name?.[0] || ''}`.toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
 
                             <div className="space-y-2">
                               <div>
-                                <h3 className="font-semibold text-lg">{application.full_name}</h3>
+                                <h3 className="font-semibold text-lg">{application.first_name} {application.last_name}</h3>
                                 <p className="text-sm text-gray-600">{application.email}</p>
                               </div>
 
@@ -187,7 +188,7 @@ export const ApplicationReview = () => {
                         <div className="space-y-2 text-sm">
                           <div className="flex items-center gap-2">
                             <User className="h-4 w-4" />
-                            {selectedApp.full_name}
+                            {selectedApp.first_name} {selectedApp.last_name}
                           </div>
                           <div className="flex items-center gap-2">
                             <Mail className="h-4 w-4" />
