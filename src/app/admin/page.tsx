@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useJobs } from '@/hooks/useJobs'
+import { useAllJobs, useDeleteJob } from '@/hooks/useJobs'
 import { useApplications } from '@/hooks/useApplications'
 import { useProfile } from '@/hooks/useProfile'
 import { JobPostForm } from '@/components/JobPostForm'
@@ -18,13 +18,13 @@ import { toast } from 'sonner'
 export default function AdminPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
-  const { profile, isLoading: profileLoading } = useProfile()
-  const { jobs, createJob, deleteJob, isLoading: jobsLoading } = useJobs()
+  const { profile, isLoading: profileLoading } = useProfile(user?.id)
+  const { data: jobs = [], isLoading: jobsLoading } = useAllJobs()
+  const deleteJobMutation = useDeleteJob()
   const { useAllApplications } = useApplications()
   const { data: applications = [], isLoading: applicationsLoading } = useAllApplications()
   
   const [showJobForm, setShowJobForm] = useState(false)
-  const [editingJob, setEditingJob] = useState(null)
 
   useEffect(() => {
     if (!loading && !profileLoading) {
@@ -55,7 +55,7 @@ export default function AdminPage() {
 
   const handleDeleteJob = async (jobId: string) => {
     if (confirm('Are you sure you want to delete this job?')) {
-      deleteJob(jobId)
+      deleteJobMutation.mutate(jobId)
     }
   }
 
@@ -133,16 +133,7 @@ export default function AdminPage() {
                 <CardTitle>Create New Job</CardTitle>
               </CardHeader>
               <CardContent>
-                <JobPostForm 
-                  onSubmit={(jobData) => {
-                    createJob({
-                      ...jobData,
-                      posted_by: user.id,
-                    })
-                    setShowJobForm(false)
-                  }}
-                  onCancel={() => setShowJobForm(false)}
-                />
+                <JobPostForm onClose={() => setShowJobForm(false)} />
               </CardContent>
             </Card>
           )}
@@ -174,6 +165,7 @@ export default function AdminPage() {
                           variant="destructive" 
                           size="sm"
                           onClick={() => handleDeleteJob(job.id)}
+                          disabled={deleteJobMutation.isPending}
                         >
                           <Trash className="h-4 w-4" />
                         </Button>
@@ -181,8 +173,10 @@ export default function AdminPage() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-2">{job.description.substring(0, 200)}...</p>
-                    {job.skills && (
+                    <p className="text-sm text-gray-600 mb-2">
+                      {job.description?.substring(0, 200)}...
+                    </p>
+                    {job.skills && job.skills.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {job.skills.map((skill, index) => (
                           <Badge key={index} variant="secondary">{skill}</Badge>
