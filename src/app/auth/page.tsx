@@ -1,264 +1,278 @@
 
 'use client'
 
-import React, { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/auth-context";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building, Mail, Lock, User } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { useState, useEffect } from 'react'
+import { useAuth } from '@/contexts/auth-context'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { toast } from 'sonner'
+import { Eye, EyeOff } from 'lucide-react'
 
 export default function AuthPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [signInData, setSignInData] = useState({ email: "", password: "" });
+  const { user, signIn, signUp, resetPassword, loading } = useAuth()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [activeTab, setActiveTab] = useState('signin')
+
+  const [signInData, setSignInData] = useState({
+    email: '',
+    password: ''
+  })
+
   const [signUpData, setSignUpData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    firstName: "",
-    lastName: ""
-  });
-  
-  const { signIn, signUp, user, loading } = useAuth();
-  const router = useRouter();
+    email: '',
+    password: '',
+    confirmPassword: '',
+    role: 'applicant'
+  })
+
+  const [resetEmail, setResetEmail] = useState('')
 
   useEffect(() => {
     if (user && !loading) {
-      router.push('/profile');
+      router.push('/profile')
     }
-  }, [user, loading, router]);
+  }, [user, loading, router])
+
+  useEffect(() => {
+    const type = searchParams.get('type')
+    if (type === 'recovery') {
+      setActiveTab('reset')
+      toast.info('Please check your email for password reset instructions')
+    }
+  }, [searchParams])
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+
+    try {
+      await signIn(signInData.email, signInData.password)
+      toast.success('Signed in successfully!')
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to sign in')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (signUpData.password !== signUpData.confirmPassword) {
+      toast.error('Passwords do not match')
+      return
+    }
+
+    if (signUpData.password.length < 6) {
+      toast.error('Password must be at least 6 characters')
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      await signUp(signUpData.email, signUpData.password, {
+        role: signUpData.role
+      })
+      toast.success('Account created successfully! Please check your email to verify your account.')
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create account')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+
+    try {
+      await resetPassword(resetEmail)
+      toast.success('Password reset email sent! Please check your inbox.')
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to send reset email')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
       </div>
-    );
+    )
   }
 
   if (user) {
-    return null;
+    return null // Will redirect in useEffect
   }
-
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    try {
-      const { error } = await signIn(signInData.email, signInData.password);
-      if (!error) {
-        toast.success("Welcome back!");
-      }
-    } catch (error) {
-      console.error("Sign in error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (signUpData.password !== signUpData.confirmPassword) {
-      toast.error("Passwords don't match");
-      return;
-    }
-    
-    setIsLoading(true);
-    
-    try {
-      const { error } = await signUp(
-        signUpData.email,
-        signUpData.password,
-        signUpData.firstName,
-        signUpData.lastName
-      );
-      
-      if (!error) {
-        toast.success("Account created! Please check your email for verification.");
-      }
-    } catch (error) {
-      console.error("Sign up error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <Building className="mx-auto h-12 w-12 text-blue-600" />
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Job Application System
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in to your account or create a new one
-          </p>
+          <h2 className="text-3xl font-bold text-gray-900">Job Application System</h2>
+          <p className="mt-2 text-gray-600">Sign in to your account or create a new one</p>
         </div>
 
-        <Tabs defaultValue="signin" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="signin">Sign In</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
-          </TabsList>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-center">Authentication</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="signin">Sign In</TabsTrigger>
+                <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                <TabsTrigger value="reset">Reset</TabsTrigger>
+              </TabsList>
 
-          <TabsContent value="signin">
-            <Card>
-              <CardHeader>
-                <CardTitle>Sign In</CardTitle>
-              </CardHeader>
-              <CardContent>
+              <TabsContent value="signin" className="space-y-4">
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <div>
                     <Label htmlFor="signin-email">Email</Label>
-                    <div className="mt-1 relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="signin-email"
-                        type="email"
-                        required
-                        className="pl-10"
-                        placeholder="Enter your email"
-                        value={signInData.email}
-                        onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
-                      />
-                    </div>
+                    <Input
+                      id="signin-email"
+                      type="email"
+                      value={signInData.email}
+                      onChange={(e) => setSignInData(prev => ({ ...prev, email: e.target.value }))}
+                      required
+                    />
                   </div>
-
                   <div>
                     <Label htmlFor="signin-password">Password</Label>
-                    <div className="mt-1 relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <div className="relative">
                       <Input
                         id="signin-password"
-                        type="password"
-                        required
-                        className="pl-10"
-                        placeholder="Enter your password"
+                        type={showPassword ? 'text' : 'password'}
                         value={signInData.password}
-                        onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
+                        onChange={(e) => setSignInData(prev => ({ ...prev, password: e.target.value }))}
+                        required
                       />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-0 top-0 h-full px-3 py-2"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
                     </div>
                   </div>
-
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Signing in..." : "Sign In"}
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Signing In...' : 'Sign In'}
                   </Button>
                 </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
+              </TabsContent>
 
-          <TabsContent value="signup">
-            <Card>
-              <CardHeader>
-                <CardTitle>Create Account</CardTitle>
-              </CardHeader>
-              <CardContent>
+              <TabsContent value="signup" className="space-y-4">
                 <form onSubmit={handleSignUp} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="firstName">First Name</Label>
-                      <div className="mt-1 relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input
-                          id="firstName"
-                          type="text"
-                          required
-                          className="pl-10"
-                          placeholder="First name"
-                          value={signUpData.firstName}
-                          onChange={(e) => setSignUpData({ ...signUpData, firstName: e.target.value })}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="lastName">Last Name</Label>
-                      <div className="mt-1 relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input
-                          id="lastName"
-                          type="text"
-                          required
-                          className="pl-10"
-                          placeholder="Last name"
-                          value={signUpData.lastName}
-                          onChange={(e) => setSignUpData({ ...signUpData, lastName: e.target.value })}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
                   <div>
                     <Label htmlFor="signup-email">Email</Label>
-                    <div className="mt-1 relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="signup-email"
-                        type="email"
-                        required
-                        className="pl-10"
-                        placeholder="Enter your email"
-                        value={signUpData.email}
-                        onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
-                      />
-                    </div>
+                    <Input
+                      id="signup-email"
+                      type="email"
+                      value={signUpData.email}
+                      onChange={(e) => setSignUpData(prev => ({ ...prev, email: e.target.value }))}
+                      required
+                    />
                   </div>
-
+                  <div>
+                    <Label htmlFor="signup-role">Role</Label>
+                    <Select value={signUpData.role} onValueChange={(value) => setSignUpData(prev => ({ ...prev, role: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="applicant">Job Applicant</SelectItem>
+                        <SelectItem value="recruiter">Recruiter</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <div>
                     <Label htmlFor="signup-password">Password</Label>
-                    <div className="mt-1 relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <div className="relative">
                       <Input
                         id="signup-password"
-                        type="password"
-                        required
-                        className="pl-10"
-                        placeholder="Create a password"
+                        type={showPassword ? 'text' : 'password'}
                         value={signUpData.password}
-                        onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="confirm-password">Confirm Password</Label>
-                    <div className="mt-1 relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="confirm-password"
-                        type="password"
+                        onChange={(e) => setSignUpData(prev => ({ ...prev, password: e.target.value }))}
                         required
-                        className="pl-10"
-                        placeholder="Confirm your password"
-                        value={signUpData.confirmPassword}
-                        onChange={(e) => setSignUpData({ ...signUpData, confirmPassword: e.target.value })}
+                        minLength={6}
                       />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-0 top-0 h-full px-3 py-2"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
                     </div>
                   </div>
-
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Creating account..." : "Create Account"}
+                  <div>
+                    <Label htmlFor="signup-confirm-password">Confirm Password</Label>
+                    <Input
+                      id="signup-confirm-password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={signUpData.confirmPassword}
+                      onChange={(e) => setSignUpData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                      required
+                      minLength={6}
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-green-600 hover:bg-green-700"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Creating Account...' : 'Create Account'}
                   </Button>
                 </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              </TabsContent>
 
-        <div className="text-center">
-          <Link href="/" className="text-blue-600 hover:text-blue-500">
-            Back to Home
-          </Link>
-        </div>
+              <TabsContent value="reset" className="space-y-4">
+                <form onSubmit={handleResetPassword} className="space-y-4">
+                  <div>
+                    <Label htmlFor="reset-email">Email</Label>
+                    <Input
+                      id="reset-email"
+                      type="email"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      placeholder="Enter your email address"
+                      required
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-orange-600 hover:bg-orange-700"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Sending...' : 'Send Reset Email'}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
       </div>
     </div>
-  );
+  )
 }
