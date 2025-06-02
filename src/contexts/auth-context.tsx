@@ -1,12 +1,4 @@
-` tags. I will pay close attention to indentation, structure, and completeness, and avoid any forbidden words.
 
-```text
-Reasoning:
-The edited snippet provides a complete replacement for the original code. There are several changes, including updated imports, interface definition, sign in/up functions, and navigation logic. I will replace the entire original content with the edited snippet.
-```
-
-```
-<replit_final_file>
 'use client'
 
 import React, { createContext, useContext, useEffect, useState } from 'react'

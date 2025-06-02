@@ -1,115 +1,63 @@
-
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/integrations/supabase/client'
-import { useAuth } from '@/contexts/auth-context'
-import { toast } from 'sonner'
+import { Database } from '@/integrations/supabase/types'
 
-interface Profile {
-  id: string
-  email: string
-  role: string
-  created_at: string
-  updated_at: string
-  phone: string | null
-  first_name: string | null
-  last_name: string | null
-  current_location: string | null
-  willing_to_relocate: boolean
-  preferred_cities: string[] | null
-  experience_years: number | null
-  expected_salary_sek: number | null
-  availability: string | null
-  skills: string[] | null
-  portfolio_url: string | null
-  certifications: string[] | null
-  linkedin_url: string | null
-  github_url: string | null
-  bio: string | null
-  cv_url: string | null
-  job_seeking_status: string | null
-  profile_picture_url: string | null
-  date_of_birth: string | null
-  nationality: string | null
-  work_authorization: string | null
-  visa_status: string | null
-  education: any | null
-  work_experience: any | null
-  languages: string[] | null
-  salary_expectations: any | null
-  last_login: string | null
-  is_active: boolean
-  is_verified: boolean
-}
+type Profile = Database['public']['Tables']['profiles']['Row']
+type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
 
-export function useProfile() {
-  const { user } = useAuth()
-
+export function useProfile(userId?: string) {
   return useQuery({
-    queryKey: ['profile', user?.id],
+    queryKey: ['profile', userId],
     queryFn: async () => {
-      if (!user?.id) return null
+      if (!userId) throw new Error('User ID is required')
 
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('id', userId)
         .single()
 
-      if (error) {
-        console.error('Error fetching profile:', error)
-        throw error
-      }
-
+      if (error) throw error
       console.log('User profile loaded:', data)
       return data as Profile
     },
-    enabled: !!user?.id,
+    enabled: !!userId,
   })
 }
 
 export function useUpdateProfile() {
   const queryClient = useQueryClient()
-  const { user } = useAuth()
 
   return useMutation({
-    mutationFn: async (profileData: Partial<Profile>) => {
-      if (!user?.id) throw new Error('User not authenticated')
-
+    mutationFn: async ({ userId, updates }: { userId: string; updates: ProfileUpdate }) => {
       const { data, error } = await supabase
         .from('profiles')
-        .update(profileData)
-        .eq('id', user.id)
+        .update(updates)
+        .eq('id', userId)
         .select()
         .single()
 
       if (error) throw error
-      return data
+      return data as Profile
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] })
-      toast.success('Profile updated successfully')
+    onSuccess: (data) => {
+      queryClient.setQueryData(['profile', data.id], data)
+      queryClient.invalidateQueries({ queryKey: ['profile'] })
     },
-    onError: (error) => {
-      console.error('Error updating profile:', error)
-      toast.error('Failed to update profile')
-    }
   })
 }
 
 export function useUploadCV() {
   const queryClient = useQueryClient()
-  const { user } = useAuth()
 
   return useMutation({
-    mutationFn: async (file: File) => {
-      if (!user?.id) throw new Error('User not authenticated')
-
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${user.id}/cv.${fileExt}`
-
+    mutationFn: async ({ userId, file }: { userId: string; file: File }) => {
       // Upload file to Supabase storage
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${userId}/cv.${fileExt}`
+
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('documents')
         .upload(fileName, file, {
@@ -127,20 +75,46 @@ export function useUploadCV() {
       const { data, error } = await supabase
         .from('profiles')
         .update({ cv_url: publicUrl })
-        .eq('id', user.id)
+        .eq('id', userId)
         .select()
         .single()
 
       if (error) throw error
-      return data
+      return data as Profile
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] })
-      toast.success('CV uploaded successfully')
+    onSuccess: (data) => {
+      queryClient.setQueryData(['profile', data.id], data)
+      queryClient.invalidateQueries({ queryKey: ['profile'] })
     },
-    onError: (error) => {
-      console.error('Error uploading CV:', error)
-      toast.error('Failed to upload CV')
-    }
+  })
+}
+
+export function useDeleteCV() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      // Remove CV URL from profile
+      const { data, error } = await supabase
+        .from('profiles')
+        .update({ cv_url: null })
+        .eq('id', userId)
+        .select()
+        .single()
+
+      if (error) throw error
+
+      // Delete file from storage
+      const fileName = `${userId}/cv.pdf`
+      await supabase.storage
+        .from('documents')
+        .remove([fileName])
+
+      return data as Profile
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(['profile', data.id], data)
+      queryClient.invalidateQueries({ queryKey: ['profile'] })
+    },
   })
 }
