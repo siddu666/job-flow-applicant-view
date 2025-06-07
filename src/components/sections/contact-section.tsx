@@ -26,11 +26,11 @@ export function ContactSection() {
               <div className="space-y-4">
                 <div className="flex items-center">
                   <Mail className="h-5 w-5 text-blue-600 mr-3" />
-                  <span className="text-gray-700">support@jobflow.se</span>
+                  <span className="text-gray-700">hrteam@justeragroup.com</span>
                 </div>
                 <div className="flex items-center">
                   <Phone className="h-5 w-5 text-blue-600 mr-3" />
-                  <span className="text-gray-700">+46 8 123 456 78</span>
+                  <span className="text-gray-700">+46769624470</span>
                 </div>
                 <div className="flex items-center">
                   <MapPin className="h-5 w-5 text-blue-600 mr-3" />
@@ -42,15 +42,14 @@ export function ContactSection() {
             <div>
               <h4 className="text-lg font-semibold text-gray-900 mb-4">Office Hours</h4>
               <div className="space-y-2 text-gray-600">
-                <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
-                <p>Saturday: 10:00 AM - 4:00 PM</p>
+                <p>Monday - Friday: 8:00 AM - 5:00 PM</p>
                 <p>Sunday: Closed</p>
               </div>
             </div>
           </div>
 
           {/* Contact Form */}
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle>Send us a Message</CardTitle>
             </CardHeader>
@@ -85,7 +84,7 @@ export function ContactSection() {
                 Send Message
               </Button>
             </CardContent>
-          </Card>
+          </Card>*/}
         </div>
       </div>
     </section>

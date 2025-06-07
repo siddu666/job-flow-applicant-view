@@ -32,8 +32,7 @@ export function HeroSection() {
             </h1>
             
             <p className="text-xl text-gray-600 mb-8 max-w-2xl leading-relaxed">
-              Connect with world-class opportunities through our executive search and professional 
-              recruitment platform. Your next career milestone starts here.
+              Connect with world-class opportunities. Your next career milestone starts here.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
@@ -55,22 +54,6 @@ export function HeroSection() {
                   Browse Opportunities
                 </Button>
               </Link>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-8 border-t border-gray-200">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600 mb-1">500+</div>
-                <div className="text-sm text-gray-600">Partner Companies</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600 mb-1">10k+</div>
-                <div className="text-sm text-gray-600">Successful Placements</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600 mb-1">95%</div>
-                <div className="text-sm text-gray-600">Satisfaction Rate</div>
-              </div>
             </div>
           </div>
 

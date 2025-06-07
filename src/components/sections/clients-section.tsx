@@ -1,15 +1,15 @@
 
 export function ClientsSection() {
   const partners = [
-    { name: 'Microsoft', category: 'Technology' },
-    { name: 'Amazon', category: 'E-commerce' },
-    { name: 'Google', category: 'Technology' },
-    { name: 'Apple', category: 'Technology' },
-    { name: 'Meta', category: 'Social Media' },
-    { name: 'Netflix', category: 'Entertainment' },
-    { name: 'Tesla', category: 'Automotive' },
-    { name: 'Salesforce', category: 'CRM' }
-  ]
+    { name: 'IKEA', category: 'Retail' },
+    { name: 'VOLVO', category: 'Automotive' },
+    { name: 'Swedbank', category: 'Banking' },
+    { name: 'Nordea', category: 'Banking' },
+    { name: 'SEB', category: 'Banking' },
+    { name: 'Ericsson', category: 'Telecommunications' },
+    { name: 'CEVT', category: 'Automotive Engineering' },
+    { name: 'Tetra Pak', category: 'Packaging' }
+  ];
 
   return (
     <section className="py-20 bg-gray-50">
@@ -33,20 +33,6 @@ export function ClientsSection() {
           ))}
         </div>
         
-        <div className="bg-white rounded-2xl shadow-lg p-8 max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div>
-              <div className="text-3xl font-bold text-blue-600 mb-2">10,000+</div>
-              <div className="text-gray-600">Successful Placements</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-blue-600 mb-2">500+</div>
-              <div className="text-gray-600">Partner Companies</div>
-            </div>
-            <div className="text-3xl font-bold text-blue-600 mb-2">95%</div>
-            <div className="text-gray-600">Client Satisfaction</div>
-          </div>
-        </div>
       </div>
     </section>
   )

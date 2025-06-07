@@ -2,31 +2,49 @@
 'use client'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Search, UserCheck, FileText, Award } from 'lucide-react'
+import {
+  Server,          // for Infrastructure
+  Cloud,           // for Cloud Services
+  Code,            // for Software Development
+  HelpCircle,      // for IT Consultancy
+  Shield,          // for Info Security
+  AlertTriangle    // for Cybersecurity
+} from 'react-feather';
 
 export function ServicesSection() {
+  
   const services = [
     {
-      icon: Search,
-      title: 'Job Matching',
-      description: 'AI-powered job matching that connects you with the perfect opportunities based on your skills and preferences.'
+      icon: Server,
+      title: 'IT Infrastructure & Integration',
+      description: 'Design, deploy, and manage robust IT infrastructure solutions tailored for business efficiency.'
     },
     {
-      icon: UserCheck,
-      title: 'Profile Optimization',
-      description: 'Get expert guidance on optimizing your profile to stand out to employers and increase your chances.'
+      icon: Cloud,
+      title: 'Cloud Solutions and Services',
+      description: 'Leverage cloud technologies to scale, secure, and streamline your operations and services.'
     },
     {
-      icon: FileText,
-      title: 'Application Support',
-      description: 'Comprehensive support throughout the application process, from initial submission to final interview.'
+      icon: Code,
+      title: 'Software Development',
+      description: 'Custom software solutions to meet complex business challenges and accelerate digital growth.'
     },
     {
-      icon: Award,
-      title: 'Career Development',
-      description: 'Access to training resources and career development tools to help you grow professionally.'
+      icon: HelpCircle,
+      title: 'IT Consultancy Services',
+      description: 'Expert IT advisory to align your tech strategy with your business objectives.'
+    },
+    {
+      icon: Shield,
+      title: 'Information Security Services',
+      description: 'Protect your data and systems with comprehensive cybersecurity and compliance services.'
+    },
+    {
+      icon: AlertTriangle,
+      title: 'Industry Cyber Security',
+      description: 'Sector-specific cybersecurity solutions to guard against evolving digital threats.'
     }
-  ]
+  ];
 
   return (
     <section className="py-20 bg-gray-50">
