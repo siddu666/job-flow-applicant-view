@@ -39,7 +39,8 @@ export const useCreateGDPRRequest = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (_request: Omit<GDPRRequestInsert, 'verification_token'>): Promise<GDPRRequest> => {
+    mutationFn: async (request: Omit<GDPRRequestInsert, 'verification_token'>): Promise<GDPRRequest> => {
+      console.log('GDPR request:', request);
       throw new Error("GDPR functionality not implemented yet - tables don't exist");
     },
     onSuccess: () => {
@@ -56,15 +57,14 @@ export const useProcessGDPRRequest = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      action,
-    }: {
+    mutationFn: async (variables: {
       id: string;
       action: 'approve' | 'reject';
       processedBy: string;
       completionDetails?: Record<string, unknown>;
       rejectionReason?: string;
     }) => {
+      console.log('Processing GDPR request:', variables);
       throw new Error("GDPR functionality not implemented yet - tables don't exist");
     },
     onSuccess: (_data, variables) => {
