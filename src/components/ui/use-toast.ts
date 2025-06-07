@@ -24,8 +24,6 @@ type ActionType = {
   REMOVE_TOAST: "REMOVE_TOAST",
 }
 
-type ActionType = typeof actionTypes
-
 let count = 0
 
 function genId() {
