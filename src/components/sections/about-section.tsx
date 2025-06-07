@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { CheckCircle, Zap, Shield, Globe, Users, Award, TrendingUp, Sparkles, ArrowRight, Target, Lightbulb, Rocket } from 'lucide-react'
 import Link from 'next/link'
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
 export function AboutSection() {
   const features = [
@@ -73,7 +73,7 @@ export function AboutSection() {
             </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              JUSTERA GROUP is an end-to-end IT solutions provider enabling businesses and enterprises in Sweden to harness the power of digital technologies and continuously evolve in today's fast-changing economy.
+              JUSTERA GROUP is an end-to-end IT solutions provider enabling businesses and enterprises in Sweden to harness the power of digital technologies and continuously evolve in today&apos;s fast-changing economy.
             </p>
           </div>
 
