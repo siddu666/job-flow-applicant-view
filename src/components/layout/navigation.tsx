@@ -50,9 +50,6 @@ export function Navigation() {
             <Link href="/jobs" className="text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-3 rounded-md hover:bg-blue-50">
               Browse Jobs
             </Link>
-            <Link href="/apply" className="text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-3 rounded-md hover:bg-blue-50">
-              Apply Now
-            </Link>
             {user && (
               <>
                 <Link href="/profile" className="text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-3 rounded-md hover:bg-blue-50">

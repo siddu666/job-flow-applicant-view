@@ -1,107 +1,185 @@
-
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { ArrowRight, Users, Briefcase, Award, TrendingUp } from 'lucide-react'
+import { ArrowRight, Users, Briefcase, Award, TrendingUp, Sparkles, Globe, Star } from 'lucide-react'
 import Link from 'next/link'
 
 export function HeroSection() {
   return (
-    <section className="relative bg-gradient-to-br from-blue-50 via-white to-blue-100 py-20 lg:py-32 overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-1000"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-pink-600 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-2000"></div>
-      </div>
+      <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+          <div className="absolute top-40 right-10 w-96 h-96 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000"></div>
+          <div className="absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-2000"></div>
+          <div className="absolute bottom-40 right-40 w-64 h-64 bg-gradient-to-r from-pink-400 to-red-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-3000"></div>
+        </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left Column - Content */}
-          <div className="text-center lg:text-left">
-            <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
-              <Award className="w-4 h-4 mr-2" />
-              Trusted by 500+ Companies Worldwide
-            </div>
-            
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Elevate Your Career with
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
-                Justera Group
+        {/* Floating Particles */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(20)].map((_, i) => (
+              <div
+                  key={i}
+                  className="absolute w-2 h-2 bg-white rounded-full opacity-20 animate-pulse"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 3}s`,
+                    animationDuration: `${2 + Math.random() * 2}s`
+                  }}
+              />
+          ))}
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10 flex items-center min-h-screen">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
+            {/* Left Column - Content */}
+            <div className="text-center lg:text-left space-y-8">
+              {/* Trust Badge */}
+              <div className="inline-flex items-center bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-blue-300/30 text-blue-100 px-6 py-3 rounded-full text-sm font-medium shadow-lg hover:scale-105 transition-all duration-300">
+                <Award className="w-4 h-4 mr-2 text-yellow-400" />
+                <span className="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-transparent font-semibold">
+                Trusted by 500+ Global Companies
               </span>
-            </h1>
-            
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl leading-relaxed">
-              Connect with world-class opportunities. Your next career milestone starts here.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Link href="/apply">
-                <Button 
-                  size="lg" 
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 group"
-                >
-                  Start Your Journey
-                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <Link href="/jobs">
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-4 text-lg font-semibold transition-all duration-200"
-                >
-                  Browse Opportunities
-                </Button>
-              </Link>
+                <Sparkles className="w-4 h-4 ml-2 text-yellow-400 animate-pulse" />
+              </div>
+
+              {/* Main Headline */}
+              <div className="space-y-4">
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight">
+                  Elevate Your
+                  <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent animate-pulse">
+                  Career Journey
+                </span>
+                  <span className="block text-4xl md:text-5xl lg:text-6xl mt-2">
+                  with{' '}
+                    <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                    Justera Group
+                  </span>
+                </span>
+                </h1>
+              </div>
+
+              {/* Subtitle */}
+              <p className="text-xl md:text-2xl text-blue-100 max-w-2xl leading-relaxed font-light">
+                Connect with world-class opportunities and unlock your potential.
+                <span className="text-cyan-300 font-medium"> Your extraordinary career starts here.</span>
+              </p>
+
+              {/* Stats Row */}
+              <div className="grid grid-cols-3 gap-6 py-6">
+                <div className="text-center lg:text-left">
+                  <div className="text-3xl font-bold text-cyan-400">50+</div>
+                  <div className="text-blue-200 text-sm">Companies</div>
+                </div>
+                <div className="text-center lg:text-left">
+                  <div className="text-3xl font-bold text-purple-400">20++</div>
+                  <div className="text-blue-200 text-sm">Employments</div>
+                </div>
+                <div className="text-center lg:text-left">
+                  <div className="text-3xl font-bold text-yellow-400">98%</div>
+                  <div className="text-blue-200 text-sm">Success Rate</div>
+                </div>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-6 pt-4">
+                <Link href="/apply">
+                  <Button
+                      size="lg"
+                      className="bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-600 hover:via-blue-700 hover:to-purple-700 text-white px-10 py-6 text-xl font-bold shadow-2xl hover:shadow-cyan-500/25 transform hover:scale-110 transition-all duration-300 group relative overflow-hidden"
+                  >
+                  <span className="relative z-10 flex items-center">
+                    Start Your Journey
+                    <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-2 transition-transform duration-300" />
+                  </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </Button>
+                </Link>
+                <Link href="/jobs">
+                  <Button
+                      variant="outline"
+                      size="lg"
+                      className="border-2 border-cyan-400/50 text-cyan-300 hover:bg-cyan-400/10 hover:text-cyan-200 hover:border-cyan-300 backdrop-blur-sm px-10 py-6 text-xl font-bold transition-all duration-300 hover:scale-105 group"
+                  >
+                    <Globe className="mr-3 h-5 w-5 group-hover:rotate-12 transition-transform duration-300" />
+                    Explore Opportunities
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Social Proof */}
+              <div className="flex items-center justify-center lg:justify-start space-x-2 pt-6">
+                <div className="flex -space-x-2">
+                  {[...Array(5)].map((_, i) => (
+                      <div
+                          key={i}
+                          className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 border-2 border-white/20"
+                      />
+                  ))}
+                </div>
+                <div className="flex items-center text-yellow-400 ml-4">
+                  {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-current" />
+                  ))}
+                </div>
+                <span className="text-blue-200 text-sm ml-2">Rated 5.0 by our candidates</span>
+              </div>
             </div>
-          </div>
 
-          {/* Right Column - Visual Elements */}
-          <div className="relative lg:pl-8">
-            <div className="relative">
-              {/* Main Card */}
-              <div className="bg-white rounded-2xl shadow-2xl p-8 relative z-10 border border-gray-100">
-                <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mr-4">
-                    <Briefcase className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">Executive Search</h3>
-                    <p className="text-gray-600 text-sm">Premium placements</p>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Success Rate</span>
-                    <span className="font-semibold text-green-600">97%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full w-[97%] animate-pulse"></div>
-                  </div>
+            {/* Right Column - Visual Element */}
+            <div className="relative lg:flex hidden items-center justify-center">
+              <div className="relative w-96 h-96">
+                {/* Central Orb */}
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-full animate-pulse shadow-2xl shadow-blue-500/50"></div>
+                <div className="absolute inset-4 bg-gradient-to-r from-blue-900 to-purple-900 rounded-full"></div>
+                <div className="absolute inset-8 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full animate-spin-slow opacity-80"></div>
+
+                {/* Orbiting Elements */}
+                <div className="absolute inset-0 animate-spin-slow">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-yellow-400 rounded-full shadow-lg"></div>
+                  <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-6 h-6 bg-pink-400 rounded-full shadow-lg"></div>
+                  <div className="absolute top-1/2 -left-4 transform -translate-y-1/2 w-7 h-7 bg-green-400 rounded-full shadow-lg"></div>
+                  <div className="absolute top-1/2 -right-4 transform -translate-y-1/2 w-6 h-6 bg-red-400 rounded-full shadow-lg"></div>
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-gray-100">
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Users className="w-4 h-4 mr-2" />
-                    <span>Trusted by industry leaders</span>
-                  </div>
+                {/* Icon in Center */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <TrendingUp className="w-16 h-16 text-white animate-pulse" />
                 </div>
               </div>
 
-              {/* Floating Elements */}
-              <div className="absolute -top-4 -right-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-4 shadow-lg animate-bounce z-20">
-                <TrendingUp className="w-6 h-6 text-white" />
+              {/* Floating Cards */}
+              <div className="absolute -top-8 -right-8 bg-white/10 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-white/20 animate-bounce">
+                <Briefcase className="w-6 h-6 text-cyan-400 mb-2" />
+                <div className="text-white text-sm font-medium">New Opportunities</div>
               </div>
-
-              <div className="absolute -bottom-4 -left-4 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl p-4 shadow-lg animate-pulse z-20">
-                <Award className="w-6 h-6 text-white" />
+              <div className="absolute -bottom-8 -left-8 bg-white/10 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-white/20 animate-bounce delay-1000">
+                <Users className="w-6 h-6 text-purple-400 mb-2" />
+                <div className="text-white text-sm font-medium">Global Network</div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+
+        {/* Bottom Gradient Overlay */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-900/50 to-transparent"></div>
+      </section>
   )
 }
+
+// Add custom CSS for slow spin animation
+const customStyles = `
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+`
