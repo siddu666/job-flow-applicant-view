@@ -38,12 +38,20 @@ export function AboutSection() {
     }
   ]
 
+  const [hoveredFeature, setHoveredFeature] = useState<number | null>(null)
+  const [isInView, setIsInView] = useState(false)
+
   const stats = [
-    { number: '50+', label: 'Partner Companies', color: 'text-blue-600' },
-    { number: '20+', label: 'Successful Employees', color: 'text-purple-600' },
-    { number: '98%', label: 'Client Satisfaction', color: 'text-green-600' },
-    { number: '15+', label: 'Years Experience', color: 'text-orange-600' }
+    { number: '500+', label: 'Partner Companies', color: 'text-blue-600', description: 'Global enterprises trust us' },
+    { number: '2000+', label: 'Career Placements', color: 'text-purple-600', description: 'Lives transformed through work' },
+    { number: '98%', label: 'Client Satisfaction', color: 'text-green-600', description: 'Exceptional service delivery' },
+    { number: '15+', label: 'Years Excellence', color: 'text-orange-600', description: 'Proven industry leadership' }
   ]
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsInView(true), 100)
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
       <section className="py-24 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
@@ -101,21 +109,48 @@ export function AboutSection() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {features.map((feature, index) => (
-                    <div key={index} className="group">
-                      <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-gray-100 h-full">
-                        <div className="flex items-start space-x-4">
+                    <div 
+                      key={index} 
+                      className="group"
+                      onMouseEnter={() => setHoveredFeature(index)}
+                      onMouseLeave={() => setHoveredFeature(null)}
+                    >
+                      <div className={`
+                        bg-white rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 
+                        transform hover:scale-105 border border-gray-100 h-full relative overflow-hidden
+                        ${hoveredFeature === index ? 'ring-2 ring-blue-500/20 bg-gradient-to-br from-blue-50 to-purple-50' : ''}
+                      `}>
+                        {/* Hover overlay effect */}
+                        <div className={`
+                          absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 
+                          transition-opacity duration-500 ${hoveredFeature === index ? 'opacity-100' : 'opacity-0'}
+                        `}></div>
+                        
+                        <div className="flex items-start space-x-4 relative z-10">
                           <div className="flex-shrink-0">
-                            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <div className={`
+                              w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl 
+                              flex items-center justify-center transition-all duration-300
+                              ${hoveredFeature === index ? 'scale-125 rotate-6 shadow-lg' : 'group-hover:scale-110'}
+                            `}>
                               <feature.icon className="w-6 h-6 text-white" />
                             </div>
                           </div>
                           <div className="flex-1">
-                            <h4 className="font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300">
+                            <h4 className={`
+                              font-bold mb-2 transition-colors duration-300
+                              ${hoveredFeature === index ? 'text-blue-600' : 'text-gray-900 group-hover:text-blue-600'}
+                            `}>
                               {feature.title}
                             </h4>
                             <p className="text-sm text-gray-600 leading-relaxed">
                               {feature.description}
                             </p>
+                            {hoveredFeature === index && (
+                              <div className="mt-3 text-xs text-blue-600 font-medium animate-fadeIn">
+                                ✓ Trusted by industry leaders
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>

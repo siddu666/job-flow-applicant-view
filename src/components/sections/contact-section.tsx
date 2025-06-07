@@ -70,7 +70,9 @@ export function ContactSection() {
               <div className="h-1 w-24 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mb-6"></div>
             </div>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Ready to take the next step in your career journey? We're here to guide you every step of the way.
+              Ready to transform your career with Sweden's leading IT recruitment specialists? 
+              Our expert consultants are standing by to connect you with your ideal opportunity. 
+              Get personalized career guidance and exclusive access to premium positions.
             </p>
           </div>
 
@@ -90,17 +92,22 @@ export function ContactSection() {
 
                     <div className="space-y-6">
                       {[
-                        { icon: Mail, text: 'hrteam@justeragroup.com', color: 'blue' },
-                        { icon: Phone, text: '+46769624470', color: 'green' },
-                        { icon: MapPin, text: 'Stockholm, Sweden', color: 'purple' }
+                        { icon: Mail, text: 'hrteam@justeragroup.com', color: 'blue', subtext: 'Response within 2 hours' },
+                        { icon: Phone, text: '+46769624470', color: 'green', subtext: 'Direct line to consultants' },
+                        { icon: MapPin, text: 'Stockholm, Sweden', color: 'purple', subtext: 'Serving all of Scandinavia' }
                       ].map((item, index) => (
                           <div key={index} className="group/item flex items-center p-4 rounded-2xl hover:bg-gray-50/80 transition-all duration-300 cursor-pointer">
                             <div className={`p-3 rounded-xl bg-${item.color}-500/10 group-hover/item:bg-${item.color}-500/20 transition-all duration-300`}>
                               <item.icon className={`h-6 w-6 text-${item.color}-600 group-hover/item:scale-110 transition-transform duration-300`} />
                             </div>
-                            <span className="text-gray-700 ml-4 font-medium group-hover/item:text-gray-900 transition-colors duration-300">
-                          {item.text}
-                        </span>
+                            <div className="ml-4">
+                              <div className="text-gray-700 font-medium group-hover/item:text-gray-900 transition-colors duration-300">
+                                {item.text}
+                              </div>
+                              <div className="text-xs text-gray-500 mt-1">
+                                {item.subtext}
+                              </div>
+                            </div>
                           </div>
                       ))}
                     </div>

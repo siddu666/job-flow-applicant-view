@@ -119,7 +119,9 @@ export function ServicesSection() {
             </h2>
 
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              End-to-end technology services designed to accelerate your digital transformation and drive business success in Sweden's competitive market
+              Comprehensive IT solutions and digital transformation services tailored for Swedish enterprises. 
+              From cloud migration to cybersecurity, we deliver cutting-edge technology solutions that drive 
+              measurable business outcomes and competitive advantage.
             </p>
 
             {/* Stats Bar */}
@@ -139,14 +141,15 @@ export function ServicesSection() {
             </div>
           </div>
 
-          {/* Services Grid */}
+          {/* Enhanced Services Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {services.map((service, index) => {
               const IconComponent = service.icon
               return (
                   <Card
                       key={index}
-                      className="bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-500 group hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/20 relative overflow-hidden"
+                      className="bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-500 group hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/20 relative overflow-hidden cursor-pointer"
+                      style={{ animationDelay: `${index * 100}ms` }}
                   >
                     {/* Card Glow Effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
@@ -177,13 +180,23 @@ export function ServicesSection() {
                         ))}
                       </div>
 
+                      {/* Success Metrics */}
+                      <div className="pt-4 border-t border-white/10">
+                        <div className="text-xs text-gray-400 mb-2">Success Metrics:</div>
+                        <div className="flex justify-between text-xs">
+                          <span className="text-green-400">99% Uptime</span>
+                          <span className="text-blue-400">50+ Projects</span>
+                          <span className="text-purple-400">24/7 Support</span>
+                        </div>
+                      </div>
+
                       {/* Learn More Button */}
                       <div className="pt-4">
                         <Button
                             variant="ghost"
                             className="w-full text-cyan-300 hover:text-white hover:bg-white/10 transition-all duration-300 group/btn"
                         >
-                          Learn More
+                          Get Free Consultation
                           <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
                         </Button>
                       </div>

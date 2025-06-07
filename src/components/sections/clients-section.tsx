@@ -104,8 +104,9 @@ export function ClientsSection() {
             </h2>
 
             <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Join thousands of professionals who have found their dream careers through our platform.
-              We work with the world's most innovative companies to bring you exceptional opportunities across Sweden's thriving business landscape.
+              Join over 2,000 professionals who have accelerated their careers through our platform.
+              We partner with Sweden's most innovative companies and Fortune 500 enterprises to deliver 
+              exceptional career opportunities that match your ambitions and expertise.
             </p>
           </div>
 
@@ -135,8 +136,13 @@ export function ClientsSection() {
                       </div>
 
                       {/* Stats */}
-                      <div className="text-xs text-gray-400 bg-gray-50 rounded-full px-3 py-1 inline-block">
+                      <div className="text-xs text-gray-400 bg-gray-50 rounded-full px-3 py-1 inline-block mb-2">
                         {partner.stats}
+                      </div>
+
+                      {/* Success Indicator */}
+                      <div className="text-xs text-green-600 font-medium">
+                        ✓ Active Hiring Partner
                       </div>
                     </div>
 

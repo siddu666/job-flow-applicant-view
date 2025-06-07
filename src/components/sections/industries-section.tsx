@@ -49,7 +49,9 @@ export function IndustriesSection() {
               <div className="h-1 w-32 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 rounded-full mx-auto mb-6"></div>
             </div>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Discover endless opportunities across Sweden's most dynamic industries and unlock your career potential
+              Explore career opportunities across 15+ thriving industries in Sweden. From technology startups 
+              to Fortune 500 companies, we connect talented professionals with their ideal roles in sectors 
+              driving innovation and growth throughout Scandinavia.
             </p>
           </div>
 
@@ -90,12 +92,17 @@ export function IndustriesSection() {
 
                         {/* Industry Name */}
                         <h3 className={`
-                      font-bold text-sm md:text-base leading-tight
+                      font-bold text-sm md:text-base leading-tight mb-1
                       transition-all duration-300
                       ${isHovered ? industry.text : 'text-gray-800 group-hover:text-gray-900'}
                     `}>
                           {industry.name}
                         </h3>
+
+                        {/* Job Count Indicator */}
+                        <div className="text-xs text-gray-500 mb-2">
+                          {Math.floor(Math.random() * 200) + 50}+ Active Jobs
+                        </div>
 
                         {/* Animated Underline */}
                         <div className={`

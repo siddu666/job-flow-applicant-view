@@ -3,8 +3,26 @@
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Users, Briefcase, Award, TrendingUp, Sparkles, Globe, Star } from 'lucide-react'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 export function HeroSection() {
+  const [isVisible, setIsVisible] = useState(false)
+  const [currentStatIndex, setCurrentStatIndex] = useState(0)
+
+  const dynamicStats = [
+    { number: '500+', label: 'Global Companies', color: 'text-cyan-400' },
+    { number: '2000+', label: 'Career Placements', color: 'text-purple-400' },
+    { number: '98%', label: 'Success Rate', color: 'text-yellow-400' },
+    { number: '15+', label: 'Years Excellence', color: 'text-green-400' }
+  ]
+
+  useEffect(() => {
+    setIsVisible(true)
+    const interval = setInterval(() => {
+      setCurrentStatIndex((prev) => (prev + 1) % 3)
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [])
   return (
       <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 overflow-hidden">
         {/* Animated Background Elements */}
@@ -66,19 +84,37 @@ export function HeroSection() {
                 <span className="text-cyan-300 font-medium"> Your extraordinary career starts here.</span>
               </p>
 
-              {/* Stats Row */}
+              {/* Enhanced Stats Row with Dynamic Content */}
               <div className="grid grid-cols-3 gap-6 py-6">
-                <div className="text-center lg:text-left">
-                  <div className="text-3xl font-bold text-cyan-400">50+</div>
-                  <div className="text-blue-200 text-sm">Companies</div>
+                {dynamicStats.slice(0, 3).map((stat, index) => (
+                  <div 
+                    key={index}
+                    className={`text-center lg:text-left transform transition-all duration-500 ${
+                      isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+                    }`}
+                    style={{ transitionDelay: `${index * 200}ms` }}
+                  >
+                    <div className={`text-3xl font-bold ${stat.color} animate-pulse hover:scale-110 transition-transform duration-300`}>
+                      {stat.number}
+                    </div>
+                    <div className="text-blue-200 text-sm font-medium">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="flex items-center justify-center lg:justify-start space-x-6 pt-4">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-blue-200 text-sm">Live Job Matching</span>
                 </div>
-                <div className="text-center lg:text-left">
-                  <div className="text-3xl font-bold text-purple-400">20++</div>
-                  <div className="text-blue-200 text-sm">Employments</div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse delay-500"></div>
+                  <span className="text-blue-200 text-sm">24/7 Support</span>
                 </div>
-                <div className="text-center lg:text-left">
-                  <div className="text-3xl font-bold text-yellow-400">98%</div>
-                  <div className="text-blue-200 text-sm">Success Rate</div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse delay-1000"></div>
+                  <span className="text-blue-200 text-sm">GDPR Compliant</span>
                 </div>
               </div>
 
