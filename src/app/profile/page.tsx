@@ -82,7 +82,6 @@ export default function ProfilePage() {
     }
   }, [user, loading, router])
 
-<<<<<<< HEAD
   // Fetch profile data
   useEffect(() => {
     const fetchProfile = async () => {
@@ -139,7 +138,7 @@ export default function ProfilePage() {
       fetchProfile()
     }
   }, [user?.id, supabase, toast])
-=======
+
   const fetchProfile = async () => {
     if (!user?.id) return
 
@@ -190,7 +189,6 @@ export default function ProfilePage() {
       setIsProfileLoading(false)
     }
   }
->>>>>>> 68cf0f4dc595584cbd48b0bad48158dff50be83b
 
   // Fetch profile data
   useEffect(() => {

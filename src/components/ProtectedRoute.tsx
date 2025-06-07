@@ -23,7 +23,8 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
 
       if (requiredRole && user.user_metadata?.role !== requiredRole) {
         // Redirect to appropriate page based on user role
-        switch (user.user_metadata?.role) {
+        const userRole = user.user_metadata?.role
+        switch (userRole) {
           case 'admin':
             router.push('/admin')
             break

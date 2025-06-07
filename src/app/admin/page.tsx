@@ -13,6 +13,7 @@ import { useProfile } from '@/hooks/useProfile'
 import { JobPostForm } from '@/components/JobPostForm'
 import { Briefcase, Users, FileText, Plus, Eye, Edit, Trash } from 'lucide-react'
 import { toast } from 'sonner'
+import { ProtectedRoute } from '@/components/ProtectedRoute'
 
 export default function AdminPage() {
   const { user, loading } = useAuth()
@@ -60,6 +61,7 @@ export default function AdminPage() {
 
 
   return (
+      <ProtectedRoute requiredRole="admin">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
@@ -234,5 +236,6 @@ export default function AdminPage() {
           </TabsContent>
         </Tabs>
       </div>
+      </ProtectedRoute>
   )
 }

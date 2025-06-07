@@ -77,7 +77,7 @@ const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
               <li>All personal data (GDPR compliant)</li>
             </ul>
             <p className="text-red-600 font-medium">
-              This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+              This action cannot be undone. You&apos;ll need to create a new account if you want to use our services again.
             </p>
           </AlertDialogDescription>
         </AlertDialogHeader>

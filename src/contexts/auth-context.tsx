@@ -48,9 +48,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false)
 
         if (event === 'SIGNED_IN') {
-          // Check if user has completed onboarding
+          // Check if user has completed onboarding and redirect based on role
           if (session?.user) {
-              router.push('/profile')
+            const userRole = session.user.user_metadata?.role
+            
+            // Redirect based on user role
+            switch (userRole) {
+              case 'admin':
+                router.push('/admin')
+                break
+              case 'recruiter':
+                router.push('/jobs')
+                break
+              default:
+                router.push('/profile')
+            }
           }
         } else if (event === 'SIGNED_OUT') {
           router.push('/auth')

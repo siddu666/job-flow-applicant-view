@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useAuth } from '@/contexts/auth-context'
@@ -59,7 +58,7 @@ export function Navigation() {
                 <Link href="/profile" className="text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-3 rounded-md hover:bg-blue-50">
                   My Profile
                 </Link>
-                {user.email === 'admin@example.com' && (
+                {user.user_metadata?.role === 'admin' && (
                   <Link href="/admin" className="text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-3 rounded-md hover:bg-blue-50">
                     Admin Panel
                   </Link>
@@ -134,24 +133,22 @@ export function Navigation() {
                 Apply Now
               </Link>
               {user && (
-                <>
-                  <Link 
-                    href="/profile" 
-                    className="text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-3 rounded-md hover:bg-blue-50"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    My Profile
+                <div className="grid gap-6 p-6">
+                  <Link href="/profile" className="block px-2 py-1 text-base text-gray-700 hover:text-blue-600 transition-colors">
+                    Profile
                   </Link>
-                  {user.email === 'admin@example.com' && (
-                    <Link 
-                      href="/admin" 
-                      className="text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-3 rounded-md hover:bg-blue-50"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Admin Panel
+                  <Link href="/jobs" className="block px-2 py-1 text-base text-gray-700 hover:text-blue-600 transition-colors">
+                    Jobs
+                  </Link>
+                  <Link href="/apply" className="block px-2 py-1 text-base text-gray-700 hover:text-blue-600 transition-colors">
+                    Apply
+                  </Link>
+                  {user.user_metadata?.role === 'admin' && (
+                    <Link href="/admin" className="block px-2 py-1 text-base text-gray-700 hover:text-blue-600 transition-colors">
+                      Admin
                     </Link>
                   )}
-                </>
+                </div>
               )}
               <div className="border-t pt-3 mt-3">
                 {user ? (
