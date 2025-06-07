@@ -5,12 +5,13 @@ import './globals.css'
 import { Toaster } from '@/components/ui/sonner'
 import { AuthProvider } from '@/contexts/auth-context'
 import { Providers } from '@/components/providers'
+import { MainLayout } from '@/components/layout/main-layout'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Job Application System',
-  description: 'Professional job application platform with Supabase integration',
+  title: 'JobFlow - Professional Career Platform | Justera Group',
+  description: 'Professional job application platform powered by Justera Group. Connect with exceptional opportunities and advance your career.',
 }
 
 export default function RootLayout({
@@ -23,7 +24,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <AuthProvider>
-            {children}
+            <MainLayout>
+              {children}
+            </MainLayout>
             <Toaster />
           </AuthProvider>
         </Providers>
