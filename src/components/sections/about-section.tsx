@@ -48,7 +48,7 @@ export function AboutSection() {
     { number: '15+', label: 'Years Excellence', color: 'text-orange-600', description: 'Proven industry leadership' }
   ]
 
-  
+
 
   return (
       <section className="py-24 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
