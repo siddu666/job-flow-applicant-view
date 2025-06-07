@@ -82,7 +82,7 @@ function ApplyPageContent() {
     setFormData(prev => ({ ...prev, skills: prev.skills.filter(s => s !== skill) }));
   };
 
-  
+
 
   if (authLoading || profileLoading || jobLoading) {
     return (
@@ -126,7 +126,7 @@ function ApplyPageContent() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                
+
                 <div className="flex items-center gap-4 text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <MapPin className="h-4 w-4" />
