@@ -84,61 +84,60 @@ export default function ProfilePage() {
 
   // Fetch profile data
   useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user?.id) return
+
+      try {
+        setIsProfileLoading(true)
+
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single()
+
+        if (error) {
+          // If profile doesn't exist, that's okay - we'll create one on submit
+          if (error.code !== 'PGRST116') {
+            console.error('Error fetching profile:', error)
+            toast.error('Failed to load profile data')
+          }
+          return
+        }
+
+        if (data) {
+          setProfile({
+            first_name: data.first_name || '',
+            last_name: data.last_name || '',
+            phone: data.phone || '',
+            current_location: data.current_location || '',
+            bio: data.bio || '',
+            skills: Array.isArray(data.skills) ? data.skills : [],
+            experience_years: data.experience_years || null,
+            linkedin_url: data.linkedin_url || '',
+            github_url: data.github_url || '',
+            portfolio_url: data.portfolio_url || '',
+            email: data.email || user.email || '',
+            role: data.role || '',
+            certifications: Array.isArray(data.certifications) ? data.certifications : [],
+            preferred_cities: Array.isArray(data.preferred_cities) ? data.preferred_cities : [],
+            willing_to_relocate: Boolean(data.willing_to_relocate),
+            job_seeking_status: data.job_seeking_status || '',
+            expected_salary_sek: data.expected_salary_sek || null,
+            cv_url: data.cv_url || ''
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error)
+        toast.error('Failed to load profile data')
+      } finally {
+        setIsProfileLoading(false)
+      }
+    }
     if (user?.id) {
       fetchProfile()
     }
-  }, [user?.id, fetchProfile])
-
-  const fetchProfile = async () => {
-    if (!user?.id) return
-
-    try {
-      setIsProfileLoading(true)
-
-      const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single()
-
-      if (error) {
-        // If profile doesn't exist, that's okay - we'll create one on submit
-        if (error.code !== 'PGRST116') {
-          console.error('Error fetching profile:', error)
-          toast.error('Failed to load profile data')
-        }
-        return
-      }
-
-      if (data) {
-        setProfile({
-          first_name: data.first_name || '',
-          last_name: data.last_name || '',
-          phone: data.phone || '',
-          current_location: data.current_location || '',
-          bio: data.bio || '',
-          skills: Array.isArray(data.skills) ? data.skills : [],
-          experience_years: data.experience_years || null,
-          linkedin_url: data.linkedin_url || '',
-          github_url: data.github_url || '',
-          portfolio_url: data.portfolio_url || '',
-          email: data.email || user.email || '',
-          role: data.role || '',
-          certifications: Array.isArray(data.certifications) ? data.certifications : [],
-          preferred_cities: Array.isArray(data.preferred_cities) ? data.preferred_cities : [],
-          willing_to_relocate: Boolean(data.willing_to_relocate),
-          job_seeking_status: data.job_seeking_status || '',
-          expected_salary_sek: data.expected_salary_sek || null,
-          cv_url: data.cv_url || ''
-        })
-      }
-    } catch (error) {
-      console.error('Error fetching profile:', error)
-      toast.error('Failed to load profile data')
-    } finally {
-      setIsProfileLoading(false)
-    }
-  }
+  }, [user?.id, supabase, toast])
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!user?.id) {
