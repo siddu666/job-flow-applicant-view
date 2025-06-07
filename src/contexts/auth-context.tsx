@@ -48,6 +48,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false)
 
         if (event === 'SIGNED_IN') {
+          // Check if this is a new user who just confirmed their email
+          if (session?.user && !session.user.user_metadata?.profile_created) {
+            // Check if profile exists
+            const { data: existingProfile } = await supabase
+              .from('profiles')
+              .select('id')
+              .eq('id', session.user.id)
+              .single();
+
+            if (!existingProfile) {
+              // Profile doesn't exist, user likely just confirmed email
+              // Redirect to onboarding or create basic profile
+              console.log('User confirmed email but no profile exists');
+            }
+          }
+
           // For role-based redirection, we need to fetch the profile first
           // Let the individual pages handle the redirection based on profile role
           if (session?.user) {
@@ -80,35 +96,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           first_name: onboardingData.firstName,
           last_name: onboardingData.lastName,
         },
+        emailRedirectTo: `${window.location.origin}/auth?type=signup`,
       },
     });
 
     if (error) throw error;
 
-    // Create profile record
-    if (data.user) {
-      const profileData = {
-        id: data.user.id,
-        email: data.user.email || '',
-        role: 'applicant',
-        first_name: onboardingData.firstName,
-        last_name: onboardingData.lastName,
-        phone: onboardingData.phone,
-        current_location: onboardingData.city,
-        skills: onboardingData.skills,
-        experience_years: onboardingData.experience,
-        job_seeking_status: onboardingData.preferredJobType,
-        availability: onboardingData.availability,
-        linkedin_url: onboardingData.linkedinUrl,
-        portfolio_url: onboardingData.portfolioUrl,
-        willing_to_relocate: onboardingData.authorizedToWork,
-      };
+    // Check if user was created successfully
+    if (!data.user) {
+      throw new Error('User creation failed');
+    }
 
-      const { error: profileError } = await supabase
-          .from('profiles')
-          .insert(profileData);
+    // Only create profile if user was successfully created and confirmed
+    // For email confirmation flows, data.user exists but session might be null
+    if (data.user && !data.user.email_confirmed_at && !data.session) {
+      // User needs to confirm email - don't create profile yet
+      console.log('User needs to confirm email before profile creation');
+      return;
+    }
 
-      if (profileError) throw profileError;
+    // Create profile record only after successful user creation
+    const profileData = {
+      id: data.user.id,
+      email: data.user.email || '',
+      role: 'applicant',
+      first_name: onboardingData.firstName,
+      last_name: onboardingData.lastName,
+      phone: onboardingData.phone,
+      current_location: onboardingData.city,
+      skills: onboardingData.skills,
+      experience_years: onboardingData.experience,
+      job_seeking_status: onboardingData.preferredJobType,
+      availability: onboardingData.availability,
+      linkedin_url: onboardingData.linkedinUrl,
+      portfolio_url: onboardingData.portfolioUrl,
+      willing_to_relocate: onboardingData.authorizedToWork,
+    };
+
+    const { error: profileError } = await supabase
+        .from('profiles')
+        .insert(profileData);
+
+    if (profileError) {
+      console.error('Profile creation failed:', profileError);
+      throw profileError;
     }
   };
 
