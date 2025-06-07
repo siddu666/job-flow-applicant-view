@@ -19,7 +19,6 @@ const ResumeLinksStep: React.FC<ResumeLinksStepProps> = ({
   onPrev 
 }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [uploading] = useState(false);
 
   const validateStep = () => {
     const newErrors: Record<string, string> = {};

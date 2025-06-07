@@ -159,3 +159,13 @@ export const useAuditLogs = (filters?: {
     staleTime: 30 * 1000, // 30 seconds
   });
 };
+
+export const useDataPortability = () => {
+  return useMutation({
+    mutationFn: async () => {
+      // Placeholder since data export function doesn't exist
+      console.log("Data portability export not implemented yet");
+      return { downloadUrl: "#", expiresAt: new Date().toISOString() };
+    },
+  });
+};

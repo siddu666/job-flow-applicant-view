@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Loader2, Briefcase, MapPin, DollarSign, Clock, User, FileText } from 'lucide-react';
+import { Loader2, Briefcase, MapPin, Clock, User, FileText } from 'lucide-react';
 
 function ApplyPageContent() {
   const { user, loading: authLoading } = useAuth();
@@ -245,7 +245,7 @@ function ApplyPageContent() {
                       id="coverLetter"
                       value={formData.cover_letter}
                       onChange={(e) => setFormData(prev => ({ ...prev, cover_letter: e.target.value }))}
-                      placeholder="Tell us why you&apos;re interested in this position and what makes you a great fit..."
+                      placeholder="Tell us why you're interested in this position and what makes you a great fit..."
                       rows={6}
                       required
                   />

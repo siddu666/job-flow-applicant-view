@@ -87,7 +87,7 @@ export default function ProfilePage() {
     if (user?.id) {
       fetchProfile()
     }
-  }, [user?.id])
+  }, [user?.id, fetchProfile])
 
   const fetchProfile = async () => {
     if (!user?.id) return
