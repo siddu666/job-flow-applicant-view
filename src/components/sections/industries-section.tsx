@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Badge } from '@/components/ui/badge'
+
 import { Building2, Code, Heart, GraduationCap, Factory, ShoppingCart, Users, Camera, Home, Truck, Zap, Shield, HandHeart, Coffee, Wheat } from 'lucide-react'
 
 export function IndustriesSection() {

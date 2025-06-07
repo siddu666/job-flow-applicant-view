@@ -104,7 +104,7 @@ export function AboutSection() {
                   <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Justera Advantage</span>
                 </h3>
                 <p className="text-lg text-gray-600 leading-relaxed">
-                  We don't just find jobs – we craft careers. Our innovative approach combines cutting-edge technology with human expertise to deliver exceptional results that transform professional journeys.
+                  We don&apos;t just find jobs – we craft careers. Our innovative approach combines cutting-edge technology with human expertise to deliver exceptional results that transform professional journeys.
                 </p>
               </div>
 
@@ -126,7 +126,7 @@ export function AboutSection() {
                           absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 
                           transition-opacity duration-500 ${hoveredFeature === index ? 'opacity-100' : 'opacity-0'}
                         `}></div>
-                        
+
                         <div className="flex items-start space-x-4 relative z-10">
                           <div className="flex-shrink-0">
                             <div className={`

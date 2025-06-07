@@ -213,7 +213,7 @@ export function ServicesSection() {
                 Ready to Transform Your Business?
               </h3>
               <p className="text-gray-300 mb-8 text-lg">
-                Let's discuss how our comprehensive IT solutions can accelerate your digital transformation journey
+                Let&apos;s discuss how our comprehensive IT solutions can accelerate your digital transformation journey
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

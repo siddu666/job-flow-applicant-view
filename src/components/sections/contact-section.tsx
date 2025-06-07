@@ -24,8 +24,10 @@ export function ContactSection() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async (e : any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    const formData = new FormData(e.target as HTMLFormElement)
+
     setIsSubmitting(true)
 
     // Simulate form submission
@@ -65,7 +67,7 @@ export function ContactSection() {
           <div className="text-center mb-20 relative">
             <div className="inline-block">
               <h2 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent mb-6 leading-tight">
-                Let's Connect
+                Let&apos;s Connect
               </h2>
               <div className="h-1 w-24 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mb-6"></div>
             </div>
@@ -153,7 +155,7 @@ export function ContactSection() {
                           <CheckCircle className="h-10 w-10 text-green-600" />
                         </div>
                         <h3 className="text-2xl font-bold text-gray-900 mb-3">Message Sent!</h3>
-                        <p className="text-gray-600">Thank you for reaching out. We'll get back to you within 24 hours.</p>
+                        <p className="text-gray-600">We&apos;ll get back to you within 24 hours.</p>
                       </div>
                   ) : (
                       <form onSubmit={handleSubmit} className="space-y-6">
