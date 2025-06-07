@@ -1,0 +1,35 @@
+./src/components/sections/about-section.tsx
+43:10  Warning: 'isInView' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+80:191  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+107:25  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/sections/clients-section.tsx
+3:10  Warning: 'Award' is defined but never used.  @typescript-eslint/no-unused-vars
+3:17  Warning: 'TrendingUp' is defined but never used.  @typescript-eslint/no-unused-vars
+3:29  Warning: 'Users' is defined but never used.  @typescript-eslint/no-unused-vars
+108:37  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+192:15  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+192:182  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+
+./src/components/sections/contact-section.tsx
+22:34  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+27:35  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+68:20  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+73:57  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+156:84  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/sections/hero-section.tsx
+10:10  Warning: 'currentStatIndex' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+208:7  Warning: 'customStyles' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/sections/industries-section.tsx
+4:10  Warning: 'Badge' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/sections/services-section.tsx
+216:20  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/ui/use-toast.ts
+20:7  Warning: 'actionTypes' is assigned a value but only used as a type.  @typescript-eslint/no-unused-vars
+
+./src/hooks/use-toast.ts
+18:7  Warning: 'actionTypes' is assigned a value but only used as a type.  @typescript-eslint/no-unused-vars
