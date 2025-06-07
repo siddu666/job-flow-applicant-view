@@ -82,13 +82,6 @@ export default function ProfilePage() {
     }
   }, [user, loading, router])
 
-  // Fetch profile data
-  useEffect(() => {
-    if (user?.id) {
-      fetchProfile()
-    }
-  }, [user?.id, fetchProfile])
-
   const fetchProfile = async () => {
     if (!user?.id) return
 
@@ -139,6 +132,16 @@ export default function ProfilePage() {
       setIsProfileLoading(false)
     }
   }
+
+  // Fetch profile data
+  useEffect(() => {
+    if (user?.id) {
+      const fetchData = async () => {
+        await fetchProfile();
+      };
+      fetchData();
+    }
+  }, [user?.id]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!user?.id) {

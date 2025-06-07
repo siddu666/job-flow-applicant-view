@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -26,14 +25,27 @@ function ApplyPageContent() {
   const { data: job, isLoading: jobLoading } = useJobById(jobId || '');
   const { applyToJobAsync, isApplying } = useApplications();
 
+// Ensure that the initial state for formData uses empty strings as defaults
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
     phone: '',
-    availability: '',
     cover_letter: '',
     skills: [] as string[],
   });
+
+// When setting formData from profile, ensure null values are converted to empty strings
+  useEffect(() => {
+    if (profile && user) {
+      setFormData({
+        full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim(),
+        email: profile.email || user.email || '',
+        phone: profile.phone || '',
+        cover_letter: '',
+        skills: profile.skills || [],
+      });
+    }
+  }, [profile, user]);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -53,7 +65,6 @@ function ApplyPageContent() {
         full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim(),
         email: profile.email || user.email || '',
         phone: profile.phone || '',
-        availability: profile.availability || '',
         cover_letter: '',
         skills: profile.skills || [],
       });
@@ -68,13 +79,19 @@ function ApplyPageContent() {
       await applyToJobAsync({
         jobId,
         coverLetter: formData.cover_letter,
-        cvUrl: profile?.cv_url || null,
+        cvUrl: profile?.cv_url ?? undefined,
       });
       toast.success('Application submitted successfully!');
       router.push('/profile');
     } catch (error) {
       console.error('Application submission error:', error);
-      toast.error(error.message || 'Failed to submit application');
+      // Type-check if error is an instance of Error
+      if (error instanceof Error) {
+        toast.error(error.message || 'Failed to submit application');
+      } else {
+        // Handle the case where error is not an instance of Error
+        toast.error('An unknown error occurred');
+      }
     }
   };
 
@@ -205,22 +222,6 @@ function ApplyPageContent() {
                       onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                       required
                   />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="availability">Availability</Label>
-                  <Select value={formData.availability} onValueChange={(value) => setFormData(prev => ({ ...prev, availability: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select availability" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="immediately">Immediately</SelectItem>
-                      <SelectItem value="2_weeks">2 weeks notice</SelectItem>
-                      <SelectItem value="1_month">1 month notice</SelectItem>
-                      <SelectItem value="2_months">2 months notice</SelectItem>
-                      <SelectItem value="3_months">3 months notice</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
 
                 <div className="space-y-2">

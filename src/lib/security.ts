@@ -68,16 +68,6 @@ export const checkRateLimit = (
   return { allowed: true };
 };
 
-export const sanitizeInput = (input: unknown): string => {
-  const result = input.toString()
-    .replace(/[<>]/g, '') // Remove angle brackets
-    .replace(/javascript:/gi, '') // Remove javascript: protocol
-    .replace(/on\w+=/gi, '') // Remove event handlers
-    .trim()
-
-  return result
-};
-
 export const validateFileType = (file: File): string => {
   const allowedTypes = [
     "application/pdf",
