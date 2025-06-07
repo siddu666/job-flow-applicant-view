@@ -16,42 +16,13 @@ import { toast } from 'sonner'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 
 export default function AdminPage() {
-  const { user, loading } = useAuth()
-  const router = useRouter()
-  const { data: profile, isLoading: profileLoading } = useProfile(user?.id)
+  const { user } = useAuth()
   const { data: jobs = [], isLoading: jobsLoading } = useAllJobs()
   const deleteJobMutation = useDeleteJob()
   const { useAllApplications } = useApplications()
   const { data: applications = [], isLoading: applicationsLoading } = useAllApplications()
 
   const [showJobForm, setShowJobForm] = useState(false)
-
-  useEffect(() => {
-    if (!loading && !profileLoading) {
-      if (!user) {
-        router.push('/auth')
-        return
-      }
-
-      if (profile?.role !== 'admin') {
-        toast.error('Access denied. Admin privileges required.')
-        router.push('/profile')
-        return
-      }
-    }
-  }, [user, profile, loading, profileLoading, router])
-
-  if (loading || profileLoading) {
-    return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-        </div>
-    )
-  }
-
-  if (!user || profile?.role !== 'admin') {
-    return null
-  }
 
   const handleDeleteJob = async (jobId: string) => {
     if (confirm('Are you sure you want to delete this job?')) {

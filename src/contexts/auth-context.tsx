@@ -48,21 +48,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false)
 
         if (event === 'SIGNED_IN') {
-          // Check if user has completed onboarding and redirect based on role
+          // For role-based redirection, we need to fetch the profile first
+          // Let the individual pages handle the redirection based on profile role
           if (session?.user) {
-            const userRole = session.user.user_metadata?.role
-            
-            // Redirect based on user role
-            switch (userRole) {
-              case 'admin':
-                router.push('/admin')
-                break
-              case 'recruiter':
-                router.push('/jobs')
-                break
-              default:
-                router.push('/profile')
-            }
+            router.push('/profile')
           }
         } else if (event === 'SIGNED_OUT') {
           router.push('/auth')

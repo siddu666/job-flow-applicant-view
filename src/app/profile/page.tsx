@@ -14,6 +14,7 @@ import { toast } from 'sonner'
 import { supabase } from '@/integrations/supabase/client'
 import { useUploadCV } from "@/hooks/useProfile"
 import { Upload, FileText, Loader2 } from 'lucide-react'
+import { useRoleRedirect } from '@/hooks/useRoleRedirect'
 
 // Define the Profile interface
 interface Profile {
@@ -45,8 +46,11 @@ const JOB_SEEKING_STATUS_OPTIONS = [
 
 export default function ProfilePage() {
   const { user, loading } = useAuth()
-  const uploadCV = useUploadCV()
   const router = useRouter()
+
+  // Handle role-based redirection
+  useRoleRedirect()
+  const uploadCV = useUploadCV()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [profile, setProfile] = useState<Profile>({

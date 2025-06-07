@@ -2,6 +2,7 @@
 'use client'
 
 import { useAuth } from '@/contexts/auth-context'
+import { useProfile } from '@/hooks/useProfile'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
@@ -12,18 +13,19 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
   const { user, loading } = useAuth()
+  const { data: profile, isLoading: profileLoading } = useProfile(user?.id)
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && !profileLoading) {
       if (!user) {
         router.push('/auth')
         return
       }
 
-      if (requiredRole && user.user_metadata?.role !== requiredRole) {
+      if (requiredRole && profile?.role !== requiredRole) {
         // Redirect to appropriate page based on user role
-        const userRole = user.user_metadata?.role
+        const userRole = profile?.role
         switch (userRole) {
           case 'admin':
             router.push('/admin')
@@ -37,9 +39,9 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
         return
       }
     }
-  }, [user, loading, requiredRole, router])
+  }, [user, profile, loading, profileLoading, requiredRole, router])
 
-  if (loading) {
+  if (loading || profileLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
@@ -51,7 +53,7 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
     return null
   }
 
-  if (requiredRole && user.user_metadata?.role !== requiredRole) {
+  if (requiredRole && profile?.role !== requiredRole) {
     return null
   }
 
