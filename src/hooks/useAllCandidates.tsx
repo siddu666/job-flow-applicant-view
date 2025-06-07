@@ -28,7 +28,7 @@ export function useAllCandidates(filters?: CandidateSearchFilters) {
       // Apply filters
       if (filters?.searchTerm) {
         const searchTerm = `%${filters.searchTerm}%`
-        query = query.or(`first_name.ilike.${searchTerm},last_name.ilike.${searchTerm},email.ilike.${searchTerm}`)
+        query = query.or(`first_name.ilike.${searchTerm},last_name.ilike.${searchTerm},email.ilike.${searchTerm},bio.ilike.${searchTerm},current_position.ilike.${searchTerm}`)
       }
 
       if (filters?.experienceLevel && filters.experienceLevel !== 'any') {

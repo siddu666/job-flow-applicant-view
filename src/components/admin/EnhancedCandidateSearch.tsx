@@ -13,6 +13,7 @@ import { useAllCandidates, useCandidateStats, CandidateSearchFilters } from '@/h
 export default function EnhancedCandidateSearch() {
   const [filters, setFilters] = useState<CandidateSearchFilters>({})
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([])
 
   const { data: candidates = [], isLoading } = useAllCandidates(filters)
   const { data: stats } = useCandidateStats()
@@ -35,9 +36,19 @@ export default function EnhancedCandidateSearch() {
     setFilters(prev => ({ ...prev, availability: value }))
   }
 
+  const handleSkillToggle = (skill: string) => {
+    const newSkills = selectedSkills.includes(skill)
+      ? selectedSkills.filter(s => s !== skill)
+      : [...selectedSkills, skill]
+    
+    setSelectedSkills(newSkills)
+    setFilters(prev => ({ ...prev, skills: newSkills.length > 0 ? newSkills : undefined }))
+  }
+
   const clearFilters = () => {
     setFilters({})
     setSearchTerm('')
+    setSelectedSkills([])
   }
 
   const exportCandidates = () => {
@@ -79,7 +90,7 @@ export default function EnhancedCandidateSearch() {
             <div className="space-y-2">
               <Input
                 type="text"
-                placeholder="Search by name, email, or bio..."
+                placeholder="Search by name, email, bio, position..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -143,8 +154,34 @@ export default function EnhancedCandidateSearch() {
             </Button>
           </div>
 
+          {stats && Object.keys(stats.topSkills).length > 0 && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Filter by Skills:</label>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(stats.topSkills)
+                  .sort(([,a], [,b]) => b - a)
+                  .slice(0, 15)
+                  .map(([skill, count]) => (
+                    <Badge
+                      key={skill}
+                      variant={selectedSkills.includes(skill) ? "default" : "outline"}
+                      className="cursor-pointer"
+                      onClick={() => handleSkillToggle(skill)}
+                    >
+                      {skill} ({count})
+                    </Badge>
+                  ))}
+              </div>
+            </div>
+          )}
+
           <div className="text-sm text-gray-600">
             Showing {candidates.length} candidates {stats && `of ${stats.total} total`}
+            {selectedSkills.length > 0 && (
+              <span className="ml-2">
+                • Filtered by skills: {selectedSkills.join(', ')}
+              </span>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -194,6 +231,19 @@ export default function EnhancedCandidateSearch() {
                     )}
                   </div>
 
+                  {candidate.current_position && (
+                    <div className="text-sm text-gray-600 mt-2">
+                      <strong>Current Position:</strong> {candidate.current_position}
+                    </div>
+                  )}
+
+                  {candidate.bio && (
+                    <div className="text-sm text-gray-600 mt-2">
+                      <strong>Bio:</strong> {candidate.bio.substring(0, 150)}
+                      {candidate.bio.length > 150 && '...'}
+                    </div>
+                  )}
+
                   {candidate.skills && candidate.skills.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {candidate.skills.slice(0, 5).map((skill) => (
@@ -209,9 +259,25 @@ export default function EnhancedCandidateSearch() {
                     </div>
                   )}
 
-                  <div className="flex items-center text-xs text-gray-500">
-                    <Calendar className="mr-1 h-3 w-3" />
-                    Joined {candidate.created_at}
+                  <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center text-xs text-gray-500">
+                      <Calendar className="mr-1 h-3 w-3" />
+                      Joined {new Date(candidate.created_at).toLocaleDateString()}
+                    </div>
+                    <div className="flex gap-2">
+                      {candidate.cv_url && (
+                        <Button variant="outline" size="sm" asChild>
+                          <a href={candidate.cv_url} target="_blank" rel="noopener noreferrer">
+                            View CV
+                          </a>
+                        </Button>
+                      )}
+                      <Button variant="outline" size="sm" asChild>
+                        <a href={`mailto:${candidate.email}`}>
+                          Contact
+                        </a>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>

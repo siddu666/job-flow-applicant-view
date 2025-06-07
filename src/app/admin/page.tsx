@@ -1,22 +1,18 @@
 'use client'
 
-import { useAuth } from '@/contexts/auth-context'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useAllJobs, useDeleteJob } from '@/hooks/useJobs'
 import { useApplications } from '@/hooks/useApplications'
-import { useProfile } from '@/hooks/useProfile'
 import { JobPostForm } from '@/components/JobPostForm'
 import { Briefcase, Users, FileText, Plus, Eye, Edit, Trash } from 'lucide-react'
-import { toast } from 'sonner'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
+import EnhancedCandidateSearch from '@/components/admin/EnhancedCandidateSearch'
 
 export default function AdminPage() {
-  const { user } = useAuth()
   const { data: jobs = [], isLoading: jobsLoading } = useAllJobs()
   const deleteJobMutation = useDeleteJob()
   const { useAllApplications } = useApplications()
@@ -78,6 +74,7 @@ export default function AdminPage() {
           <TabsList>
             <TabsTrigger value="jobs">Job Management</TabsTrigger>
             <TabsTrigger value="applications">Applications</TabsTrigger>
+            <TabsTrigger value="candidates">Candidate Management</TabsTrigger>
           </TabsList>
 
           <TabsContent value="jobs" className="space-y-6">
@@ -204,6 +201,13 @@ export default function AdminPage() {
                   ))
               )}
             </div>
+          </TabsContent>
+
+          <TabsContent value="candidates" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold">Candidate Management</h2>
+            </div>
+            <EnhancedCandidateSearch />
           </TabsContent>
         </Tabs>
       </div>
