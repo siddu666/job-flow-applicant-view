@@ -1,0 +1,72 @@
+[23:19:38.861] Running build in Washington, D.C., USA (East) – iad1
+[23:19:38.868] Build machine configuration: 2 cores, 8 GB
+[23:19:38.934] Cloning github.com/siddu666/job-flow-applicant-view (Branch: main, Commit: 3825da9)
+[23:19:39.727] Cloning completed: 793.000ms
+[23:19:40.464] Restored build cache from previous deployment (9tT6WVLBe4gBWEBuJhFbgA3SLyLc)
+[23:19:40.992] Running "vercel build"
+[23:19:41.446] Vercel CLI 42.2.0
+[23:19:42.010] Installing dependencies...
+[23:19:45.739] npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+[23:19:46.054] npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+[23:19:46.385] npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+[23:19:46.560] npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+[23:19:46.596] npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+[23:19:47.957] npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+[23:19:53.193] 
+[23:19:53.193] added 260 packages, removed 42 packages, and changed 37 packages in 11s
+[23:19:53.193] 
+[23:19:53.194] 159 packages are looking for funding
+[23:19:53.194]   run `npm fund` for details
+[23:19:53.240] Running "npm run build"
+[23:19:53.357] 
+[23:19:53.358] > nextjs-job-flow-app@0.1.0 build
+[23:19:53.358] > next build
+[23:19:53.358] 
+[23:19:54.144] Attention: Next.js now collects completely anonymous telemetry regarding usage.
+[23:19:54.145] This information is used to shape Next.js' roadmap and prioritize features.
+[23:19:54.145] You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+[23:19:54.145] https://nextjs.org/telemetry
+[23:19:54.145] 
+[23:19:54.197]   ▲ Next.js 14.2.29
+[23:19:54.197]   - Environments: .env
+[23:19:54.198] 
+[23:19:54.259]    Creating an optimized production build ...
+[23:20:06.887] Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+[23:20:06.887]   npx update-browserslist-db@latest
+[23:20:06.887]   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[23:20:11.929] Browserslist: caniuse-lite is outdated. Please run:
+[23:20:11.929]   npx update-browserslist-db@latest
+[23:20:11.930]   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[23:20:14.292]  ✓ Compiled successfully
+[23:20:14.293]    Linting and checking validity of types ...
+[23:20:22.531] 
+[23:20:22.536] Failed to compile.
+[23:20:22.537] 
+[23:20:22.537] ./src/app/profile/page.tsx
+[23:20:22.537] 144:6  Warning: React Hook useEffect has a missing dependency: 'user.email'. Either include it or remove the dependency array. Outer scope values like 'supabase' aren't valid dependencies because mutating them doesn't re-render the component.  react-hooks/exhaustive-deps
+[23:20:22.537] 205:6  Warning: React Hook useEffect has a missing dependency: 'fetchProfile'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+[23:20:22.537] 
+[23:20:22.537] ./src/components/ApplyPageContent.tsx
+[23:20:22.537] 121:58  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+[23:20:22.537] 121:87  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+[23:20:22.537] 
+[23:20:22.538] ./src/components/DeleteUserDialog.tsx
+[23:20:22.538] 71:78  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+[23:20:22.538] 
+[23:20:22.538] ./src/components/ui/use-toast.ts
+[23:20:22.538] 20:7  Warning: 'actionTypes' is assigned a value but only used as a type.  @typescript-eslint/no-unused-vars
+[23:20:22.538] 
+[23:20:22.538] ./src/hooks/use-toast.ts
+[23:20:22.538] 18:7  Warning: 'actionTypes' is assigned a value but only used as a type.  @typescript-eslint/no-unused-vars
+[23:20:22.538] 
+[23:20:22.538] ./src/hooks/useGDPR.tsx
+[23:20:22.538] 42:24  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+[23:20:22.538] 60:7  Warning: 'action' is defined but never used.  @typescript-eslint/no-unused-vars
+[23:20:22.538] 
+[23:20:22.538] ./src/interfaces/Profile.ts
+[23:20:22.538] 1:11  Warning: 'Profile' is defined but never used.  @typescript-eslint/no-unused-vars
+[23:20:22.538] 
+[23:20:22.538] info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+[23:20:22.577] Error: Command "npm run build" exited with 1
+[23:20:22.901] 
+[23:20:26.099] Exiting build container
