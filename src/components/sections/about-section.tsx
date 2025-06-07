@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { CheckCircle, Zap, Shield, Globe, Users, Award, TrendingUp, Sparkles, ArrowRight, Target, Lightbulb, Rocket } from 'lucide-react'
 import Link from 'next/link'
+import {useEffect, useState} from "react";
 
 export function AboutSection() {
   const features = [

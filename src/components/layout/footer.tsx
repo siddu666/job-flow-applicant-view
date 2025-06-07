@@ -21,7 +21,7 @@ export function Footer() {
             </p>
             <div className="flex space-x-4 mb-6">
               <a 
-                href="https://linkedin.com/company/justeragroup" 
+                href="https://linkedin.com/company/justera-ab" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-gray-400 hover:text-blue-400 transition-colors transform hover:scale-110"
