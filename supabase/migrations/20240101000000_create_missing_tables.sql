@@ -142,6 +142,86 @@ CREATE POLICY "Recruiters can update application status" ON applications
 ```
 
 ```sql
+-- Create activity_logs table
+CREATE TABLE IF NOT EXISTS activity_logs (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  action TEXT NOT NULL,
+  resource_type TEXT,
+  resource_id TEXT,
+  metadata JSONB DEFAULT '{}',
+  ip_address INET,
+  user_agent TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create activity_check_tokens table for periodic checks
+CREATE TABLE IF NOT EXISTS activity_check_tokens (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  token TEXT NOT NULL UNIQUE,
+  expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  used_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create audit_logs table for GDPR compliance
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  action TEXT NOT NULL,
+  resource_type TEXT,
+  resource_id TEXT,
+  old_values JSONB,
+  new_values JSONB,
+  metadata JSONB DEFAULT '{}',
+  ip_address INET,
+  user_agent TEXT,
+  gdpr_related BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable RLS on new tables
+ALTER TABLE activity_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE activity_check_tokens ENABLE ROW LEVEL SECURITY;
+ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
+
+-- RLS policies for activity_logs
+CREATE POLICY "Users can view their own activity logs" ON activity_logs
+  FOR SELECT TO authenticated 
+  USING (user_id = auth.uid());
+
+CREATE POLICY "System can insert activity logs" ON activity_logs
+  FOR INSERT TO authenticated 
+  WITH CHECK (true);
+
+-- RLS policies for activity_check_tokens
+CREATE POLICY "Users can view their own tokens" ON activity_check_tokens
+  FOR SELECT TO authenticated 
+  USING (user_id = auth.uid());
+
+CREATE POLICY "System can manage tokens" ON activity_check_tokens
+  FOR ALL TO authenticated 
+  USING (true);
+
+-- RLS policies for audit_logs
+CREATE POLICY "Admins can view all audit logs" ON audit_logs
+  FOR SELECT TO authenticated 
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles 
+      WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+
+CREATE POLICY "Users can view their own audit logs" ON audit_logs
+  FOR SELECT TO authenticated 
+  USING (user_id = auth.uid());
+
+CREATE POLICY "System can insert audit logs" ON audit_logs
+  FOR INSERT TO authenticated 
+  WITH CHECK (true);
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_profiles_role ON profiles(role);
 CREATE INDEX IF NOT EXISTS idx_jobs_posted_by ON jobs(posted_by);
@@ -149,6 +229,15 @@ CREATE INDEX IF NOT EXISTS idx_jobs_created_at ON jobs(created_at);
 CREATE INDEX IF NOT EXISTS idx_applications_job_id ON applications(job_id);
 CREATE INDEX IF NOT EXISTS idx_applications_applicant_id ON applications(applicant_id);
 CREATE INDEX IF NOT EXISTS idx_applications_status ON applications(status);
+
+-- Indexes for new tables
+CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id ON activity_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_activity_logs_created_at ON activity_logs(created_at);
+CREATE INDEX IF NOT EXISTS idx_activity_check_tokens_user_id ON activity_check_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_activity_check_tokens_token ON activity_check_tokens(token);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_gdpr_related ON audit_logs(gdpr_related);
 ```
 
 ```sql

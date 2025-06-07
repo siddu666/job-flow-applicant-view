@@ -140,10 +140,13 @@ export const logSecurityEvent = async (
   metadata: Record<string, unknown> = {}
 ) => {
   try {
-    // Security logging placeholder - audit_logs table doesn't exist
-    console.log("Security event:", { userId, action, resourceType, resourceId, metadata });
+    // Security logging placeholder - audit_logs table doesn't exist yet
+    // Just log to console for now instead of trying to insert to database
+    console.log("Security event:", { userId, action, resourceType, resourceId, metadata, timestamp: new Date().toISOString() });
+    return true;
   } catch (error) {
     console.error("Failed to log security event:", error);
+    return false;
   }
 };
 
