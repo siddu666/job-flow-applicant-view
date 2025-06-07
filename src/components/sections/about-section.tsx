@@ -40,7 +40,6 @@ export function AboutSection() {
   ]
 
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null)
-  const [isInView, setIsInView] = useState(false)
 
   const stats = [
     { number: '500+', label: 'Partner Companies', color: 'text-blue-600', description: 'Global enterprises trust us' },
@@ -49,10 +48,7 @@ export function AboutSection() {
     { number: '15+', label: 'Years Excellence', color: 'text-orange-600', description: 'Proven industry leadership' }
   ]
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsInView(true), 100)
-    return () => clearTimeout(timer)
-  }, [])
+  
 
   return (
       <section className="py-24 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">

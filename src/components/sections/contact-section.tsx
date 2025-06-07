@@ -19,14 +19,13 @@ export function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
-  const handleInputChange = (e : any) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const formData = new FormData(e.target as HTMLFormElement)
 
     setIsSubmitting(true)
 
@@ -72,7 +71,7 @@ export function ContactSection() {
               <div className="h-1 w-24 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mb-6"></div>
             </div>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Ready to transform your career with Sweden's leading IT recruitment specialists? 
+              Ready to transform your career with Sweden&apos;s leading IT recruitment specialists? 
               Our expert consultants are standing by to connect you with your ideal opportunity. 
               Get personalized career guidance and exclusive access to premium positions.
             </p>

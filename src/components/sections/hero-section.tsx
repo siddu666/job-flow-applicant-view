@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react'
 
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false)
-  const [currentStatIndex, setCurrentStatIndex] = useState(0)
 
   const dynamicStats = [
     { number: '500+', label: 'Global Companies', color: 'text-cyan-400' },
@@ -18,10 +17,6 @@ export function HeroSection() {
 
   useEffect(() => {
     setIsVisible(true)
-    const interval = setInterval(() => {
-      setCurrentStatIndex((prev) => (prev + 1) % 3)
-    }, 3000)
-    return () => clearInterval(interval)
   }, [])
   return (
       <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 overflow-hidden">
@@ -204,18 +199,3 @@ export function HeroSection() {
   )
 }
 
-// Add custom CSS for slow spin animation
-const customStyles = `
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin-slow {
-  animation: spin-slow 20s linear infinite;
-}
-`
