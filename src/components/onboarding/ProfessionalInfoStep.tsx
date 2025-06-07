@@ -9,8 +9,6 @@ import { Badge } from '@/components/ui/badge';
 import { X, Plus, ChevronLeft } from 'lucide-react';
 import { OnboardingData } from './OnboardingSteps';
 
-import { OnboardingData } from '@/types/onboarding'
-
 interface ProfessionalInfoStepProps {
   data: OnboardingData;
   updateData: (data: Partial<OnboardingData>) => void;

@@ -159,7 +159,7 @@ export default function AdminPage() {
                   <div className="text-center py-8 text-gray-500">No applications received yet</div>
               ) : (
                   applications.map((application) => (
-                      <Card key={application.id}>
+                      <Card key={application.applicant_id}>
                         <CardHeader>
                           <div className="flex justify-between items-start">
                             <div>
@@ -167,7 +167,7 @@ export default function AdminPage() {
                                 {application.profiles?.first_name} {application.profiles?.last_name}
                               </CardTitle>
                               <CardDescription>
-                                Applied for: {application.jobs?.title} at {application.jobs?.company}
+                                Applied for: {application.jobs?.title}
                               </CardDescription>
                             </div>
                             {/*<Badge className={getStatusBadgeColor(application.status)}>

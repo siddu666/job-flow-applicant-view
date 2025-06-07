@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Search, Filter, Download, User, MapPin, Briefcase, Calendar } from 'lucide-react'
+import { Search, Filter, Download, User, MapPin, Briefcase } from 'lucide-react'
 import { useAllCandidates, useCandidateStats, CandidateSearchFilters } from '@/hooks/useAllCandidates'
 
 export default function EnhancedCandidateSearch() {
@@ -231,11 +231,11 @@ export default function EnhancedCandidateSearch() {
                     )}
                   </div>
 
-                  {candidate.current_position && (
+                  {/*candidate.current_position && (
                     <div className="text-sm text-gray-600 mt-2">
                       <strong>Current Position:</strong> {candidate.current_position}
                     </div>
-                  )}
+                  )*/} 
 
                   {candidate.bio && (
                     <div className="text-sm text-gray-600 mt-2">
@@ -260,10 +260,10 @@ export default function EnhancedCandidateSearch() {
                   )}
 
                   <div className="flex items-center justify-between mt-4">
-                    <div className="flex items-center text-xs text-gray-500">
+                    {/*<div className="flex items-center text-xs text-gray-500">
                       <Calendar className="mr-1 h-3 w-3" />
                       Joined {new Date(candidate.created_at).toLocaleDateString()}
-                    </div>
+                    </div>*/}
                     <div className="flex gap-2">
                       {candidate.cv_url && (
                         <Button variant="outline" size="sm" asChild>

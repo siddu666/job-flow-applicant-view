@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Trash2 } from 'lucide-react';
-import { useDeleteUserData } from '@/hooks/useProfile';
+import { useDeleteCV as useDeleteUserData } from '@/hooks/useProfile'
 import { useAuth } from '@/contexts/auth-context';
 
 interface DeleteUserDialogProps {
@@ -24,12 +24,12 @@ interface DeleteUserDialogProps {
 }
 
 const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
-  userId,
-  userName,
-  isOpen,
-  onClose,
-  isCurrentUser = false
-}) => {
+                                                             userId,
+                                                             userName,
+                                                             isOpen,
+                                                             onClose,
+                                                             isCurrentUser = false
+                                                           }) => {
   const [confirmText, setConfirmText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const deleteUserData = useDeleteUserData();
@@ -59,57 +59,57 @@ const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
   };
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle className="flex items-center gap-2 text-red-600">
-            <Trash2 className="h-5 w-5" />
-            Delete User Account
-          </AlertDialogTitle>
-          <AlertDialogDescription className="space-y-3">
-            <p>
-              This action will permanently delete <strong>{userName}</strong>'s account and all associated data, including:
-            </p>
-            <ul className="list-disc list-inside space-y-1 text-sm">
-              <li>Profile information</li>
-              <li>Job applications</li>
-              <li>Uploaded CV and documents</li>
-              <li>All personal data (GDPR compliant)</li>
-            </ul>
-            <p className="text-red-600 font-medium">
-              This action cannot be undone. You&apos;ll need to create a new account if you want to use our services again.
-            </p>
-          </AlertDialogDescription>
-        </AlertDialogHeader>
+      <AlertDialog open={isOpen} onOpenChange={onClose}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-red-600">
+              <Trash2 className="h-5 w-5" />
+              Delete User Account
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              <p>
+                This action will permanently delete <strong>{userName}</strong>&apos;s account and all associated data, including:
+              </p>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>Profile information</li>
+                <li>Job applications</li>
+                <li>Uploaded CV and documents</li>
+                <li>All personal data (GDPR compliant)</li>
+              </ul>
+              <p className="text-red-600 font-medium">
+                This action cannot be undone. You&apos;ll need to create a new account if you want to use our services again.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
 
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="confirm-text">
-              Type <code className="bg-gray-100 px-1 rounded">{expectedText}</code> to confirm:
-            </Label>
-            <Input
-              id="confirm-text"
-              value={confirmText}
-              onChange={(e) => setConfirmText(e.target.value)}
-              placeholder={expectedText}
-              className={confirmText && !isConfirmValid ? 'border-red-500' : ''}
-            />
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="confirm-text">
+                Type <code className="bg-gray-100 px-1 rounded">{expectedText}</code> to confirm:
+              </Label>
+              <Input
+                  id="confirm-text"
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  placeholder={expectedText}
+                  className={confirmText && !isConfirmValid ? 'border-red-500' : ''}
+              />
+            </div>
           </div>
-        </div>
 
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={onClose}>Cancel</AlertDialogCancel>
-          <Button
-            variant="destructive"
-            onClick={handleDelete}
-            disabled={!isConfirmValid || isDeleting}
-            className="bg-red-600 hover:bg-red-700"
-          >
-            {isDeleting ? 'Deleting...' : 'Delete Account'}
-          </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={onClose}>Cancel</AlertDialogCancel>
+            <Button
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={!isConfirmValid || isDeleting}
+                className="bg-red-600 hover:bg-red-700"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete Account'}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
   );
 };
 
