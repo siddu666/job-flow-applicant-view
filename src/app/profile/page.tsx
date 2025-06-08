@@ -115,7 +115,7 @@ function TagInput({ tags, setTags, suggestions, placeholder }: {
 export default function ProfilePage() {
   // Get userId from your auth context or wherever it's stored
   const context = useAuth()
-  const userId = context.user?.id;
+  let userId = context.user?.id;
 
   const { data: initialProfile, isLoading, error } = useProfile(userId)
   const updateProfileMutation = useUpdateProfile()
