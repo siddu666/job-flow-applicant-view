@@ -146,4 +146,12 @@ export function useJobs() {
   }
 }
 
+  return {
+    jobs,
+    isLoading,
+    createJob: createJobMutation.mutate,
+    deleteJob: deleteJobMutation.mutate,
+  }
+}
+
 export type { Job, JobInsert, JobUpdate }
