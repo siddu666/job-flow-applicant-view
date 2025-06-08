@@ -23,9 +23,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isMounted, setIsMounted] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
+    setIsMounted(true);
+
     // Get initial session
     const getSession = async () => {
       const { data: { session }, error } = await supabase.auth.getSession()
@@ -170,7 +173,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = {
     user,
     session,
-    loading,
+    loading: loading || !isMounted,
     signIn,
     signUp,
     signOut,

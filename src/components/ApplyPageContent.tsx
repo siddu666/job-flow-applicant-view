@@ -19,7 +19,7 @@ function ApplyPageContent() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const jobId = searchParams.get('job_id');
+  const jobId = searchParams.get('job') || searchParams.get('job_id');
 
   const { data: profile, isLoading: profileLoading } = useProfile(user?.id);
   const { data: job, isLoading: jobLoading } = useJobById(jobId || '');

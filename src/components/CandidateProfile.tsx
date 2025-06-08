@@ -1,5 +1,6 @@
 
 import { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
+import { useRouter } from 'next/navigation';
 import { useProfile, useUpdateProfile, useUploadCV } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/auth-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -186,8 +187,10 @@ const CandidateProfile = () => {
   const { data: profile, isLoading } = useProfile(user?.id);
   const updateProfile = useUpdateProfile();
   const uploadCV = useUploadCV();
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [newCertification, setNewCertification] = useState("");
+  const [isMounted, setIsMounted] = useState(false);
 
   const swedishCities = [
     "Stockholm", "Gothenburg", "Malmö", "Uppsala", "Västerås", "Örebro",
@@ -214,7 +217,11 @@ const CandidateProfile = () => {
   });
 
   useEffect(() => {
-    if (profile) {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (profile && isMounted) {
       setFormData({
         first_name: profile.first_name || "",
         last_name: profile.last_name || "",
@@ -330,7 +337,7 @@ const CandidateProfile = () => {
     }));
   };
 
-  if (isLoading) {
+  if (!isMounted || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="text-center">
