@@ -1,95 +1,36 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/integrations/supabase/client'
+import { Database } from '@/integrations/supabase/types'
 
-export interface Profile {
-  id: string
-  email: string
-  role: string
-  first_name?: string
-  last_name?: string
-  phone?: string
-  current_location?: string
-  skills?: string[]
-  experience_years?: number
-  job_seeking_status?: string
-  availability?: string
-  linkedin_url?: string
-  portfolio_url?: string
-  github_url?: string
-  bio?: string
-  certifications?: string[]
-  expected_salary_sek?: number
-  preferred_cities?: string[]
-  willing_to_relocate?: boolean
-  cv_url?: string
-  created_at?: string
-  updated_at?: string
-}
+type Profile = Database['public']['Tables']['profiles']['Row']
 
 export function useProfile(userId?: string) {
-  const [data, setData] = useState<Profile | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<Error | null>(null)
+  return useQuery({
+    queryKey: ['profile', userId],
+    queryFn: async () => {
+      if (!userId) return null
 
-  useEffect(() => {
-    if (!userId) {
-      setData(null)
-      setIsLoading(false)
-      return
-    }
-
-    const fetchProfile = async () => {
-      try {
-        setIsLoading(true)
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', userId)
-          .single()
-
-        if (error) {
-          throw error
-        }
-
-        setData(profile)
-      } catch (err) {
-        setError(err as Error)
-        setData(null)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchProfile()
-  }, [userId])
-
-  const refetch = async () => {
-    if (!userId) return
-
-    try {
-      setIsLoading(true)
-      const { data: profile, error } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single()
 
       if (error) {
+        if (error.code === 'PGRST116') {
+          // Profile doesn't exist
+          return null
+        }
         throw error
       }
-
-      setData(profile)
-    } catch (err) {
-      setError(err as Error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  return { data, isLoading, error, refetch }
+      return data as Profile
+    },
+    enabled: !!userId,
+    retry: 1,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
 }
 
 export function useUpdateProfile() {

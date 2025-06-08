@@ -24,7 +24,7 @@ export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = 
   }, [])
 
   useEffect(() => {
-    if (!isMounted || loading || profileLoading || hasRedirected) return
+    if (!isMounted || loading || hasRedirected) return
 
     // If user is not authenticated and page requires auth
     if (!user && !allowUnauthenticated) {
@@ -33,35 +33,26 @@ export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = 
       return
     }
 
-    // If user is authenticated and we need to check role-based access
-    if (user && profile) {
+    // If user is authenticated and we have a profile requirement
+    if (user && requiredRole && !profileLoading && profile) {
       const userRole = profile.role
 
-      // If specific role is required and user doesn't have it, redirect based on their role
-      if (requiredRole && userRole !== requiredRole) {
-        if (userRole === 'admin' && pathname !== '/admin') {
-          setHasRedirected(true)
+      // If specific role is required and user doesn't have it
+      if (userRole !== requiredRole) {
+        setHasRedirected(true)
+        if (userRole === 'admin') {
           router.push('/admin')
-          return
-        }
-
-        if (userRole === 'recruiter' && pathname !== '/jobs') {
-          setHasRedirected(true)
+        } else if (userRole === 'recruiter') {
           router.push('/jobs')
-          return
-        }
-
-        if (userRole === 'applicant' && !['/profile', '/jobs', '/apply'].includes(pathname)) {
-          setHasRedirected(true)
+        } else {
           router.push('/profile')
-          return
         }
       }
     }
-  }, [user, profile, loading, profileLoading, requiredRole, router, allowUnauthenticated, pathname, hasRedirected, isMounted])
+  }, [user, profile, loading, profileLoading, requiredRole, router, allowUnauthenticated, hasRedirected, isMounted])
 
   // Show loading while checking auth or not mounted
-  if (!isMounted || loading || profileLoading) {
+  if (!isMounted || loading || (requiredRole && user && profileLoading)) {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
           <div className="text-center">

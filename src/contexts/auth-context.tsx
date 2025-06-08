@@ -27,12 +27,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
 
   useEffect(() => {
-    setIsMounted(true);
-
-    // Get initial session
+    let isCancelled = false;
+    
     const getSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
+        if (isCancelled) return;
+        
         if (error) {
           console.error('Error getting session:', error)
         } else {
@@ -40,9 +41,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(session?.user ?? null)
         }
       } catch (error) {
+        if (isCancelled) return;
         console.error('Error getting session:', error)
       } finally {
-        setLoading(false)
+        if (!isCancelled) {
+          setLoading(false)
+          setIsMounted(true)
+        }
       }
     }
 
@@ -51,24 +56,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        if (isCancelled) return;
+        
         setSession(session)
         setUser(session?.user ?? null)
         
         if (event === 'SIGNED_IN') {
-          // Check if this is a new user who just confirmed their email
-          if (session?.user && !session.user.user_metadata?.profile_created) {
-            // Check if profile exists
-            const { data: existingProfile } = await supabase
-              .from('profiles')
-              .select('id')
-              .eq('id', session.user.id)
-              .single();
-
-            if (!existingProfile) {
-              // Profile doesn't exist, user likely just confirmed email
-              console.log('User confirmed email but no profile exists');
-            }
-          }
+          console.log('User signed in successfully')
         } else if (event === 'SIGNED_OUT') {
           // Only redirect to signin if we're not already there
           if (typeof window !== 'undefined' && window.location.pathname !== '/signin') {
@@ -78,7 +72,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      isCancelled = true;
+      subscription.unsubscribe();
+    }
   }, [router])
 
   const signIn = async (email: string, password: string) => {
