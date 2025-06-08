@@ -223,14 +223,6 @@ export function ServicesSection() {
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
                   </Button>
                 </Link>
-                <Link href="/services">
-                  <Button
-                      variant="outline"
-                      className="border-2 border-cyan-400/50 text-cyan-300 hover:bg-cyan-400/10 hover:text-cyan-200 hover:border-cyan-300 backdrop-blur-sm px-8 py-4 text-lg font-semibold transition-all duration-300"
-                  >
-                    View All Services
-                  </Button>
-                </Link>
               </div>
             </div>
           </div>

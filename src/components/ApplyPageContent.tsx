@@ -14,6 +14,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Loader2, Briefcase, MapPin, Clock, User, FileText } from 'lucide-react';
+import Link from "next/link";
 
 function ApplyPageContent() {
   const { user, loading: authLoading } = useAuth();
@@ -66,27 +67,34 @@ function ApplyPageContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user?.id || !jobId) return;
+
+    if (!user?.id || !jobId) {
+      toast.error('Missing user or job information.');
+      return;
+    }
 
     try {
       await applyToJobAsync({
         jobId,
         coverLetter: formData.cover_letter,
-        cvUrl: profile?.cv_url ?? undefined,
+        cvUrl: profile?.cv_url || undefined,
       });
+
       toast.success('Application submitted successfully!');
       router.push('/profile');
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Application submission error:', error);
-      // Type-check if error is an instance of Error
+
       if (error instanceof Error) {
-        toast.error(error.message || 'Failed to submit application');
+        toast.error(error.message || 'Failed to submit application.');
+      } else if (typeof error === 'string') {
+        toast.error(error);
       } else {
-        // Handle the case where error is not an instance of Error
-        toast.error('An unknown error occurred');
+        toast.error('An unknown error occurred.');
       }
     }
   };
+
 
   const removeSkill = (skill: string) => {
     setFormData(prev => ({ ...prev, skills: prev.skills.filter(s => s !== skill) }));
@@ -184,6 +192,9 @@ function ApplyPageContent() {
                   Application Form
                 </CardTitle>
                 <CardDescription>Your information has been pre-filled from your profile</CardDescription>
+                <Link href="/profile">
+                  <Button>If you want to change the profile, before you apply</Button>
+                </Link>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">

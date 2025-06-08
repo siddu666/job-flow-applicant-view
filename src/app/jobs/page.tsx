@@ -20,9 +20,6 @@ function JobsPageContent() {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Available Jobs</h1>
-          <Link href="/apply">
-            <Button>Apply for Position</Button>
-          </Link>
         </div>
 
         {jobs && jobs.length > 0 ? (

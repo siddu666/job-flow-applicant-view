@@ -41,14 +41,6 @@ export function AboutSection() {
 
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null)
 
-  const stats = [
-    { number: '500+', label: 'Partner Companies', color: 'text-blue-600', description: 'Global enterprises trust us' },
-    { number: '2000+', label: 'Career Placements', color: 'text-purple-600', description: 'Lives transformed through work' },
-    { number: '98%', label: 'Client Satisfaction', color: 'text-green-600', description: 'Exceptional service delivery' },
-    { number: '15+', label: 'Years Excellence', color: 'text-orange-600', description: 'Proven industry leadership' }
-  ]
-
-
 
   return (
       <section className="py-24 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
@@ -75,20 +67,6 @@ export function AboutSection() {
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               JUSTERA GROUP is an end-to-end IT solutions provider enabling businesses and enterprises in Sweden to harness the power of digital technologies and continuously evolve in today&apos;s fast-changing economy.
             </p>
-          </div>
-
-          {/* Stats Section */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20">
-            {stats.map((stat, index) => (
-                <div key={index} className="text-center group">
-                  <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-gray-100">
-                    <div className={`text-4xl font-black ${stat.color} mb-2 group-hover:scale-110 transition-transform duration-300`}>
-                      {stat.number}
-                    </div>
-                    <div className="text-gray-600 font-medium text-sm">{stat.label}</div>
-                  </div>
-                </div>
-            ))}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">

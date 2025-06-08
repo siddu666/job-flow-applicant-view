@@ -9,8 +9,8 @@ export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false)
 
   const dynamicStats = [
-    { number: '500+', label: 'Global Companies', color: 'text-cyan-400' },
-    { number: '2000+', label: 'Career Placements', color: 'text-purple-400' },
+    { number: '50+', label: 'Global Companies', color: 'text-cyan-400' },
+    { number: '20+', label: 'Career Placements', color: 'text-purple-400' },
     { number: '98%', label: 'Success Rate', color: 'text-yellow-400' },
     { number: '15+', label: 'Years Excellence', color: 'text-green-400' }
   ]
@@ -52,7 +52,7 @@ export function HeroSection() {
               <div className="inline-flex items-center bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-blue-300/30 text-blue-100 px-6 py-3 rounded-full text-sm font-medium shadow-lg hover:scale-105 transition-all duration-300">
                 <Award className="w-4 h-4 mr-2 text-yellow-400" />
                 <span className="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-transparent font-semibold">
-                Trusted by 500+ Global Companies
+                Trusted by 50+ Global Clients
               </span>
                 <Sparkles className="w-4 h-4 ml-2 text-yellow-400 animate-pulse" />
               </div>
@@ -95,22 +95,6 @@ export function HeroSection() {
                     <div className="text-blue-200 text-sm font-medium">{stat.label}</div>
                   </div>
                 ))}
-              </div>
-
-              {/* Trust Indicators */}
-              <div className="flex items-center justify-center lg:justify-start space-x-6 pt-4">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-blue-200 text-sm">Live Job Matching</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse delay-500"></div>
-                  <span className="text-blue-200 text-sm">24/7 Support</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse delay-1000"></div>
-                  <span className="text-blue-200 text-sm">GDPR Compliant</span>
-                </div>
               </div>
 
               {/* CTA Buttons */}
