@@ -14,7 +14,7 @@ interface CandidateFilters {
   skills?: string[];
   experience_years?: number;
   location?: string;
-  job_seeking_status?: 'actively_looking' | 'not_looking';
+  job_seeking_status?: 'actively_looking' | 'open_to_opportunities' | 'not_looking';
   search?: string;
   page?: number;
   limit?: number;
@@ -57,7 +57,7 @@ const AdminCandidates = () => {
 
   const handleJobSeekingStatusChange = (value: string) => {
     const status: 'actively_looking' | 'open_to_opportunities' | 'not_looking' | undefined =
-        value === "any" ? undefined : (value as 'actively_looking' | 'not_looking');
+        value === "any" ? undefined : (value as 'actively_looking' | 'open_to_opportunities' | 'not_looking');
 
     setFilters(prev => ({ ...prev, job_seeking_status: status }));
   };
@@ -143,6 +143,7 @@ const AdminCandidates = () => {
               <SelectContent>
                 <SelectItem value="any">Any Status</SelectItem>
                 <SelectItem value="actively_looking">Actively Looking</SelectItem>
+                <SelectItem value="open_to_opportunities">Open to Opportunities</SelectItem>
                 <SelectItem value="not_looking">Not Looking</SelectItem>
               </SelectContent>
             </Select>
