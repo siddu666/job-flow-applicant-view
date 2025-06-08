@@ -126,25 +126,9 @@ export function useDeleteJob() {
 
 // Legacy hook for backward compatibility
 export function useJobs() {
-  const { data: jobs = [], isLoading, error } = useAllJobs()
+  const { data: jobs = [], isLoading } = useAllJobs()
   const createJobMutation = useCreateJob()
   const deleteJobMutation = useDeleteJob()
-
-  // Search function for compatibility
-  const searchJobs = async (filters: any) => {
-    // This is a placeholder - implement actual search logic if needed
-    console.log('Search filters:', filters)
-  }
-
-  return {
-    jobs,
-    loading: isLoading,
-    error: error?.message,
-    searchJobs,
-    createJob: createJobMutation.mutate,
-    deleteJob: deleteJobMutation.mutate
-  }
-}
 
   return {
     jobs,

@@ -20,7 +20,7 @@ export default function SignInPage() {
     password: ''
   });
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
 
