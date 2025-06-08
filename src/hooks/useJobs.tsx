@@ -7,6 +7,48 @@ import { Database } from "@/integrations/supabase/types"
 
 type Job = Database['public']['Tables']['jobs']['Row']
 type JobInsert = Database['public']['Tables']['jobs']['Insert']
+
+export const useJobs = () => {
+  const { data: jobs, isLoading: loading, error } = useQuery({
+    queryKey: ['jobs'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('jobs')
+        .select('*')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      return data
+    },
+  })
+
+  return { jobs, loading, error }
+}
+
+export const useCreateJob = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (jobData: JobInsert) => {
+      const { data, error } = await supabase
+        .from('jobs')
+        .insert(jobData)
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['jobs'] })
+      toast.success('Job posted successfully!')
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to post job: ${error.message}`)
+    },
+  })
+}
 type JobUpdate = Database['public']['Tables']['jobs']['Update']
 
 // Get all jobs
