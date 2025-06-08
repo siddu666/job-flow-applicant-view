@@ -70,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             router.push('/profile')
           }
         } else if (event === 'SIGNED_OUT') {
-          router.push('/auth')
+          router.push('/signin')
         }
       }
     )
@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           first_name: onboardingData.firstName,
           last_name: onboardingData.lastName,
         },
-        emailRedirectTo: `${window.location.origin}/auth?type=signup`,
+        emailRedirectTo: `${window.location.origin}/signup`,
       },
     });
 
@@ -150,7 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const resetPassword = async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth?type=recovery`,
+      redirectTo: `${window.location.origin}/signin?type=recovery`,
     })
     if (error) throw error
   }

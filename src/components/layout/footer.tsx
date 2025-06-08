@@ -71,7 +71,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/auth" className="hover:text-blue-400 transition-colors flex items-center group">
+                <Link href="/signup" className="hover:text-blue-400 transition-colors flex items-center group">
                   <span className="mr-2 transform group-hover:translate-x-1 transition-transform">→</span>
                   Create Account
                 </Link>

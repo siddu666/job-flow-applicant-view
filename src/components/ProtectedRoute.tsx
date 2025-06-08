@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useAuth } from '@/contexts/auth-context'
@@ -9,17 +8,18 @@ import { useEffect } from 'react'
 interface ProtectedRouteProps {
   children: React.ReactNode
   requiredRole?: string
+  allowUnauthenticated?: boolean // Add a prop to allow unauthenticated access
 }
 
-export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
+export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = false }: ProtectedRouteProps) {
   const { user, loading } = useAuth()
   const { data: profile, isLoading: profileLoading } = useProfile(user?.id)
   const router = useRouter()
 
   useEffect(() => {
     if (!loading && !profileLoading) {
-      if (!user) {
-        router.push('/auth')
+      if (!user && !allowUnauthenticated) {
+        router.push('/signin')
         return
       }
 
@@ -39,17 +39,17 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
         return
       }
     }
-  }, [user, profile, loading, profileLoading, requiredRole, router])
+  }, [user, profile, loading, profileLoading, requiredRole, router, allowUnauthenticated])
 
   if (loading || profileLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        </div>
     )
   }
 
-  if (!user) {
+  if (!user && !allowUnauthenticated) {
     return null
   }
 

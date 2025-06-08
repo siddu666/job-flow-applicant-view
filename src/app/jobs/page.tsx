@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useRouter } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { MapPin, Clock, Search, Filter } from 'lucide-react'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/auth-context'
@@ -27,22 +27,18 @@ export default function JobsPage() {
 
   const { data: jobsData, isLoading, error } = useAllJobs()
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/auth')
+  const handleApply = (jobId:any) => {
+    if (!user) {
+      // Redirect to sign-in page if user is not authenticated
+      router.push('/signin')
+    } else {
+      // Proceed to job application if user is authenticated
+      router.push(`/apply?job_id=${jobId}`)
     }
-  }, [user, authLoading, router])
-
-  const handleApply = (jobId:string) => {
-    router.push(`/apply?job_id=${jobId}`)
   }
 
   if (authLoading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
-  }
-
-  if (!user) {
-    return null
   }
 
   return (
