@@ -43,6 +43,7 @@ export default function AdminPage() {
           candidate.first_name?.toLowerCase().includes(searchLower) ||
           candidate.last_name?.toLowerCase().includes(searchLower) ||
           candidate.email?.toLowerCase().includes(searchLower) ||
+          candidate.current_position?.toLowerCase().includes(searchLower) ||
           candidate.skills?.some(skill => skill.toLowerCase().includes(searchLower))
         )
       })
@@ -176,14 +177,14 @@ export default function AdminPage() {
               <CardContent>
                 {candidatesError && (
                   <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-                    Error loading candidates: {String(candidatesError)}
+                    Error loading candidates: {candidatesError}
                   </div>
                 )}
                 
                 {filteredCandidates && filteredCandidates.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredCandidates.map((candidate) => (
-                      <Card key={candidate.email} className="group hover:shadow-lg transition-all duration-300 border border-gray-100">
+                      <Card key={candidate.id} className="group hover:shadow-lg transition-all duration-300 border border-gray-100">
                         <CardContent className="p-6">
                           <div className="flex items-start space-x-4">
                             <Avatar className="h-12 w-12">
@@ -195,6 +196,11 @@ export default function AdminPage() {
                               <h3 className="font-semibold text-lg truncate text-gray-900">
                                 {getFullName(candidate)}
                               </h3>
+                              {candidate.current_position && (
+                                <p className="text-sm text-blue-600 font-medium mb-2">
+                                  {candidate.current_position}
+                                </p>
+                              )}
 
                               <div className="space-y-1 text-sm text-gray-600">
                                 {candidate.email && (
@@ -298,6 +304,10 @@ export default function AdminPage() {
                               <h3 className="font-semibold text-lg text-gray-900 mb-1">
                                 {job.title}
                               </h3>
+                              <div className="flex items-center gap-2 text-gray-600">
+                                <Building2 className="h-4 w-4" />
+                                <span>{job.company_name}</span>
+                              </div>
                             </div>
                             <Briefcase className="h-6 w-6 text-green-500" />
                           </div>
@@ -307,6 +317,12 @@ export default function AdminPage() {
                               <div className="flex items-center gap-2">
                                 <MapPin className="h-3 w-3" />
                                 <span>{job.location}</span>
+                              </div>
+                            )}
+                            {job.salary_range && (
+                              <div className="flex items-center gap-2">
+                                <Award className="h-3 w-3" />
+                                <span>{job.salary_range}</span>
                               </div>
                             )}
                           </div>
@@ -401,7 +417,7 @@ export default function AdminPage() {
                       <span className="text-sm text-gray-600">Complete Profiles</span>
                       <span className="font-bold text-green-600">
                         {candidates?.filter(c => 
-                          c.first_name && c.last_name && c.email && c.current_location && c.skills?.length
+                          c.first_name && c.last_name && c.email && c.current_position && c.skills?.length
                         ).length || 0}
                       </span>
                     </div>
@@ -414,7 +430,7 @@ export default function AdminPage() {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">With LinkedIn</span>
                       <span className="font-bold text-purple-600">
-                        {candidates?.filter(c => c.linkedin_url).length || 0}
+                        {candidates?.filter(c => c.linkedin_profile).length || 0}
                       </span>
                     </div>
                   </div>
