@@ -1,6 +1,5 @@
 
 import { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
-import { useRouter } from 'next/navigation';
 import { useProfile, useUpdateProfile, useUploadCV } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/auth-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -187,7 +186,6 @@ const CandidateProfile = () => {
   const { data: profile, isLoading } = useProfile(user?.id);
   const updateProfile = useUpdateProfile();
   const uploadCV = useUploadCV();
-  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [newCertification, setNewCertification] = useState("");
   const [isMounted, setIsMounted] = useState(false);

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Loading from "@/components/Loading";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 
 function JobsPageContent() {
   const { jobs, loading } = useJobs();

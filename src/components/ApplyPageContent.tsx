@@ -120,13 +120,6 @@ function ApplyPageContent() {
 
 
 
-  const addSkill = () => {
-    if (newSkill.trim() !== '') {
-      setFormData(prev => ({ ...prev, skills: [...prev.skills, newSkill.trim()] }));
-      setNewSkill('');
-    }
-  };
-
   return (
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-8">
