@@ -28,8 +28,8 @@ export default function SignInPage() {
       await signIn(loginForm.email, loginForm.password);
       toast.success('Successfully signed in!');
       router.push('/jobs');
-    } catch (error) {
-      toast.error('Failed to sign in. Please check your credentials.');
+    } catch (err) {
+      console.error('Sign in error:', err)
     } finally {
       setIsLoading(false);
     }
