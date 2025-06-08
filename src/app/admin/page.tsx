@@ -25,7 +25,7 @@ import {
 } from 'lucide-react'
 import { useAllCandidates } from '@/hooks/useAllCandidates'
 import { useJobs } from '@/hooks/useJobs'
-import { Loading } from '@/components/Loading'
+import Loading from '@/components/Loading'
 import { Profile } from '@/interfaces/Profile'
 
 export default function AdminPage() {
