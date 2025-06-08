@@ -14,7 +14,10 @@ import {
   MapPin, 
   Phone, 
   Mail, 
+  Calendar, 
   Briefcase, 
+  GraduationCap, 
+  Globe, 
   DollarSign,
   Save,
   Edit3,
@@ -23,7 +26,7 @@ import {
   Settings
 } from 'lucide-react'
 import { useProfile } from '@/hooks/useProfile'
-import Loading from '@/components/Loading'
+import { Loading } from '@/components/Loading'
 import { Profile } from '@/interfaces/Profile'
 
 const SKILLS_SUGGESTIONS = [
