@@ -18,10 +18,8 @@ import {
   Phone,
   MapPin,
   Calendar,
-  Award,
   TrendingUp,
   UserCheck,
-  Building2
 } from 'lucide-react'
 import { useAllCandidates } from '@/hooks/useAllCandidates'
 import { useJobs } from '@/hooks/useJobs'
