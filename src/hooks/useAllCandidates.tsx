@@ -6,24 +6,6 @@ import { Database } from '@/integrations/supabase/types'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
-export const useAllCandidates = () => {
-  return useQuery({
-    queryKey: ['candidates'],
-    queryFn: async (): Promise<Profile[]> => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('role', 'applicant')
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      return data || []
-    },
-  })
-}
-
-type Profile = Database['public']['Tables']['profiles']['Row']
-
 export interface CandidateSearchFilters {
   searchTerm?: string
   experienceLevel?: string

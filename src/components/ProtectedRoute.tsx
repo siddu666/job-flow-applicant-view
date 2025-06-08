@@ -11,100 +11,6 @@ interface ProtectedRouteProps {
   allowUnauthenticated?: boolean
 }
 
-export function ProtectedRoute({ 
-  children, 
-  requiredRole, 
-  allowUnauthenticated = false 
-}: ProtectedRouteProps) {
-  const { user, loading } = useAuth()
-  const { data: profile, isLoading: profileLoading } = useProfile(user?.id)
-  const router = useRouter()
-  const pathname = usePathname()
-  const [hasRedirected, setHasRedirected] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
-
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (!isMounted || loading || profileLoading || hasRedirected) return
-
-    // If route allows unauthenticated users, show content regardless
-    if (allowUnauthenticated) {
-      return
-    }
-
-    // If user is not authenticated, redirect to signin
-    if (!user) {
-      setHasRedirected(true)
-      router.push('/signin')
-      return
-    }
-
-    // If user is authenticated and we need to check role-based access
-    if (user && profile) {
-      const userRole = profile.role
-      
-      // If specific role is required and user doesn't have it, redirect based on their role
-      if (requiredRole && userRole !== requiredRole) {
-        if (userRole === 'admin' && pathname !== '/admin') {
-          setHasRedirected(true)
-          router.push('/admin')
-          return
-        }
-        
-        if (userRole === 'recruiter' && pathname !== '/jobs') {
-          setHasRedirected(true)
-          router.push('/jobs')
-          return
-        }
-        
-        if (userRole === 'applicant' && !['/profile', '/jobs', '/apply'].includes(pathname)) {
-          setHasRedirected(true)
-          router.push('/profile')
-          return
-        }
-      }
-    }
-  }, [user, profile, loading, profileLoading, requiredRole, router, allowUnauthenticated, pathname, hasRedirected, isMounted])
-
-  // Show loading while checking auth or not mounted
-  if (!isMounted || loading || profileLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600">Loading...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // If unauthenticated but route allows it, show content
-  if (allowUnauthenticated) {
-    return <>{children}</>
-  }
-
-  // If no user and route requires auth, don't render children (redirect will happen)
-  if (!user) {
-    return null
-  }
-
-  // If user exists but role check failed, don't render children (redirect will happen)
-  if (requiredRole && profile && profile.role !== requiredRole) {
-    return null
-  }
-
-  return <>{children}</>
-}
-
-interface ProtectedRouteProps {
-  children: React.ReactNode
-  requiredRole?: string
-  allowUnauthenticated?: boolean
-}
-
 export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = false }: ProtectedRouteProps) {
   const { user, loading } = useAuth()
   const { data: profile, isLoading: profileLoading } = useProfile(user?.id)
@@ -130,7 +36,7 @@ export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = 
     // If user is authenticated and we need to check role-based access
     if (user && profile) {
       const userRole = profile.role
-      
+
       // If specific role is required and user doesn't have it, redirect based on their role
       if (requiredRole && userRole !== requiredRole) {
         if (userRole === 'admin' && pathname !== '/admin') {
@@ -138,13 +44,13 @@ export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = 
           router.push('/admin')
           return
         }
-        
+
         if (userRole === 'recruiter' && pathname !== '/jobs') {
           setHasRedirected(true)
           router.push('/jobs')
           return
         }
-        
+
         if (userRole === 'applicant' && !['/profile', '/jobs', '/apply'].includes(pathname)) {
           setHasRedirected(true)
           router.push('/profile')
@@ -157,12 +63,12 @@ export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = 
   // Show loading while checking auth or not mounted
   if (!isMounted || loading || profileLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600">Loading...</p>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
+            <p className="text-lg text-gray-600">Loading...</p>
+          </div>
         </div>
-      </div>
     )
   }
 
@@ -178,3 +84,5 @@ export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = 
 
   return <>{children}</>
 }
+
+

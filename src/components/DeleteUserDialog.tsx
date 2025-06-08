@@ -12,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Trash2 } from 'lucide-react';
-import { useDeleteCV as useDeleteUserData } from '@/hooks/useProfile'
 import { useAuth } from '@/contexts/auth-context';
 
 interface DeleteUserDialogProps {
@@ -32,7 +31,6 @@ const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
                                                            }) => {
   const [confirmText, setConfirmText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
-  const deleteUserData = useDeleteUserData();
   const { signOut } = useAuth();
 
   const expectedText = `DELETE ${userName}`;
@@ -43,7 +41,6 @@ const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
 
     setIsDeleting(true);
     try {
-      await deleteUserData.mutateAsync(userId);
 
       if (isCurrentUser) {
         await signOut();

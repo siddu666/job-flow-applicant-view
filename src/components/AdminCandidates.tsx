@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import {Profile} from "@/hooks/useProfile";
 import {useAllCandidates} from "@/hooks/useAllCandidates";
 import { Card as UICard, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, ChevronLeft, ChevronRight, FileText } from "lucide-react";
 import Modal from "@/components/ui/Modal";
+import {Profile} from "@/interfaces/Profile";
 
 interface CandidateFilters {
   skills?: string[];

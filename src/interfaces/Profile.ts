@@ -16,7 +16,7 @@ export interface Profile {
     willing_to_relocate: boolean| null
     job_seeking_status: string| null
     expected_salary_sek: number | null
-    cv_url: string| null
+    cv_url: string | null
     visa_status: string | null
     availability: string | null
     created_at: string | null

@@ -87,31 +87,6 @@ export function useJobById(jobId: string) {
   })
 }
 
-// Create job
-export function useCreateJob() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async (jobData: JobInsert) => {
-      const { data, error } = await supabase
-        .from('jobs')
-        .insert(jobData)
-        .select()
-        .single()
-
-      if (error) throw error
-      return data as Job
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['jobs'] })
-      toast.success('Job created successfully')
-    },
-    onError: (error) => {
-      console.error('Error creating job:', error)
-      toast.error('Failed to create job')
-    },
-  })
-}
 
 // Update job
 export function useUpdateJob() {
@@ -163,28 +138,6 @@ export function useDeleteJob() {
       toast.error('Failed to delete job')
     },
   })
-}
-
-// Legacy hook for backward compatibility
-export function useJobs() {
-  const { data: jobs = [], isLoading, error } = useAllJobs()
-  const createJobMutation = useCreateJob()
-  const deleteJobMutation = useDeleteJob()
-
-  // Search function for compatibility
-  const searchJobs = async (filters: any) => {
-    // This is a placeholder - implement actual search logic if needed
-    console.log('Search filters:', filters)
-  }
-
-  return {
-    jobs,
-    loading: isLoading,
-    error: error?.message,
-    searchJobs,
-    createJob: createJobMutation.mutate,
-    deleteJob: deleteJobMutation.mutate
-  }
 }
 
 export type { Job, JobInsert, JobUpdate }
