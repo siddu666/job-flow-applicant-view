@@ -68,7 +68,7 @@ export const useUploadCV = () => {
     mutationFn: async ({ id, file }: UploadCVParams): Promise<string> => {
       try {
         const fileExt = file.name.split('.').pop();
-        const fileName = `${id}/cv-${Date.now()}.${fileExt}`;
+        const fileName = `${id}/cv.${fileExt}`;
 
         // Upload the file to Supabase Storage
         const { error: uploadError } = await supabase.storage
