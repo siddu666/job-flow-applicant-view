@@ -32,11 +32,11 @@ export default function AdminPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredCandidates, setFilteredCandidates] = useState<Profile[]>([])
   
-  const { candidates, loading: candidatesLoading, error: candidatesError } = useAllCandidates()
+  const { data: candidates, isLoading: candidatesLoading, error: candidatesError } = useAllCandidates()
   const { jobs, loading: jobsLoading } = useJobs()
 
   useEffect(() => {
-    if (candidates) {
+    if (candidates && Array.isArray(candidates)) {
       const filtered = candidates.filter(candidate => {
         const searchLower = searchTerm.toLowerCase()
         return (
