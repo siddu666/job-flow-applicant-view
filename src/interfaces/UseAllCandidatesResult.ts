@@ -1,12 +1,9 @@
 
-// interfaces/UseAllCandidatesResult.ts
+import { Profile } from './Profile'
 
-import {Profile} from "@/interfaces/Profile";
-
-export type UseAllCandidatesResult = {
-    data: Profile[];
-    total: number;
-    isLoading: boolean;
-    error?: Error;
-};
-
+export interface UseAllCandidatesResult {
+  data?: Profile[]
+  isLoading: boolean
+  error: Error | null
+  isError: boolean
+}

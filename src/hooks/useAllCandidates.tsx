@@ -16,7 +16,7 @@ export interface CandidateSearchFilters {
 }
 
 export function useAllCandidates(filters?: CandidateSearchFilters) {
-  return useQuery({
+  const query = useQuery({
     queryKey: ['all-candidates', filters],
     queryFn: async () => {
       let query = supabase
@@ -66,6 +66,13 @@ export function useAllCandidates(filters?: CandidateSearchFilters) {
       return data as Profile[]
     },
   })
+
+  return {
+    data: query.data,
+    isLoading: query.isLoading,
+    error: query.error,
+    isError: query.isError
+  }
 }
 
 export function useCandidateStats() {
