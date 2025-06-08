@@ -1,568 +1,732 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useAuth } from '@/contexts/auth-context'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  User, 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Calendar, 
-  Briefcase, 
-  GraduationCap, 
-  Globe, 
-  DollarSign,
-  Save,
-  Edit3,
-  Award,
-  Target,
-  Settings
-} from 'lucide-react'
-import { useProfile } from '@/hooks/useProfile'
-import { Loading } from '@/components/Loading'
-import { Profile } from '@/interfaces/Profile'
+import { Textarea } from '@/components/ui/textarea'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { toast } from 'sonner'
+import { supabase } from '@/integrations/supabase/client'
+import { useUploadCV } from "@/hooks/useProfile"
+import { Upload, FileText, Loader2 } from 'lucide-react'
+import { useRoleRedirect } from '@/hooks/useRoleRedirect'
 
-const SKILLS_SUGGESTIONS = [
-  'JavaScript', 'TypeScript', 'React', 'Node.js', 'Python', 'Java', 'C#', 'PHP',
-  'Angular', 'Vue.js', 'Next.js', 'Express.js', 'MongoDB', 'PostgreSQL', 'MySQL',
-  'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins', 'Git'
-]
-
-// Tag Input Component
-function TagInput({ tags, setTags, suggestions, placeholder }: {
-  tags: string[]
-  setTags: (tags: string[]) => void
-  suggestions: string[]
-  placeholder: string
-}) {
-  const [inputValue, setInputValue] = useState('')
-  const [showSuggestions, setShowSuggestions] = useState(false)
-
-  const addTag = (tag: string) => {
-    if (tag.trim() && !tags.includes(tag.trim())) {
-      setTags([...tags, tag.trim()])
-    }
-    setInputValue('')
-    setShowSuggestions(false)
-  }
-
-  const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove))
-  }
-
-  const filteredSuggestions = suggestions.filter(
-    suggestion => 
-      suggestion.toLowerCase().includes(inputValue.toLowerCase()) &&
-      !tags.includes(suggestion)
-  )
-
-  return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap gap-2 mb-2">
-        {tags.map((tag, index) => (
-          <Badge key={index} variant="secondary" className="flex items-center gap-1">
-            {tag}
-            <button
-              type="button"
-              onClick={() => removeTag(tag)}
-              className="ml-1 text-gray-500 hover:text-red-500"
-            >
-              ×
-            </button>
-          </Badge>
-        ))}
-      </div>
-      <div className="relative">
-        <Input
-          value={inputValue}
-          onChange={(e) => {
-            setInputValue(e.target.value)
-            setShowSuggestions(true)
-          }}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault()
-              addTag(inputValue)
-            }
-          }}
-          placeholder={placeholder}
-          onFocus={() => setShowSuggestions(true)}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-        />
-        {showSuggestions && inputValue && filteredSuggestions.length > 0 && (
-          <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-40 overflow-y-auto">
-            {filteredSuggestions.slice(0, 5).map((suggestion, index) => (
-              <button
-                key={index}
-                type="button"
-                className="w-full px-3 py-2 text-left hover:bg-gray-100"
-                onClick={() => addTag(suggestion)}
-              >
-                {suggestion}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  )
+interface Profile {
+  first_name: string;
+  last_name: string;
+  phone: string;
+  current_location: string;
+  bio: string;
+  skills: string[];
+  experience_years: number | null;
+  linkedin_url: string;
+  github_url: string;
+  portfolio_url: string;
+  email: string;
+  role: string;
+  certifications: string[];
+  preferred_cities: string[];
+  willing_to_relocate: boolean;
+  job_seeking_status: string;
+  expected_salary_sek: number | null;
+  cv_url: string | null;
 }
 
-export default function ProfilePage() {
-  const { profile: initialProfile, loading, updateProfile } = useProfile()
-  const [profile, setProfile] = useState<Partial<Profile>>({})
-  const [isEditing, setIsEditing] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
+const JOB_SEEKING_STATUS_OPTIONS = [
+  { value: 'actively_looking', label: 'Actively Looking' },
+  { value: 'not_looking', label: 'Not Looking' }
+];
+
+const SKILLS_SUGGESTIONS = [
+  // Programming languages
+  'JavaScript', 'TypeScript', 'Python', 'Java', 'C#', 'C++',
+  'Go', 'Ruby', 'PHP', 'Kotlin', 'Swift',
+  // Web & frameworks
+  'HTML', 'CSS', 'React', 'Vue.js', 'Angular', 'Next.js', 'Django', 'ASP.NET',
+  // Backend & databases
+  'Node.js', 'Express', 'SQL', 'PostgreSQL', 'MongoDB', 'GraphQL',
+  // DevOps & cloud
+  'Docker', 'Kubernetes', 'AWS', 'Azure', 'Google Cloud',
+  // Tools & versioning
+  'Git', 'CI/CD', 'Jenkins', 'JIRA', 'Terraform',
+  // Architecture & best practices
+  'Microservices', 'RESTful APIs', 'Unit Testing', 'Integration Testing',
+  // Algorithms & performance
+  'Data Structures', 'Algorithms', 'Concurrency',
+  // Security & networking
+  'Software Security', 'Networking Basics',
+  // Soft skills
+  'Problem Solving', 'Communication', 'Teamwork', 'Critical Thinking', 'Attention to Detail',
+  'Adaptability', 'Resilience', 'Prompt Engineering (AI tools)', 'Continuous Learning'
+];
+
+
+const CITIES_SUGGESTIONS = [
+  // Top 50 by population (2024)
+  'Stockholm', 'Göteborg', 'Malmö', 'Uppsala', 'Linköping',
+  'Västerås', 'Örebro', 'Helsingborg', 'Jönköping', 'Norrköping',
+  'Umeå', 'Lund', 'Borås', 'Huddinge', 'Nacka', 'Eskilstuna',
+  'Halmstad', 'Gävle', 'Södertälje', 'Haninge', 'Sundsvall',
+  'Växjö', 'Karlstad', 'Botkyrka', 'Järfälla', 'Kristianstad',
+  'Kungsbacka', 'Solna', 'Luleå', 'Skellefteå', 'Täby',
+  'Sollentuna', 'Kalmar', 'Mölndal', 'Varberg', 'Norrtälje',
+  'Karlskrona', 'Östersund', 'Gotland', 'Falun', 'Trollhättan',
+  'Nyköping', 'Skövde', 'Uddevalla', 'Sundbyberg', 'Örnsköldsvik',
+  'Sigtuna', 'Hässleholm', 'Borlänge', 'Upplands Väsby',
+
+  // Additional municipalities (selected alphabetically)
+  'Alingsås', 'Borlänge', 'Eskilstuna', 'Habo', 'Kalix',
+  'Lidingö', 'Mora', 'Skara', 'Strömstad', 'Åmål', 'Ängelholm'
+];
+
+// Component for tag input
+interface TagInputProps {
+  tags: string[];
+  setTags: (tags: string[]) => void;
+  suggestions: string[];
+  placeholder: string;
+}
+
+const TagInput = ({ tags, setTags, suggestions, placeholder }: TagInputProps) => {
+  const [inputValue, setInputValue] = useState('');
+  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (initialProfile) {
-      setProfile(initialProfile)
+    setFilteredSuggestions(
+        suggestions.filter(suggestion =>
+            suggestion.toLowerCase().includes(inputValue.toLowerCase()) &&
+            !tags.includes(suggestion)
+        )
+    );
+  }, [inputValue, suggestions, tags]);
+
+  const handleAddTag = (tag: string) => {
+    if (tag && !tags.includes(tag)) {
+      setTags([...tags, tag]);
+      setInputValue('');
     }
-  }, [initialProfile])
+  };
 
-  const handleSave = async () => {
-    setIsSaving(true)
-    try {
-      await updateProfile(profile)
-      setIsEditing(false)
-    } catch (error) {
-      console.error('Error updating profile:', error)
-    } finally {
-      setIsSaving(false)
+  const handleRemoveTag = (tagToRemove: string) => {
+    setTags(tags.filter(tag => tag !== tagToRemove));
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddTag(inputValue);
     }
-  }
-
-  const handleCertificationsChange = (value: string) => {
-    const certifications = value.split(',').map(cert => cert.trim()).filter(cert => cert.length > 0)
-    setProfile(prev => ({ ...prev, certifications }))
-  }
-
-  const getInitials = (profile: Partial<Profile>) => {
-    const firstName = profile.first_name || ''
-    const lastName = profile.last_name || ''
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
-  }
-
-  if (loading) return <Loading />
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
-              <p className="text-gray-600 mt-1">Manage your professional information</p>
+      <div className="space-y-2">
+        <div className="flex flex-wrap gap-2 mb-2">
+          {tags.map((tag, index) => (
+              <span
+                  key={index}
+                  className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+              >
+            {tag}
+                <button
+                    type="button"
+                    onClick={() => handleRemoveTag(tag)}
+                    className="ml-1 text-blue-600 hover:text-blue-800"
+                >
+              ×
+            </button>
+          </span>
+          ))}
+        </div>
+        <Input
+            ref={inputRef}
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={placeholder}
+            className="w-full"
+        />
+        {inputValue && filteredSuggestions.length > 0 && (
+            <div className="border rounded-md max-h-32 overflow-y-auto">
+              {filteredSuggestions.slice(0, 5).map((suggestion, index) => (
+                  <button
+                      key={index}
+                      type="button"
+                      onClick={() => handleAddTag(suggestion)}
+                      className="w-full text-left px-3 py-2 hover:bg-gray-100 text-sm"
+                  >
+                    {suggestion}
+                  </button>
+              ))}
             </div>
-            <div className="flex gap-3">
-              {isEditing ? (
-                <>
-                  <Button variant="outline" onClick={() => setIsEditing(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={handleSave} disabled={isSaving}>
-                    <Save className="h-4 w-4 mr-2" />
-                    {isSaving ? 'Saving...' : 'Save Changes'}
-                  </Button>
-                </>
-              ) : (
-                <Button onClick={() => setIsEditing(true)}>
-                  <Edit3 className="h-4 w-4 mr-2" />
-                  Edit Profile
-                </Button>
-              )}
-            </div>
+        )}
+      </div>
+  );
+};
+
+export default function ProfilePage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const uploadCV = useUploadCV();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [profile, setProfile] = useState<Profile>({
+    first_name: '',
+    last_name: '',
+    phone: '',
+    current_location: '',
+    bio: '',
+    skills: [],
+    experience_years: null,
+    linkedin_url: '',
+    github_url: '',
+    portfolio_url: '',
+    email: '',
+    role: '',
+    certifications: [],
+    preferred_cities: [],
+    willing_to_relocate: false,
+    job_seeking_status: '',
+    expected_salary_sek: null,
+    cv_url: null
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
+  const [isUploadingCV, setIsUploadingCV] = useState(false);
+
+  useRoleRedirect();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/signin');
+      return
+    }
+  }, [user, loading, router]);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user?.id) return;
+
+      try {
+        setIsProfileLoading(true);
+
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error fetching profile:', error);
+          toast.error('Failed to load profile data');
+          return;
+        }
+
+        if (data) {
+          setProfile({
+            first_name: data.first_name || '',
+            last_name: data.last_name || '',
+            phone: data.phone || '',
+            current_location: data.current_location || '',
+            bio: data.bio || '',
+            skills: Array.isArray(data.skills) ? data.skills : [],
+            experience_years: data.experience_years || null,
+            linkedin_url: data.linkedin_url || '',
+            github_url: data.github_url || '',
+            portfolio_url: data.portfolio_url || '',
+            email: data.email || user.email || '',
+            role: data.role || '',
+            certifications: Array.isArray(data.certifications) ? data.certifications : [],
+            preferred_cities: Array.isArray(data.preferred_cities) ? data.preferred_cities : [],
+            willing_to_relocate: Boolean(data.willing_to_relocate),
+            job_seeking_status: data.job_seeking_status || '',
+            expected_salary_sek: data.expected_salary_sek || null,
+            cv_url: data.cv_url || null
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        toast.error('Failed to load profile data');
+      } finally {
+        setIsProfileLoading(false);
+      }
+    };
+
+    if (user?.id) {
+      fetchProfile();
+    }
+  }, [user?.id, user?.email]);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user?.id) {
+      toast.error('Please log in to upload a CV');
+      return;
+    }
+
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Please upload a PDF or Word document');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size must be less than 5MB');
+      return;
+    }
+
+    try {
+      setIsUploadingCV(true);
+      const result = await uploadCV.mutateAsync({ userId: user.id, file });
+
+      if (result?.cv_url) {
+        setProfile(prev => ({ ...prev, cv_url: result.cv_url }));
+        toast.success('CV uploaded successfully!');
+      }
+    } catch (error) {
+      console.error('Error uploading CV:', error);
+      toast.error('Failed to upload CV');
+    } finally {
+      setIsUploadingCV(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user?.id) {
+      toast.error('Please log in to update your profile');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      if (!profile.first_name.trim() || !profile.last_name.trim()) {
+        toast.error('First name and last name are required');
+        return;
+      }
+
+      const profileData = {
+        id: user.id,
+        ...profile,
+        skills: Array.isArray(profile.skills) ? profile.skills.filter(skill => skill.trim()) : [],
+        certifications: Array.isArray(profile.certifications) ? profile.certifications.filter(cert => cert.trim()) : [],
+        preferred_cities: Array.isArray(profile.preferred_cities) ? profile.preferred_cities.filter(city => city.trim()) : [],
+        experience_years: profile.experience_years ? Number(profile.experience_years) : null,
+        expected_salary_sek: profile.expected_salary_sek ? Number(profile.expected_salary_sek) : null,
+        updated_at: new Date().toISOString()
+      };
+
+      const { error } = await supabase
+          .from('profiles')
+          .upsert(profileData, { onConflict: 'id' });
+
+      if (error) throw error;
+
+      toast.success('Profile updated successfully!');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Failed to update profile. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCertificationsChange = (value: string) => {
+    const certificationsArray = value.split(',').map(cert => cert.trim()).filter(cert => cert.length > 0);
+    setProfile(prev => ({ ...prev, certifications: certificationsArray }));
+  };
+
+  if (loading) {
+    return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="flex flex-col items-center space-y-4">
+            <Loader2 className="h-8 w-8 animate-spin" />
+            <p className="text-gray-600">Loading...</p>
           </div>
         </div>
+    );
+  }
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Profile Summary */}
-          <div className="lg:col-span-1">
-            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-              <CardContent className="p-6 text-center">
-                <Avatar className="h-24 w-24 mx-auto mb-4">
-                  <AvatarFallback className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-                    {getInitials(profile)}
-                  </AvatarFallback>
-                </Avatar>
+  if (!user) {
+    return null;
+  }
 
-                <h2 className="text-2xl font-bold text-gray-900 mb-1">
-                  {profile.first_name} {profile.last_name}
-                </h2>
-
-                {profile.current_position && (
-                  <p className="text-blue-600 font-medium mb-4">{profile.current_position}</p>
-                )}
-
-                <div className="space-y-3 text-sm text-gray-600">
-                  {profile.current_location && (
-                    <div className="flex items-center justify-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      <span>{profile.current_location}</span>
-                    </div>
-                  )}
-
-                  {profile.phone && (
-                    <div className="flex items-center justify-center gap-2">
-                      <Phone className="h-4 w-4" />
-                      <span>{profile.phone}</span>
-                    </div>
-                  )}
-
-                  {profile.email && (
-                    <div className="flex items-center justify-center gap-2">
-                      <Mail className="h-4 w-4" />
-                      <span>{profile.email}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Quick Stats */}
-                <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">
-                      {profile.experience_years || 0}
-                    </div>
-                    <div className="text-xs text-gray-500">Years Experience</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">
-                      {profile.skills?.length || 0}
-                    </div>
-                    <div className="text-xs text-gray-500">Skills</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Skills Overview */}
-            {profile.skills && profile.skills.length > 0 && (
-              <Card className="mt-6 bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Target className="h-5 w-5 text-blue-600" />
-                    Top Skills
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {profile.skills.slice(0, 8).map((skill, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        {skill}
-                      </Badge>
-                    ))}
-                    {profile.skills.length > 8 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{profile.skills.length - 8} more
-                      </Badge>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+  return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto">
+          {/* Header Section */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-6">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
+              Your Professional Profile
+            </h1>
+            <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
+              Craft your digital presence and unlock amazing career opportunities
+            </p>
           </div>
 
-          {/* Right Column - Detailed Information */}
-          <div className="lg:col-span-2">
-            <Tabs defaultValue="personal" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="personal" className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Personal
-                </TabsTrigger>
-                <TabsTrigger value="professional" className="flex items-center gap-2">
-                  <Briefcase className="h-4 w-4" />
-                  Professional
-                </TabsTrigger>
-                <TabsTrigger value="skills" className="flex items-center gap-2">
-                  <Award className="h-4 w-4" />
-                  Skills
-                </TabsTrigger>
-                <TabsTrigger value="preferences" className="flex items-center gap-2">
-                  <Settings className="h-4 w-4" />
-                  Preferences
-                </TabsTrigger>
-              </TabsList>
-
-              {/* Personal Information Tab */}
-              <TabsContent value="personal">
-                <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-                  <CardHeader>
-                    <CardTitle>Personal Information</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <Label htmlFor="first_name">First Name</Label>
-                        <Input
-                          id="first_name"
-                          value={profile.first_name || ''}
-                          onChange={(e) => setProfile(prev => ({ ...prev, first_name: e.target.value }))}
-                          disabled={!isEditing}
-                          className="mt-1"
-                        />
+          <Card className="bg-white/10 backdrop-blur-lg border-white/20 shadow-2xl">
+            <CardHeader className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-white/10">
+              <CardTitle className="text-2xl font-bold text-white flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                Profile Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8">
+              {isProfileLoading ? (
+                  <div className="flex items-center justify-center py-16">
+                    <div className="flex flex-col items-center space-y-6">
+                      <div className="relative">
+                        <div className="w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
+                        <div className="absolute inset-0 w-16 h-16 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" style={{animationDelay: '0.2s', animationDirection: 'reverse'}}></div>
                       </div>
-                      <div>
-                        <Label htmlFor="last_name">Last Name</Label>
-                        <Input
-                          id="last_name"
-                          value={profile.last_name || ''}
-                          onChange={(e) => setProfile(prev => ({ ...prev, last_name: e.target.value }))}
-                          disabled={!isEditing}
-                          className="mt-1"
-                        />
-                      </div>
+                      <p className="text-slate-300 text-lg">Loading your profile data...</p>
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <Label htmlFor="email">Email Address</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={profile.email || ''}
-                          onChange={(e) => setProfile(prev => ({ ...prev, email: e.target.value }))}
-                          disabled={!isEditing}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input
-                          id="phone"
-                          value={profile.phone || ''}
-                          onChange={(e) => setProfile(prev => ({ ...prev, phone: e.target.value }))}
-                          disabled={!isEditing}
-                          className="mt-1"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="current_location">Current Location</Label>
-                      <Input
-                        id="current_location"
-                        value={profile.current_location || ''}
-                        onChange={(e) => setProfile(prev => ({ ...prev, current_location: e.target.value }))}
-                        disabled={!isEditing}
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="bio">Professional Bio</Label>
-                      <Textarea
-                        id="bio"
-                        value={profile.bio || ''}
-                        onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))}
-                        disabled={!isEditing}
-                        rows={4}
-                        className="resize-none mt-1"
-                        placeholder="Tell us about yourself and your professional background..."
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Professional Information Tab */}
-              <TabsContent value="professional">
-                <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-                  <CardHeader>
-                    <CardTitle>Professional Information</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div>
-                      <Label htmlFor="current_position">Current Position</Label>
-                      <Input
-                        id="current_position"
-                        value={profile.current_position || ''}
-                        onChange={(e) => setProfile(prev => ({ ...prev, current_position: e.target.value }))}
-                        disabled={!isEditing}
-                        placeholder="Senior Software Developer"
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <Label htmlFor="experience_years">Years of Experience</Label>
-                        <Input
-                          id="experience_years"
-                          type="number"
-                          min="0"
-                          max="50"
-                          value={profile.experience_years || ''}
-                          onChange={(e) => setProfile(prev => ({ ...prev, experience_years: e.target.value ? parseInt(e.target.value) : null }))}
-                          disabled={!isEditing}
-                          placeholder="5"
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="expected_salary_sek">Expected Salary (SEK/month)</Label>
-                        <Input
-                          id="expected_salary_sek"
-                          type="number"
-                          min="0"
-                          step="1000"
-                          value={profile.expected_salary_sek || ''}
-                          onChange={(e) => setProfile(prev => ({ ...prev, expected_salary_sek: e.target.value ? parseInt(e.target.value) : null }))}
-                          disabled={!isEditing}
-                          placeholder="45000"
-                          className="mt-1"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="education">Education</Label>
-                      <Input
-                        id="education"
-                        value={profile.education || ''}
-                        onChange={(e) => setProfile(prev => ({ ...prev, education: e.target.value }))}
-                        disabled={!isEditing}
-                        placeholder="Bachelor's in Computer Science - KTH Royal Institute of Technology"
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="linkedin_profile">LinkedIn Profile</Label>
-                      <Input
-                        id="linkedin_profile"
-                        type="url"
-                        value={profile.linkedin_profile || ''}
-                        onChange={(e) => setProfile(prev => ({ ...prev, linkedin_profile: e.target.value }))}
-                        disabled={!isEditing}
-                        placeholder="https://linkedin.com/in/yourprofile"
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="certifications">Certifications</Label>
-                      <Textarea
-                        id="certifications"
-                        value={profile.certifications?.join(', ') || ''}
-                        onChange={(e) => handleCertificationsChange(e.target.value)}
-                        disabled={!isEditing}
-                        placeholder="AWS Certified Developer, Google Cloud Professional"
-                        rows={2}
-                        className="resize-none mt-1"
-                      />
-                      <p className="text-sm text-gray-500 mt-1">Separate certifications with commas</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Skills Tab */}
-              <TabsContent value="skills">
-                <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-                  <CardHeader>
-                    <CardTitle>Skills & Expertise</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div>
-                      <Label>Technical Skills</Label>
-                      {isEditing ? (
-                        <TagInput
-                          tags={profile.skills || []}
-                          setTags={(skills) => setProfile(prev => ({ ...prev, skills }))}
-                          suggestions={SKILLS_SUGGESTIONS}
-                          placeholder="Add a skill and press Enter"
-                        />
-                      ) : (
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {profile.skills && profile.skills.length > 0 ? (
-                            profile.skills.map((skill, index) => (
-                              <Badge key={index} variant="secondary">
-                                {skill}
-                              </Badge>
-                            ))
-                          ) : (
-                            <p className="text-gray-500 text-sm">No skills added yet</p>
-                          )}
+                  </div>
+              ) : (
+                  <form onSubmit={handleSubmit} className="space-y-10">
+                    {/* Basic Information */}
+                    <div className="space-y-6">
+                      <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">Basic Information</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <Label htmlFor="first_name">First Name *</Label>
+                          <Input
+                              id="first_name"
+                              value={profile.first_name}
+                              onChange={(e) => setProfile(prev => ({ ...prev, first_name: e.target.value }))}
+                              placeholder="Enter your first name"
+                              required
+                              className="mt-1"
+                          />
                         </div>
-                      )}
-                    </div>
-
-                    {profile.certifications && profile.certifications.length > 0 && (
-                      <div>
-                        <Label>Certifications</Label>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {profile.certifications.map((cert, index) => (
-                            <Badge key={index} variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                              <Award className="h-3 w-3 mr-1" />
-                              {cert}
-                            </Badge>
-                          ))}
+                        <div>
+                          <Label htmlFor="last_name">Last Name *</Label>
+                          <Input
+                              id="last_name"
+                              value={profile.last_name}
+                              onChange={(e) => setProfile(prev => ({ ...prev, last_name: e.target.value }))}
+                              placeholder="Enter your last name"
+                              required
+                              className="mt-1"
+                          />
                         </div>
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
 
-              {/* Preferences Tab */}
-              <TabsContent value="preferences">
-                <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-                  <CardHeader>
-                    <CardTitle>Job Preferences</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <Label htmlFor="preferred_location">Preferred Work Location</Label>
-                        <Input
-                          id="preferred_location"
-                          value={profile.preferred_location || ''}
-                          onChange={(e) => setProfile(prev => ({ ...prev, preferred_location: e.target.value }))}
-                          disabled={!isEditing}
-                          placeholder="Stockholm, Remote, Hybrid"
-                          className="mt-1"
-                        />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <Label htmlFor="email">Email</Label>
+                          <Input
+                              id="email"
+                              type="email"
+                              value={profile.email}
+                              onChange={(e) => setProfile(prev => ({ ...prev, email: e.target.value }))}
+                              placeholder="your.email@example.com"
+                              className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="phone">Phone Number</Label>
+                          <Input
+                              id="phone"
+                              type="tel"
+                              value={profile.phone}
+                              onChange={(e) => setProfile(prev => ({ ...prev, phone: e.target.value }))}
+                              placeholder="+46 70 123 45 67"
+                              className="mt-1"
+                          />
+                        </div>
                       </div>
-                      <div>
-                        <Label htmlFor="work_authorization">Work Authorization</Label>
-                        <Input
-                          id="work_authorization"
-                          value={profile.work_authorization || ''}
-                          onChange={(e) => setProfile(prev => ({ ...prev, work_authorization: e.target.value }))}
-                          disabled={!isEditing}
-                          placeholder="EU Citizen, Work Permit, etc."
-                          className="mt-1"
-                        />
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <Label htmlFor="current_location">Current Location</Label>
+                          <Input
+                              id="current_location"
+                              value={profile.current_location}
+                              onChange={(e) => setProfile(prev => ({ ...prev, current_location: e.target.value }))}
+                              placeholder="Stockholm, Sweden"
+                              className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="role">Current Role/Title</Label>
+                          <Input
+                              id="role"
+                              value={profile.role}
+                              onChange={(e) => setProfile(prev => ({ ...prev, role: e.target.value }))}
+                              placeholder="Software Developer"
+                              className="mt-1"
+                          />
+                        </div>
                       </div>
                     </div>
 
-                    {profile.expected_salary_sek && (
-                      <div className="bg-blue-50 p-4 rounded-lg">
-                        <div className="flex items-center gap-2 text-blue-700">
-                          <DollarSign className="h-5 w-5" />
-                          <span className="font-medium">Salary Expectation</span>
-                        </div>
-                        <p className="text-blue-600 text-lg font-bold mt-1">
-                          {profile.expected_salary_sek.toLocaleString()} SEK/month
-                        </p>
+                    {/* Professional Information */}
+                    <div className="space-y-6">
+                      <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">Professional Information</h3>
+                      <div>
+                        <Label htmlFor="bio">Professional Bio</Label>
+                        <Textarea
+                            id="bio"
+                            value={profile.bio}
+                            onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))}
+                            placeholder="Tell us about yourself, your experience, and your career goals..."
+                            rows={4}
+                            className="resize-none mt-1"
+                        />
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <Label htmlFor="experience_years">Years of Experience</Label>
+                          <Input
+                              id="experience_years"
+                              type="number"
+                              min="0"
+                              max="50"
+                              value={profile.experience_years || ''}
+                              onChange={(e) => setProfile(prev => ({ ...prev, experience_years: e.target.value ? parseInt(e.target.value) : null }))}
+                              placeholder="5"
+                              className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="expected_salary_sek">Expected Salary (SEK/month)</Label>
+                          <Input
+                              id="expected_salary_sek"
+                              type="number"
+                              min="0"
+                              step="1000"
+                              value={profile.expected_salary_sek || ''}
+                              onChange={(e) => setProfile(prev => ({ ...prev, expected_salary_sek: e.target.value ? parseInt(e.target.value) : null }))}
+                              placeholder="45000"
+                              className="mt-1"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-6">
+                        <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">Skills</h3>
+                        <div>
+                          <Label>Add Your Skills</Label>
+                          <TagInput
+                              tags={profile.skills}
+                              setTags={(skills) => setProfile(prev => ({ ...prev, skills }))}
+                              suggestions={SKILLS_SUGGESTIONS}
+                              placeholder="Add a skill and press Enter"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="certifications">Certifications</Label>
+                        <Textarea
+                            id="certifications"
+                            value={profile.certifications.join(', ')}
+                            onChange={(e) => handleCertificationsChange(e.target.value)}
+                            placeholder="AWS Certified Developer, Google Cloud Professional"
+                            rows={2}
+                            className="resize-none mt-1"
+                        />
+                        <p className="text-sm text-gray-500 mt-1">Separate certifications with commas</p>
+                      </div>
+                    </div>
+
+                    {/* Job Preferences */}
+                    <div className="space-y-6">
+                      <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">Job Preferences</h3>
+                      <div>
+                        <Label htmlFor="job_seeking_status">Job Seeking Status</Label>
+                        <Select
+                            value={profile.job_seeking_status}
+                            onValueChange={(value) => setProfile(prev => ({ ...prev, job_seeking_status: value }))}
+                        >
+                          <SelectTrigger className="mt-1">
+                            <SelectValue placeholder="Select your job seeking status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {JOB_SEEKING_STATUS_OPTIONS.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-6">
+                        <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">Preferred Cities</h3>
+                        <div>
+                          <Label>Add Preferred Cities</Label>
+                          <TagInput
+                              tags={profile.preferred_cities}
+                              setTags={(cities) => setProfile(prev => ({ ...prev, preferred_cities: cities }))}
+                              suggestions={CITIES_SUGGESTIONS}
+                              placeholder="Add a city and press Enter"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="willing_to_relocate"
+                            checked={profile.willing_to_relocate}
+                            onCheckedChange={(checked) => setProfile(prev => ({ ...prev, willing_to_relocate: Boolean(checked) }))}
+                        />
+                        <Label htmlFor="willing_to_relocate">Willing to relocate</Label>
+                      </div>
+                    </div>
+
+                    {/* Professional Links */}
+                    <div className="space-y-6">
+                      <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">Professional Links</h3>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div>
+                          <Label htmlFor="linkedin_url">LinkedIn URL</Label>
+                          <Input
+                              id="linkedin_url"
+                              type="url"
+                              value={profile.linkedin_url}
+                              onChange={(e) => setProfile(prev => ({ ...prev, linkedin_url: e.target.value }))}
+                              placeholder="https://linkedin.com/in/yourprofile"
+                              className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="github_url">GitHub URL</Label>
+                          <Input
+                              id="github_url"
+                              type="url"
+                              value={profile.github_url}
+                              onChange={(e) => setProfile(prev => ({ ...prev, github_url: e.target.value }))}
+                              placeholder="https://github.com/yourusername"
+                              className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="portfolio_url">Portfolio URL</Label>
+                          <Input
+                              id="portfolio_url"
+                              type="url"
+                              value={profile.portfolio_url}
+                              onChange={(e) => setProfile(prev => ({ ...prev, portfolio_url: e.target.value }))}
+                              placeholder="https://yourportfolio.com"
+                              className="mt-1"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* CV Upload */}
+                    <div className="space-y-6">
+                      <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">CV Upload</h3>
+                      <div>
+                        <Label htmlFor="cv-upload">Upload CV</Label>
+                        <div className="mt-2">
+                          <input
+                              ref={fileInputRef}
+                              type="file"
+                              accept=".pdf,.doc,.docx"
+                              onChange={handleFileChange}
+                              className="hidden"
+                              id="cv-upload"
+                              disabled={isUploadingCV}
+                          />
+                          <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => fileInputRef.current?.click()}
+                              disabled={isUploadingCV}
+                              className="w-full sm:w-auto"
+                          >
+                            {isUploadingCV ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Uploading...
+                                </>
+                            ) : (
+                                <>
+                                  <Upload className="mr-2 h-4 w-4" />
+                                  Choose File
+                                </>
+                            )}
+                          </Button>
+                          <p className="text-sm text-gray-500 mt-1">
+                            Supported formats: PDF, DOC, DOCX (max 5MB)
+                          </p>
+                        </div>
+
+                        {profile.cv_url && (
+                            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-md">
+                              <div className="flex items-center">
+                                <FileText className="h-4 w-4 text-green-600 mr-2" />
+                                <span className="text-sm text-green-800">CV uploaded successfully</span>
+                              </div>
+                              <a
+                                  href={profile.cv_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-green-600 hover:text-green-800 underline ml-6"
+                              >
+                                View Current CV
+                              </a>
+                            </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Form Actions */}
+                    <div className="flex flex-col sm:flex-row justify-between gap-4 pt-6 border-t">
+                      <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => router.push('/jobs')}
+                          className="w-full sm:w-auto"
+                      >
+                        View Jobs
+                      </Button>
+                      <Button
+                          type="submit"
+                          disabled={isLoading}
+                          className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                      >
+                        {isLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Updating...
+                            </>
+                        ) : (
+                            'Update Profile'
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
-    </div>
-  )
+  );
 }

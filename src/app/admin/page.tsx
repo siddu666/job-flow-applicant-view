@@ -1,445 +1,216 @@
-
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  Users, 
-  Briefcase, 
-  Search, 
-  Filter, 
-  MoreHorizontal,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Award,
-  TrendingUp,
-  UserCheck,
-  Building2
-} from 'lucide-react'
-import { useAllCandidates } from '@/hooks/useAllCandidates'
-import { useJobs } from '@/hooks/useJobs'
-import { Loading } from '@/components/Loading'
-import { Profile } from '@/interfaces/Profile'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { useAllJobs, useDeleteJob } from '@/hooks/useJobs'
+import { useApplications } from '@/hooks/useApplications'
+import { JobPostForm } from '@/components/JobPostForm'
+import { Briefcase, Users, FileText, Plus, Eye, Edit, Trash } from 'lucide-react'
+import { ProtectedRoute } from '@/components/ProtectedRoute'
+import EnhancedCandidateSearch from '@/components/admin/EnhancedCandidateSearch'
 
 export default function AdminPage() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filteredCandidates, setFilteredCandidates] = useState<Profile[]>([])
-  
-  const { candidates, loading: candidatesLoading, error: candidatesError } = useAllCandidates()
-  const { jobs, loading: jobsLoading } = useJobs()
+  const { data: jobs = [], isLoading: jobsLoading } = useAllJobs()
+  const deleteJobMutation = useDeleteJob()
+  const { useAllApplications } = useApplications()
+  const { data: applications = [], isLoading: applicationsLoading } = useAllApplications()
 
-  useEffect(() => {
-    if (candidates) {
-      const filtered = candidates.filter(candidate => {
-        const searchLower = searchTerm.toLowerCase()
-        return (
-          candidate.first_name?.toLowerCase().includes(searchLower) ||
-          candidate.last_name?.toLowerCase().includes(searchLower) ||
-          candidate.email?.toLowerCase().includes(searchLower) ||
-          candidate.current_position?.toLowerCase().includes(searchLower) ||
-          candidate.skills?.some(skill => skill.toLowerCase().includes(searchLower))
-        )
-      })
-      setFilteredCandidates(filtered)
+  const [showJobForm, setShowJobForm] = useState(false)
+
+  const handleDeleteJob = async (jobId: string) => {
+    if (confirm('Are you sure you want to delete this job?')) {
+      deleteJobMutation.mutate(jobId)
     }
-  }, [candidates, searchTerm])
-
-  const getFullName = (candidate: Profile) => {
-    return `${candidate.first_name || ''} ${candidate.last_name || ''}`.trim() || 'Unknown Name'
   }
 
-  const getInitials = (candidate: Profile) => {
-    const firstName = candidate.first_name || ''
-    const lastName = candidate.last_name || ''
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
-  }
-
-  if (candidatesLoading || jobsLoading) return <Loading />
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <ProtectedRoute requiredRole="admin">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">Manage candidates, jobs, and applications</p>
+          <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
+          <p className="text-gray-600">Manage jobs, applications, and candidates</p>
         </div>
 
-        {/* Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Total Candidates</p>
-                  <p className="text-3xl font-bold text-blue-600">{candidates?.length || 0}</p>
-                </div>
-                <Users className="h-12 w-12 text-blue-500 opacity-80" />
-              </div>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Jobs</CardTitle>
+              <Briefcase className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{jobs.length}</div>
             </CardContent>
           </Card>
-          
-          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Active Jobs</p>
-                  <p className="text-3xl font-bold text-green-600">{jobs?.length || 0}</p>
-                </div>
-                <Briefcase className="h-12 w-12 text-green-500 opacity-80" />
-              </div>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Applications</CardTitle>
+              <FileText className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{applications.length}</div>
             </CardContent>
           </Card>
-          
-          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Verified Profiles</p>
-                  <p className="text-3xl font-bold text-purple-600">
-                    {candidates?.filter(c => c.first_name && c.last_name && c.email).length || 0}
-                  </p>
-                </div>
-                <UserCheck className="h-12 w-12 text-purple-500 opacity-80" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">This Month</p>
-                  <p className="text-3xl font-bold text-orange-600">
-                    {candidates?.filter(c => {
-                      if (!c.created_at) return false
-                      const created = new Date(c.created_at)
-                      const now = new Date()
-                      return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear()
-                    }).length || 0}
-                  </p>
-                </div>
-                <TrendingUp className="h-12 w-12 text-orange-500 opacity-80" />
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Pending Applications</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {applications.filter(app => app.status === 'pending').length}
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <Tabs defaultValue="candidates" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="candidates" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Candidates
-            </TabsTrigger>
-            <TabsTrigger value="jobs" className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4" />
-              Jobs
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Analytics
-            </TabsTrigger>
+        <Tabs defaultValue="jobs" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="jobs">Job Management</TabsTrigger>
+            <TabsTrigger value="applications">Applications</TabsTrigger>
+            <TabsTrigger value="candidates">Candidate Management</TabsTrigger>
           </TabsList>
 
-          {/* Candidates Tab */}
-          <TabsContent value="candidates">
-            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-blue-600" />
-                    Candidate Management
-                  </CardTitle>
-                  <div className="flex items-center gap-4">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                      <Input
-                        placeholder="Search candidates..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10 w-64"
-                      />
-                    </div>
-                    <Button variant="outline">
-                      <Filter className="h-4 w-4 mr-2" />
-                      Filter
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {candidatesError && (
-                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-                    Error loading candidates: {candidatesError}
-                  </div>
-                )}
-                
-                {filteredCandidates && filteredCandidates.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredCandidates.map((candidate) => (
-                      <Card key={candidate.id} className="group hover:shadow-lg transition-all duration-300 border border-gray-100">
-                        <CardContent className="p-6">
-                          <div className="flex items-start space-x-4">
-                            <Avatar className="h-12 w-12">
-                              <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                                {getInitials(candidate)}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-lg truncate text-gray-900">
-                                {getFullName(candidate)}
-                              </h3>
-                              {candidate.current_position && (
-                                <p className="text-sm text-blue-600 font-medium mb-2">
-                                  {candidate.current_position}
-                                </p>
-                              )}
-
-                              <div className="space-y-1 text-sm text-gray-600">
-                                {candidate.email && (
-                                  <div className="flex items-center gap-2">
-                                    <Mail className="h-3 w-3" />
-                                    <span className="truncate">{candidate.email}</span>
-                                  </div>
-                                )}
-
-                                {candidate.current_location && (
-                                  <div className="flex items-center gap-2">
-                                    <MapPin className="h-3 w-3" />
-                                    <span>{candidate.current_location}</span>
-                                  </div>
-                                )}
-
-                                {candidate.experience_years && (
-                                  <div className="flex items-center gap-2">
-                                    <Calendar className="h-3 w-3" />
-                                    <span>{candidate.experience_years} years experience</span>
-                                  </div>
-                                )}
-
-                                {candidate.phone && (
-                                  <div className="flex items-center gap-2">
-                                    <Phone className="h-3 w-3" />
-                                    <span>{candidate.phone}</span>
-                                  </div>
-                                )}
-                              </div>
-
-                              {/* Skills */}
-                              {candidate.skills && candidate.skills.length > 0 && (
-                                <div className="mt-3">
-                                  <div className="flex flex-wrap gap-1">
-                                    {candidate.skills.slice(0, 3).map((skill, index) => (
-                                      <Badge key={index} variant="secondary" className="text-xs">
-                                        {skill}
-                                      </Badge>
-                                    ))}
-                                    {candidate.skills.length > 3 && (
-                                      <Badge variant="outline" className="text-xs">
-                                        +{candidate.skills.length - 3}
-                                      </Badge>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Salary Expectation */}
-                              {candidate.expected_salary_sek && (
-                                <div className="mt-2 text-sm text-green-600 font-medium">
-                                  {candidate.expected_salary_sek.toLocaleString()} SEK/month
-                                </div>
-                              )}
-
-                              <div className="flex items-center justify-between mt-4">
-                                <div className="text-xs text-gray-500">
-                                  {candidate.created_at ? new Date(candidate.created_at).toLocaleDateString() : 'No date'}
-                                </div>
-                                <Button variant="ghost" size="sm">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12">
-                    <Users className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-gray-600 mb-2">No Candidates Found</h3>
-                    <p className="text-gray-500">
-                      {searchTerm ? 'No candidates match your search criteria.' : 'No candidates have registered yet.'}
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Jobs Tab */}
-          <TabsContent value="jobs">
-            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Briefcase className="h-5 w-5 text-green-600" />
-                  Job Management
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {jobs && jobs.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {jobs.map((job) => (
-                      <Card key={job.id} className="border border-gray-100 hover:shadow-lg transition-shadow">
-                        <CardContent className="p-6">
-                          <div className="flex items-start justify-between mb-4">
-                            <div>
-                              <h3 className="font-semibold text-lg text-gray-900 mb-1">
-                                {job.title}
-                              </h3>
-                              <div className="flex items-center gap-2 text-gray-600">
-                                <Building2 className="h-4 w-4" />
-                                <span>{job.company_name}</span>
-                              </div>
-                            </div>
-                            <Briefcase className="h-6 w-6 text-green-500" />
-                          </div>
-
-                          <div className="space-y-2 text-sm text-gray-600 mb-4">
-                            {job.location && (
-                              <div className="flex items-center gap-2">
-                                <MapPin className="h-3 w-3" />
-                                <span>{job.location}</span>
-                              </div>
-                            )}
-                            {job.salary_range && (
-                              <div className="flex items-center gap-2">
-                                <Award className="h-3 w-3" />
-                                <span>{job.salary_range}</span>
-                              </div>
-                            )}
-                          </div>
-
-                          {job.skills && job.skills.length > 0 && (
-                            <div className="mb-4">
-                              <div className="flex flex-wrap gap-1">
-                                {job.skills.slice(0, 4).map((skill, index) => (
-                                  <Badge key={index} variant="secondary" className="text-xs">
-                                    {skill}
-                                  </Badge>
-                                ))}
-                                {job.skills.length > 4 && (
-                                  <Badge variant="outline" className="text-xs">
-                                    +{job.skills.length - 4}
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                          )}
-
-                          <div className="flex items-center justify-between">
-                            <div className="text-xs text-gray-500">
-                              Posted {job.created_at ? new Date(job.created_at).toLocaleDateString() : 'Recently'}
-                            </div>
-                            <Button variant="outline" size="sm">
-                              Manage
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12">
-                    <Briefcase className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-gray-600 mb-2">No Jobs Posted</h3>
-                    <p className="text-gray-500">No job opportunities have been posted yet.</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Analytics Tab */}
-          <TabsContent value="analytics">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle>Candidate Registration Trends</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">This Week</span>
-                      <span className="font-bold text-blue-600">
-                        {candidates?.filter(c => {
-                          if (!c.created_at) return false
-                          const created = new Date(c.created_at)
-                          const weekAgo = new Date()
-                          weekAgo.setDate(weekAgo.getDate() - 7)
-                          return created >= weekAgo
-                        }).length || 0}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">This Month</span>
-                      <span className="font-bold text-green-600">
-                        {candidates?.filter(c => {
-                          if (!c.created_at) return false
-                          const created = new Date(c.created_at)
-                          const now = new Date()
-                          return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear()
-                        }).length || 0}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Total</span>
-                      <span className="font-bold text-purple-600">{candidates?.length || 0}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle>Profile Completion</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Complete Profiles</span>
-                      <span className="font-bold text-green-600">
-                        {candidates?.filter(c => 
-                          c.first_name && c.last_name && c.email && c.current_position && c.skills?.length
-                        ).length || 0}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">With Skills</span>
-                      <span className="font-bold text-blue-600">
-                        {candidates?.filter(c => c.skills && c.skills.length > 0).length || 0}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">With LinkedIn</span>
-                      <span className="font-bold text-purple-600">
-                        {candidates?.filter(c => c.linkedin_profile).length || 0}
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+          <TabsContent value="jobs" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold">Job Postings</h2>
+              <Button onClick={() => setShowJobForm(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Post New Job
+              </Button>
             </div>
+
+            {showJobForm && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Create New Job</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <JobPostForm onClose={() => setShowJobForm(false)} />
+                  </CardContent>
+                </Card>
+            )}
+
+            <div className="space-y-4">
+              {jobsLoading ? (
+                  <div className="text-center py-8">Loading jobs...</div>
+              ) : jobs.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">No jobs posted yet</div>
+              ) : (
+                  jobs.map((job) => (
+                      <Card key={job.id}>
+                        <CardHeader>
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <CardTitle>{job.title}</CardTitle>
+                              <CardDescription>
+                                {job.location} • {job.type}
+                              </CardDescription>
+                            </div>
+                            <div className="flex space-x-2">
+                              <Button variant="outline" size="sm">
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                              <Button variant="outline" size="sm">
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => handleDeleteJob(job.id)}
+                                  disabled={deleteJobMutation.isPending}
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-gray-600 mb-2">
+                            {job.description?.substring(0, 200)}...
+                          </p>
+                          {job.skills && job.skills.length > 0 && (
+                              <div className="flex flex-wrap gap-1">
+                                {job.skills.map((skill, index) => (
+                                    <Badge key={index} variant="secondary">{skill}</Badge>
+                                ))}
+                              </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                  ))
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="applications" className="space-y-6">
+            <h2 className="text-2xl font-semibold">Applications</h2>
+
+            <div className="space-y-4">
+              {applicationsLoading ? (
+                  <div className="text-center py-8">Loading applications...</div>
+              ) : applications.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">No applications received yet</div>
+              ) : (
+                  applications.map((application) => (
+                      <Card key={application.applicant_id}>
+                        <CardHeader>
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <CardTitle className="text-lg">
+                                {application.profiles?.first_name} {application.profiles?.last_name}
+                              </CardTitle>
+                              <CardDescription>
+                                Applied for: {application.jobs?.title}
+                              </CardDescription>
+                            </div>
+                            {/*<Badge className={getStatusBadgeColor(application.status)}>
+                              {application.status}
+                            </Badge>*/}
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-2">
+                            <p><strong>Email:</strong> {application.profiles?.email}</p>
+                            <p><strong>Phone:</strong> {application.profiles?.phone}</p>
+                            {/*<p><strong>Applied:</strong> {new Date(application.applied_at).toLocaleDateString()}</p>*/}
+                            {application.cover_letter && (
+                                <div>
+                                  <strong>Cover Letter:</strong>
+                                  <p className="text-sm text-gray-600 mt-1">{application.cover_letter}</p>
+                                </div>
+                            )}
+                            {application.cv_url && (
+                                <div>
+                                  <Button variant="outline" size="sm" asChild>
+                                    <a href={application.cv_url} target="_blank" rel="noopener noreferrer">
+                                      View CV
+                                    </a>
+                                  </Button>
+                                </div>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                  ))
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="candidates" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold">Candidate Management</h2>
+            </div>
+            <EnhancedCandidateSearch />
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+      </ProtectedRoute>
   )
 }
