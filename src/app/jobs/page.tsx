@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Briefcase, MapPin, Clock, DollarSign, Users, Search, Filter, Building2, Globe, Calendar } from 'lucide-react'
 import { useJobs } from '@/hooks/useJobs'
-import Loading from '@/components/Loading'
+import { Loading } from '@/components/Loading'
 
 export default function JobsPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -145,6 +145,10 @@ export default function JobsPage() {
                       <CardTitle className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
                         {job.title}
                       </CardTitle>
+                      <div className="flex items-center gap-2 mt-2 text-gray-600">
+                        <Building2 className="h-4 w-4" />
+                        <span className="font-medium">{job.company_name}</span>
+                      </div>
                     </div>
                     <Briefcase className="h-6 w-6 text-blue-500 flex-shrink-0" />
                   </div>
@@ -157,7 +161,19 @@ export default function JobsPage() {
                       <MapPin className="h-4 w-4" />
                       <span>{job.location || 'Location TBD'}</span>
                     </div>
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      <span>{job.job_type || 'Full-time'}</span>
+                    </div>
                   </div>
+
+                  {/* Salary */}
+                  {job.salary_range && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <DollarSign className="h-4 w-4 text-green-600" />
+                      <span className="font-medium text-green-600">{job.salary_range}</span>
+                    </div>
+                  )}
 
                   {/* Experience Level */}
                   {job.experience_level && (
