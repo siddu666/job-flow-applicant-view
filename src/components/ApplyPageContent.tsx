@@ -87,6 +87,8 @@ function ApplyPageContent() {
     setFormData(prev => ({ ...prev, skills: prev.skills.filter(s => s !== skill) }));
   };
 
+  const [newSkill, setNewSkill] = useState('');
+
   if (authLoading || profileLoading || jobLoading) {
     return (
         <div className="min-h-screen flex items-center justify-center">
@@ -111,7 +113,7 @@ function ApplyPageContent() {
     );
   }
 
-  const [newSkill, setNewSkill] = useState('');
+
 
   const addSkill = () => {
     if (newSkill.trim() !== '') {
