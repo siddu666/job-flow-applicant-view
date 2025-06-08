@@ -11,15 +11,6 @@ import { useState, useEffect } from "react";
 
 function JobsPageContent() {
   const { jobs, loading } = useJobs();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return <Loading />;
-  }
 
   if (loading) {
     return <Loading />;

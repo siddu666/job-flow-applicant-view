@@ -31,14 +31,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Get initial session
     const getSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession()
-      if (error) {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        if (error) {
+          console.error('Error getting session:', error)
+        } else {
+          setSession(session)
+          setUser(session?.user ?? null)
+        }
+      } catch (error) {
         console.error('Error getting session:', error)
-      } else {
-        setSession(session)
-        setUser(session?.user ?? null)
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
 
     getSession()
@@ -48,8 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       async (event, session) => {
         setSession(session)
         setUser(session?.user ?? null)
-        setLoading(false)
-
+        
         if (event === 'SIGNED_IN') {
           // Check if this is a new user who just confirmed their email
           if (session?.user && !session.user.user_metadata?.profile_created) {
@@ -67,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         } else if (event === 'SIGNED_OUT') {
           // Only redirect to signin if we're not already there
-          if (window.location.pathname !== '/signin') {
+          if (typeof window !== 'undefined' && window.location.pathname !== '/signin') {
             router.push('/signin')
           }
         }
@@ -179,6 +183,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
     resetPassword,
     updateProfile
+  }
+
+  // Don't render children until mounted to prevent hydration issues
+  if (!isMounted) {
+    return (
+      <AuthContext.Provider value={value}>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
+            <p className="text-lg text-gray-600">Loading...</p>
+          </div>
+        </div>
+      </AuthContext.Provider>
+    )
   }
 
   return (

@@ -17,9 +17,14 @@ export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = 
   const router = useRouter()
   const pathname = usePathname()
   const [hasRedirected, setHasRedirected] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    if (loading || profileLoading || hasRedirected) return
+    setIsMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isMounted || loading || profileLoading || hasRedirected) return
 
     // If user is not authenticated and page requires auth
     if (!user && !allowUnauthenticated) {
@@ -28,37 +33,41 @@ export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = 
       return
     }
 
-    // If user is authenticated but we need a specific role
-    if (user && requiredRole && profile?.role !== requiredRole) {
-      // Don't redirect if we're already on the correct page for the user's role
-      const userRole = profile?.role
-      const currentPath = pathname
+    // If user is authenticated and we need to check role-based access
+    if (user && profile) {
+      const userRole = profile.role
       
-      if (userRole === 'admin' && currentPath !== '/admin') {
-        setHasRedirected(true)
-        router.push('/admin')
-        return
-      }
-      
-      if (userRole === 'recruiter' && currentPath !== '/jobs') {
-        setHasRedirected(true)
-        router.push('/jobs')
-        return
-      }
-      
-      if (userRole === 'applicant' && currentPath !== '/profile' && currentPath !== '/jobs' && currentPath !== '/apply') {
-        setHasRedirected(true)
-        router.push('/profile')
-        return
+      // If specific role is required and user doesn't have it, redirect based on their role
+      if (requiredRole && userRole !== requiredRole) {
+        if (userRole === 'admin' && pathname !== '/admin') {
+          setHasRedirected(true)
+          router.push('/admin')
+          return
+        }
+        
+        if (userRole === 'recruiter' && pathname !== '/jobs') {
+          setHasRedirected(true)
+          router.push('/jobs')
+          return
+        }
+        
+        if (userRole === 'applicant' && !['/profile', '/jobs', '/apply'].includes(pathname)) {
+          setHasRedirected(true)
+          router.push('/profile')
+          return
+        }
       }
     }
-  }, [user, profile, loading, profileLoading, requiredRole, router, allowUnauthenticated, pathname, hasRedirected])
+  }, [user, profile, loading, profileLoading, requiredRole, router, allowUnauthenticated, pathname, hasRedirected, isMounted])
 
-  // Show loading while checking auth
-  if (loading || profileLoading) {
+  // Show loading while checking auth or not mounted
+  if (!isMounted || loading || profileLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
+          <p className="text-lg text-gray-600">Loading...</p>
+        </div>
       </div>
     )
   }
