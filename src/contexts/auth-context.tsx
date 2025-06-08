@@ -59,18 +59,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             if (!existingProfile) {
               // Profile doesn't exist, user likely just confirmed email
-              // Redirect to onboarding or create basic profile
               console.log('User confirmed email but no profile exists');
             }
           }
-
-          // For role-based redirection, we need to fetch the profile first
-          // Let the individual pages handle the redirection based on profile role
-          if (session?.user) {
-            router.push('/profile')
-          }
         } else if (event === 'SIGNED_OUT') {
-          router.push('/signin')
+          // Only redirect to signin if we're not already there
+          if (window.location.pathname !== '/signin') {
+            router.push('/signin')
+          }
         }
       }
     )
