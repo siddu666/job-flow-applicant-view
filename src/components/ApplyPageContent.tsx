@@ -33,10 +33,15 @@ function ApplyPageContent() {
     cover_letter: '',
     skills: [] as string[],
   });
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // When setting formData from profile, ensure null values are converted to empty strings
   useEffect(() => {
-    if (profile && user) {
+    if (profile && user && isMounted) {
       setFormData({
         full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim(),
         email: profile.email || user.email || '',
@@ -45,7 +50,7 @@ function ApplyPageContent() {
         skills: profile.skills || [],
       });
     }
-  }, [profile, user]);
+  }, [profile, user, isMounted]);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -89,7 +94,7 @@ function ApplyPageContent() {
 
   const [newSkill, setNewSkill] = useState('');
 
-  if (authLoading || profileLoading || jobLoading) {
+  if (!isMounted || authLoading || profileLoading || jobLoading) {
     return (
         <div className="min-h-screen flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin" />

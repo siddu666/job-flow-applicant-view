@@ -10,14 +10,18 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 
 function JobsPageContent() {
-  const { jobs: jobs, loading } = useJobs();
+  const { jobs, loading } = useJobs();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  if (!isMounted || loading) {
+  if (!isMounted) {
+    return <Loading />;
+  }
+
+  if (loading) {
     return <Loading />;
   }
 

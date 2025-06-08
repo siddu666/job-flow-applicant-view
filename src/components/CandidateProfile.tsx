@@ -245,7 +245,7 @@ const CandidateProfile = () => {
         setIsEditing(true);
       }
     }
-  }, [profile]);
+  }, [profile, isMounted]);
 
   const handleSave = async () => {
     if (!user?.id) return;
