@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { ProtectedRoute } from '@/components/ProtectedRoute'
-import { AdminCandidates } from '@/components/AdminCandidates'
-import { EnhancedCandidateSearch } from '@/components/admin/EnhancedCandidateSearch'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AdminCandidates } from "@/components/AdminCandidates";
+import EnhancedCandidateSearch from "@/components/admin/EnhancedCandidateSearch";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function AdminPageContent() {
   return (
@@ -63,7 +63,7 @@ function AdminPageContent() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }
 
 export default function AdminPage() {
@@ -71,5 +71,5 @@ export default function AdminPage() {
     <ProtectedRoute requiredRole="admin">
       <AdminPageContent />
     </ProtectedRoute>
-  )
+  );
 }

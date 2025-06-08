@@ -1,20 +1,18 @@
-'use client'
+"use client";
 
-import { ProtectedRoute } from '@/components/ProtectedRoute'
-import { useAuth } from '@/contexts/auth-context'
-import { useJobs } from '@/hooks/useJobs'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import Loading from '@/components/Loading'
-import Link from 'next/link'
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { useJobs } from "@/hooks/useJobs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import Loading from "@/components/Loading";
+import Link from "next/link";
 
 function JobsPageContent() {
-  const { user } = useAuth()
-  const { data: jobs, isLoading } = useJobs()
+  const { jobs: jobs, loading } = useJobs();
 
-  if (isLoading) {
-    return <Loading />
+  if (loading) {
+    return <Loading />;
   }
 
   return (
@@ -39,24 +37,38 @@ function JobsPageContent() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="text-gray-600 line-clamp-3">{job.description}</p>
+                  <p className="text-gray-600 line-clamp-3">
+                    {job.description}
+                  </p>
 
                   {job.salary_range && (
                     <div>
-                      <label className="text-sm font-medium text-gray-500">Salary Range</label>
-                      <p className="text-lg font-semibold">{job.salary_range}</p>
+                      <label className="text-sm font-medium text-gray-500">
+                        Salary Range
+                      </label>
+                      <p className="text-lg font-semibold">
+                        {job.salary_range}
+                      </p>
                     </div>
                   )}
 
                   {job.required_skills && job.required_skills.length > 0 && (
                     <div>
-                      <label className="text-sm font-medium text-gray-500">Required Skills</label>
+                      <label className="text-sm font-medium text-gray-500">
+                        Required Skills
+                      </label>
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {job.required_skills.slice(0, 3).map((skill: string, index: number) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {skill}
-                          </Badge>
-                        ))}
+                        {job.required_skills
+                          .slice(0, 3)
+                          .map((skill: string, index: number) => (
+                            <Badge
+                              key={index}
+                              variant="outline"
+                              className="text-xs"
+                            >
+                              {skill}
+                            </Badge>
+                          ))}
                         {job.required_skills.length > 3 && (
                           <Badge variant="outline" className="text-xs">
                             +{job.required_skills.length - 3} more
@@ -77,8 +89,12 @@ function JobsPageContent() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <h3 className="text-xl font-semibold mb-4">No jobs available at the moment</h3>
-            <p className="text-gray-600 mb-6">Check back later for new opportunities!</p>
+            <h3 className="text-xl font-semibold mb-4">
+              No jobs available at the moment
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Check back later for new opportunities!
+            </p>
             <Link href="/apply">
               <Button>Submit General Application</Button>
             </Link>
@@ -86,7 +102,7 @@ function JobsPageContent() {
         )}
       </div>
     </div>
-  )
+  );
 }
 
 export default function JobsPage() {
@@ -94,5 +110,5 @@ export default function JobsPage() {
     <ProtectedRoute allowUnauthenticated={true}>
       <JobsPageContent />
     </ProtectedRoute>
-  )
+  );
 }
