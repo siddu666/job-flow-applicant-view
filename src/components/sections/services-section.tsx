@@ -134,10 +134,6 @@ export function ServicesSection() {
                 <TrendingUp className="w-4 h-4 mr-2 text-green-400" />
                 98% Client Satisfaction
               </div>
-              <div className="flex items-center">
-                <Zap className="w-4 h-4 mr-2 text-yellow-400" />
-                24/7 Support
-              </div>
             </div>
           </div>
 
@@ -186,19 +182,16 @@ export function ServicesSection() {
                         <div className="flex justify-between text-xs">
                           <span className="text-green-400">99% Uptime</span>
                           <span className="text-blue-400">50+ Projects</span>
-                          <span className="text-purple-400">24/7 Support</span>
                         </div>
                       </div>
 
                       {/* Learn More Button */}
-                      <div className="pt-4">
-                        <Button
-                            variant="ghost"
-                            className="w-full text-cyan-300 hover:text-white hover:bg-white/10 transition-all duration-300 group/btn"
-                        >
+                      <div  className="pt-4">
+
+                        <Link href="/contact" className="hover:text-blue-400 transition-colors flex items-center group">
+                          <span className="mr-2 transform group-hover:translate-x-1 transition-transform">→</span>
                           Get Free Consultation
-                          <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                        </Button>
+                        </Link>
                       </div>
                     </CardContent>
                   </Card>

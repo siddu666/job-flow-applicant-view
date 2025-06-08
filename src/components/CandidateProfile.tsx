@@ -278,12 +278,12 @@ const CandidateProfile = () => {
     }
 
     try {
-      const updatedProfile = await uploadCV.mutateAsync({ userId: user.id, file });
+      const cv_url = await uploadCV.mutateAsync({ id: user.id, file });
       await updateProfile.mutateAsync({
         userId: user.id,
         updates: {
           ...formData,
-          cv_url: updatedProfile.cv_url,
+          cv_url: cv_url,
         },
       });
       toast.success("CV uploaded successfully!");

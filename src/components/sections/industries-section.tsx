@@ -9,20 +9,14 @@ export function IndustriesSection() {
 
   const industries = [
     { name: 'Technology', icon: Code, color: 'from-blue-500 to-cyan-500', bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700' },
+    { name: 'Automotive', icon: Truck, color: 'from-yellow-500 to-orange-500', bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-700' },
     { name: 'Healthcare', icon: Heart, color: 'from-red-500 to-pink-500', bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700' },
     { name: 'Finance', icon: Building2, color: 'from-green-500 to-emerald-500', bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700' },
-    { name: 'Education', icon: GraduationCap, color: 'from-purple-500 to-violet-500', bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700' },
     { name: 'Manufacturing', icon: Factory, color: 'from-gray-500 to-slate-500', bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-700' },
     { name: 'Retail', icon: ShoppingCart, color: 'from-orange-500 to-amber-500', bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700' },
     { name: 'Consulting', icon: Users, color: 'from-indigo-500 to-blue-500', bg: 'bg-indigo-50', border: 'border-indigo-200', text: 'text-indigo-700' },
     { name: 'Media', icon: Camera, color: 'from-pink-500 to-rose-500', bg: 'bg-pink-50', border: 'border-pink-200', text: 'text-pink-700' },
-    { name: 'Real Estate', icon: Home, color: 'from-teal-500 to-cyan-500', bg: 'bg-teal-50', border: 'border-teal-200', text: 'text-teal-700' },
-    { name: 'Transportation', icon: Truck, color: 'from-yellow-500 to-orange-500', bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-700' },
     { name: 'Energy', icon: Zap, color: 'from-lime-500 to-green-500', bg: 'bg-lime-50', border: 'border-lime-200', text: 'text-lime-700' },
-    { name: 'Government', icon: Shield, color: 'from-slate-500 to-gray-500', bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700' },
-    { name: 'Non-Profit', icon: HandHeart, color: 'from-emerald-500 to-teal-500', bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700' },
-    { name: 'Hospitality', icon: Coffee, color: 'from-amber-500 to-orange-500', bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700' },
-    { name: 'Agriculture', icon: Wheat, color: 'from-green-600 to-lime-500', bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700' }
   ]
 
   return (

@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/auth-context';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import {useUploadCV} from "@/hooks/useProfile";
 
 interface ReviewSubmitStepProps {
   data: OnboardingData;
@@ -25,6 +26,7 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user, signUp } = useAuth();
   const router = useRouter();
+  const uploadCV = useUploadCV();
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -45,26 +47,42 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({
         throw new Error('Failed to get user ID');
       }
 
-      // Upload CV if provided
-      let cvUrl = null;
-      if (data.cvFile) {
-        const fileExt = data.cvFile.name.split('.').pop();
-        const fileName = `${userId}/cv.${fileExt}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('documents')
-          .upload(fileName, data.cvFile, { upsert: true });
-
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('documents')
-          .getPublicUrl(fileName);
-
-        cvUrl = publicUrl;
+      const file = data.cvFile;
+      if (!file) {
+        toast.error("No CV file provided");
+        setIsSubmitting(false);
+        return;
       }
 
-      // Update or create complete profile
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("File size must be less than 10MB");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const allowedTypes = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ];
+
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Only PDF and Word documents are allowed");
+        setIsSubmitting(false);
+        return;
+      }
+
+      let cvUrl: string | null = null;
+
+      try {
+        cvUrl = await uploadCV.mutateAsync({ id: userId, file });
+        toast.success("CV uploaded successfully!");
+      } catch (error) {
+        console.error("Error uploading CV:", error);
+        toast.error("Failed to upload CV. Please try again.");
+      }
+
+      // Prepare profile data
       const profileData = {
         id: userId,
         email: data.email,
@@ -85,12 +103,12 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({
         job_seeking_status: 'actively_looking',
         willing_to_relocate: false,
         is_active: true,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert(profileData, { onConflict: 'id' });
+          .from('profiles')
+          .upsert(profileData, { onConflict: 'id' });
 
       if (profileError) throw profileError;
 

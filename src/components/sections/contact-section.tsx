@@ -94,7 +94,7 @@ export function ContactSection() {
                     <div className="space-y-6">
                       {[
                         { icon: Mail, text: 'hrteam@justeragroup.com', color: 'blue', subtext: 'Response within 2 hours' },
-                        { icon: Phone, text: '+46769624470', color: 'green', subtext: 'Direct line to consultants' },
+                        { icon: Phone, text: '+46734852217', color: 'green', subtext: 'Direct line to consultants' },
                         { icon: MapPin, text: 'Stockholm, Sweden', color: 'purple', subtext: 'Serving all of Scandinavia' }
                       ].map((item, index) => (
                           <div key={index} className="group/item flex items-center p-4 rounded-2xl hover:bg-gray-50/80 transition-all duration-300 cursor-pointer">
@@ -123,10 +123,6 @@ export function ContactSection() {
                       <div className="flex justify-between items-center">
                         <span>Monday - Friday</span>
                         <span className="font-medium text-gray-900">8:00 AM - 5:00 PM</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span>Sunday</span>
-                        <span className="font-medium text-gray-900">Closed</span>
                       </div>
                     </div>
                   </div>
