@@ -66,11 +66,11 @@ export const generateCVSignedUrl = async (cvPath: string): Promise<string | null
   if (!cvPath) return null;
 
   try {
-    const twoYearsInSeconds = 2 * 365 * 24 * 60 * 60; // 63,072,000 seconds
+    const thirtyMinutesInSeconds = 30 * 60; // 1,800 seconds
 
     const { data, error } = await supabase.storage
-      .from('documents')
-      .createSignedUrl(cvPath, twoYearsInSeconds);
+        .from('documents')
+        .createSignedUrl(cvPath, thirtyMinutesInSeconds);
 
     if (error) {
       console.error('Error generating signed URL:', error);
@@ -102,34 +102,8 @@ export const useUploadCV = () => {
           console.error('Upload error:', uploadError);
           throw new Error(`Failed to upload CV: ${uploadError.message}`);
         }
-
-        // Generate a signed URL (valid for 1 year - more reasonable duration)
-        const { data, error: signedUrlError } = await supabase.storage
-            .from('documents')
-            .createSignedUrl(fileName, 60 * 60 * 24 * 365); // 1 year
-
-        if (signedUrlError) {
-          console.error('Error generating signed URL:', signedUrlError);
-          throw new Error(`Failed to generate signed URL: ${signedUrlError.message}`);
-        }
-
-        const signedUrl = data?.signedUrl;
-        if (!signedUrl) {
-          throw new Error('Failed to generate signed URL');
-        }
-
-        // Store the file path instead of the signed URL
-        const { error: updateError } = await supabase
-            .from('profiles')
-            .update({ cv_url: fileName })
-            .eq('id', id);
-
-        if (updateError) {
-          console.error('Error updating profile with CV URL:', updateError);
-          throw new Error(`Failed to update profile: ${updateError.message}`);
-        }
-
-        return signedUrl;
+        
+        return fileName;
       } catch (error) {
         console.error("Unexpected error uploading CV:", error);
         throw error;

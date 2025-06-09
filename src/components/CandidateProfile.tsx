@@ -19,6 +19,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Upload, Plus, X, User, FileText, Briefcase, MapPin, Calendar, DollarSign, Search, CheckCircle, Edit3, Save } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import {supabase} from "@/integrations/supabase/client";
 
 interface FormData {
   first_name: string;
@@ -257,15 +258,22 @@ const CandidateProfile = () => {
     toast.success("Profile updated successfully!");
   };
 
-  const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!user?.id || !file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
+    // Check if user is logged in and a file is selected
+    if (!user?.id || !file) {
+      return;
+    }
+
+    // Validate file size
+    const maxFileSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxFileSize) {
       toast.error("File size must be less than 10MB");
       return;
     }
 
+    // Validate file type
     const allowedTypes = [
       "application/pdf",
       "application/msword",
@@ -278,8 +286,22 @@ const CandidateProfile = () => {
     }
 
     try {
-      await uploadCV.mutateAsync({ id: user.id, file });
-      // CV URL is now automatically updated in the profile table by useUploadCV hook
+      // Upload the file
+      const fileName = await uploadCV.mutateAsync({ id: user.id, file });
+
+      // Update the profile with the new CV URL
+      const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ cv_url: fileName })
+          .eq('id', user.id);
+
+      if (updateError) {
+        console.error('Error updating profile with CV URL:', updateError);
+        toast.error(`Failed to update profile: ${updateError.message}`);
+        return;
+      }
+
+      toast.success("CV uploaded successfully!");
     } catch (error) {
       console.error("Error uploading CV:", error);
       toast.error("Failed to upload CV. Please try again.");
