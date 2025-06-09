@@ -258,3 +258,206 @@ export function JobManagement() {
 }
 
 export default JobManagement;
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useJobs } from '@/hooks/useJobs';
+import { 
+  Plus, 
+  Briefcase, 
+  MapPin, 
+  Calendar, 
+  DollarSign, 
+  Edit, 
+  Trash2,
+  Search,
+  Filter
+} from 'lucide-react';
+import { toast } from 'sonner';
+
+const JobManagement = () => {
+  const { data: jobs = [], isLoading } = useJobs();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const filteredJobs = jobs.filter(job =>
+    job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    job.location.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="py-8 text-center">
+            <div className="flex items-center justify-center space-x-2">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600"></div>
+              <p className="text-gray-500">Loading jobs...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <Card className="bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-200">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl font-semibold text-indigo-700 flex items-center gap-2">
+                <Briefcase className="h-6 w-6" />
+                Job Management
+              </CardTitle>
+              <p className="text-indigo-600 mt-1">
+                Create, edit, and manage job postings
+              </p>
+            </div>
+            <Button 
+              onClick={() => setIsCreateModalOpen(true)}
+              className="bg-indigo-600 hover:bg-indigo-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Post New Job
+            </Button>
+          </div>
+        </CardHeader>
+      </Card>
+
+      {/* Search and Filters */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex items-center space-x-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search jobs by title, company, or location..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Button variant="outline" className="border-indigo-500 text-indigo-600 hover:bg-indigo-50">
+              <Filter className="h-4 w-4 mr-2" />
+              Filters
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Jobs List */}
+      <div className="grid grid-cols-1 gap-4">
+        {filteredJobs.map((job) => (
+          <Card key={job.id} className="border border-gray-200 hover:border-indigo-300 transition-colors">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <h3 className="text-lg font-semibold text-gray-900">{job.title}</h3>
+                    <Badge 
+                      variant={job.status === 'active' ? 'default' : 'secondary'}
+                      className={job.status === 'active' ? 'bg-green-100 text-green-800' : ''}
+                    >
+                      {job.status}
+                    </Badge>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Briefcase className="h-4 w-4 mr-2 text-indigo-500" />
+                      {job.company}
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <MapPin className="h-4 w-4 mr-2 text-indigo-500" />
+                      {job.location}
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Calendar className="h-4 w-4 mr-2 text-indigo-500" />
+                      {job.experience_level || 'Any level'}
+                    </div>
+                    {(job.salary_min || job.salary_max) && (
+                      <div className="flex items-center text-sm text-gray-600">
+                        <DollarSign className="h-4 w-4 mr-2 text-indigo-500" />
+                        {job.salary_min && job.salary_max 
+                          ? `${job.salary_min.toLocaleString()}-${job.salary_max.toLocaleString()} SEK`
+                          : job.salary_min 
+                          ? `From ${job.salary_min.toLocaleString()} SEK`
+                          : `Up to ${job.salary_max?.toLocaleString()} SEK`}
+                      </div>
+                    )}
+                  </div>
+
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                    {job.description}
+                  </p>
+
+                  {job.skills && job.skills.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-4">
+                      {job.skills.slice(0, 5).map((skill, index) => (
+                        <Badge key={index} variant="outline" className="text-xs bg-indigo-50 text-indigo-700 border-indigo-200">
+                          {skill}
+                        </Badge>
+                      ))}
+                      {job.skills.length > 5 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{job.skills.length - 5} more
+                        </Badge>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center space-x-2 ml-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-indigo-500 text-indigo-600 hover:bg-indigo-50"
+                  >
+                    <Edit className="h-4 w-4 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-red-500 text-red-600 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {filteredJobs.length === 0 && (
+        <Card>
+          <CardContent className="py-12 text-center">
+            <Briefcase className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No jobs found</h3>
+            <p className="text-gray-500 mb-4">
+              {searchTerm ? 'No jobs match your search criteria.' : 'No jobs have been posted yet.'}
+            </p>
+            <Button 
+              onClick={() => setIsCreateModalOpen(true)}
+              className="bg-indigo-600 hover:bg-indigo-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Post Your First Job
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+};
+
+export default JobManagement;

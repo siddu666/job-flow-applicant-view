@@ -479,5 +479,4 @@ const JobCandidateRecommendations = () => {
   );
 };
 
-export { JobCandidateRecommendations };
 export default JobCandidateRecommendations;
