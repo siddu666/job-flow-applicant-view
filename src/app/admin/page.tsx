@@ -3,7 +3,7 @@
 
 import { useAuth } from '@/contexts/auth-context';
 import { useProfile } from '@/hooks/useProfile';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import {ProtectedRoute} from '@/components/ProtectedRoute';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, Briefcase, Target, BarChart3 } from 'lucide-react';
@@ -15,7 +15,7 @@ import ApplicationReview from '@/components/ApplicationReview';
 
 function AdminDashboard() {
   const { user } = useAuth();
-  const { profile } = useProfile();
+  const { data: profile } = useProfile(user?.id);
 
   return (
     <div className="min-h-screen bg-gray-50">

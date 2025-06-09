@@ -1,10 +1,10 @@
-
 'use client'
 
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { useProfile } from "./useProfile"
 
+// Updated JobMatch interface to handle nullable database fields
 export interface JobMatch {
   id: string
   title: string
@@ -16,6 +16,7 @@ export interface JobMatch {
   experience_level: string
   posted_by: string
   created_at: string
+  updated_at?: string | null
   match_score: number
   match_reasons: {
     skills_match: {
@@ -38,24 +39,29 @@ export interface JobMatch {
   }
 }
 
+interface ExperienceRange {
+  min: number
+  max: number
+}
+
 // Skills matching algorithm
 const calculateSkillsMatch = (userSkills: string[], jobSkills: string[]) => {
   const normalizeSkill = (skill: string) => skill.toLowerCase().trim()
   const normalizedUserSkills = userSkills.map(normalizeSkill)
   const normalizedJobSkills = jobSkills.map(normalizeSkill)
-  
+
   const matchingSkills: string[] = []
   const missingSkills: string[] = []
-  
+
   normalizedJobSkills.forEach(jobSkill => {
-    const hasMatch = normalizedUserSkills.some(userSkill => 
-      userSkill.includes(jobSkill) || 
-      jobSkill.includes(userSkill) ||
-      // Handle common abbreviations and variations
-      getSkillVariations(userSkill).includes(jobSkill) ||
-      getSkillVariations(jobSkill).includes(userSkill)
+    const hasMatch = normalizedUserSkills.some(userSkill =>
+        userSkill.includes(jobSkill) ||
+        jobSkill.includes(userSkill) ||
+        // Handle common abbreviations and variations
+        getSkillVariations(userSkill).includes(jobSkill) ||
+        getSkillVariations(jobSkill).includes(userSkill)
     )
-    
+
     if (hasMatch) {
       // Find the original skill name for display
       const originalSkill = jobSkills.find(s => normalizeSkill(s) === jobSkill) || jobSkill
@@ -65,17 +71,17 @@ const calculateSkillsMatch = (userSkills: string[], jobSkills: string[]) => {
       missingSkills.push(originalSkill)
     }
   })
-  
-  const score = normalizedJobSkills.length > 0 
-    ? (matchingSkills.length / normalizedJobSkills.length) * 100 
-    : 0
-  
+
+  const score = normalizedJobSkills.length > 0
+      ? (matchingSkills.length / normalizedJobSkills.length) * 100
+      : 0
+
   return { matchingSkills, missingSkills, score }
 }
 
 // Get skill variations for better matching
 const getSkillVariations = (skill: string): string[] => {
-  const variations: { [key: string]: string[] } = {
+  const variations: Record<string, string[]> = {
     'javascript': ['js', 'node.js', 'nodejs'],
     'typescript': ['ts'],
     'react': ['reactjs', 'react.js'],
@@ -94,15 +100,15 @@ const getSkillVariations = (skill: string): string[] => {
     'jenkins': ['ci/cd'],
     'git': ['github', 'gitlab', 'version control']
   }
-  
+
   const normalizedSkill = skill.toLowerCase()
-  
+
   // Return variations for the skill
   for (const [key, values] of Object.entries(variations)) {
     if (key === normalizedSkill) return values
     if (values.includes(normalizedSkill)) return [key, ...values.filter(v => v !== normalizedSkill)]
   }
-  
+
   return []
 }
 
@@ -111,17 +117,17 @@ const calculateLocationMatch = (userLocation: string, jobLocation: string, prefe
   const normalizeLocation = (loc: string) => loc.toLowerCase().trim()
   const normalizedUserLoc = normalizeLocation(userLocation)
   const normalizedJobLoc = normalizeLocation(jobLocation)
-  
+
   let isPreferred = false
   let distanceScore = 0
-  
+
   // Check if job location is in user's preferred locations
   if (preferredLocations) {
-    isPreferred = preferredLocations.some(pref => 
-      normalizeLocation(pref) === normalizedJobLoc
+    isPreferred = preferredLocations.some(pref =>
+        normalizeLocation(pref) === normalizedJobLoc
     )
   }
-  
+
   // Exact match
   if (normalizedUserLoc === normalizedJobLoc) {
     distanceScore = 100
@@ -137,9 +143,9 @@ const calculateLocationMatch = (userLocation: string, jobLocation: string, prefe
   else {
     distanceScore = 30 // Different location but still possible
   }
-  
+
   const score = isPreferred ? Math.min(distanceScore + 20, 100) : distanceScore
-  
+
   return { isPreferred, distanceScore, score }
 }
 
@@ -153,29 +159,25 @@ const areSimilarLocations = (loc1: string, loc2: string): boolean => {
     ['umeå', 'gävle'],
     ['örebro', 'eskilstuna']
   ]
-  
-  return regions.some(region => 
-    region.includes(loc1) && region.includes(loc2)
+
+  return regions.some(region =>
+      region.includes(loc1) && region.includes(loc2)
   )
 }
 
 // Experience matching algorithm
 const calculateExperienceMatch = (userExperience: number, jobExperienceLevel: string) => {
-  const experienceLevels = {
+  const experienceLevels: Record<string, ExperienceRange> = {
     'entry level': { min: 0, max: 2 },
     'mid level': { min: 2, max: 5 },
     'senior level': { min: 5, max: 100 },
-    'junior': { min: 0, max: 3 },
-    'senior': { min: 5, max: 100 },
-    'lead': { min: 7, max: 100 },
-    'principal': { min: 10, max: 100 }
   }
-  
+
   const normalizedLevel = jobExperienceLevel.toLowerCase()
   const levelRange = experienceLevels[normalizedLevel] || { min: 0, max: 100 }
-  
+
   const isSuitable = userExperience >= levelRange.min && userExperience <= levelRange.max + 2
-  
+
   let score = 0
   if (userExperience >= levelRange.min && userExperience <= levelRange.max) {
     score = 100 // Perfect match
@@ -186,7 +188,7 @@ const calculateExperienceMatch = (userExperience: number, jobExperienceLevel: st
   } else {
     score = 30 // Poor match but not impossible
   }
-  
+
   return { userExperience, requiredLevel: jobExperienceLevel, isSuitable, score }
 }
 
@@ -200,22 +202,24 @@ const getCompatibilityDescription = (overallScore: number): string => {
   return "Low match - Consider skill development"
 }
 
-export const useJobRecommendations = (limit: number = 10) => {
-  const { profile } = useProfile()
+export const useJobRecommendations = (userId?: string, limit: number = 10) => {
+  const profileQuery = useProfile(userId)
 
   return useQuery({
-    queryKey: ['job-recommendations', profile?.id, limit],
+    queryKey: ['job-recommendations', profileQuery.data?.id, limit],
     queryFn: async (): Promise<JobMatch[]> => {
+      const profile = profileQuery.data
+
       if (!profile?.id) {
         throw new Error('User profile not found')
       }
 
       // Fetch active jobs
       const { data: jobs, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .eq('status', 'active')
-        .order('created_at', { ascending: false })
+          .from('jobs')
+          .select('*')
+          .eq('status', 'active')
+          .order('created_at', { ascending: false })
 
       if (error) throw error
 
@@ -226,10 +230,10 @@ export const useJobRecommendations = (limit: number = 10) => {
       // Calculate matches for each job
       const jobMatches: JobMatch[] = jobs.map(job => {
         const userSkills = profile.skills || []
-        const jobSkills = job.skills || []
+        const jobSkills = job.skills || [] // Handle null skills from database
         const userLocation = profile.current_location || ''
         const userExperience = profile.experience_years || 0
-        const preferredLocations = profile.preferred_locations
+        const preferredLocations = profile.preferred_cities || undefined
 
         // Calculate individual match components
         const skillsMatch = calculateSkillsMatch(userSkills, jobSkills)
@@ -244,13 +248,23 @@ export const useJobRecommendations = (limit: number = 10) => {
         }
 
         const overallScore = Math.round(
-          (skillsMatch.score * weights.skills) +
-          (locationMatch.score * weights.location) +
-          (experienceMatch.score * weights.experience)
+            (skillsMatch.score * weights.skills) +
+            (locationMatch.score * weights.location) +
+            (experienceMatch.score * weights.experience)
         )
 
         return {
-          ...job,
+          id: job.id,
+          title: job.title,
+          description: job.description,
+          location: job.location,
+          type: job.type,
+          requirements: job.requirements,
+          skills: job.skills || [], // Handle null skills - ensure array
+          experience_level: job.experience_level || 'any level', // Handle null experience_level
+          posted_by: job.posted_by,
+          created_at: job.created_at || '', // Handle null created_at
+          updated_at: job.updated_at,
           match_score: overallScore,
           match_reasons: {
             skills_match: {
@@ -276,32 +290,34 @@ export const useJobRecommendations = (limit: number = 10) => {
 
       // Sort by match score and return top matches
       return jobMatches
-        .sort((a, b) => b.match_score - a.match_score)
-        .slice(0, limit)
+          .sort((a, b) => b.match_score - a.match_score)
+          .slice(0, limit)
     },
-    enabled: !!profile?.id,
+    enabled: !!profileQuery.data?.id,
   })
 }
 
 // Hook for getting detailed explanation of a specific job match
-export const useJobMatchExplanation = (jobId: string) => {
-  const { profile } = useProfile()
+export const useJobMatchExplanation = (jobId: string, userId?: string) => {
+  const profileQuery = useProfile(userId)
 
   return useQuery({
-    queryKey: ['job-match-explanation', jobId, profile?.id],
+    queryKey: ['job-match-explanation', jobId, profileQuery.data?.id],
     queryFn: async () => {
+      const profile = profileQuery.data
+
       if (!profile?.id || !jobId) return null
 
       const { data: job, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .eq('id', jobId)
-        .single()
+          .from('jobs')
+          .select('*')
+          .eq('id', jobId)
+          .single()
 
       if (error) throw error
 
       const userSkills = profile.skills || []
-      const jobSkills = job.skills || []
+      const jobSkills = job.skills || [] // Handle null skills
       const userLocation = profile.current_location || ''
       const userExperience = profile.experience_years || 0
 
@@ -317,15 +333,15 @@ export const useJobMatchExplanation = (jobId: string) => {
         recommendations: {
           skillsToImprove: skillsMatch.missingSkills.slice(0, 3),
           strengthAreas: skillsMatch.matchingSkills,
-          locationConsiderations: locationMatch.isPreferred 
-            ? "This job is in your preferred location"
-            : "Consider relocation requirements",
+          locationConsiderations: locationMatch.isPreferred
+              ? "This job is in your preferred location"
+              : "Consider relocation requirements",
           experienceGuidance: experienceMatch.isSuitable
-            ? "Your experience level is well-suited for this role"
-            : "Consider if this role aligns with your career progression goals"
+              ? "Your experience level is well-suited for this role"
+              : "Consider if this role aligns with your career progression goals"
         }
       }
     },
-    enabled: !!profile?.id && !!jobId,
+    enabled: !!profileQuery.data?.id && !!jobId,
   })
 }

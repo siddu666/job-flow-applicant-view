@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/auth-context';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import {ProtectedRoute} from '@/components/ProtectedRoute';
 import JobRecommendations from '@/components/JobRecommendations';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Target, Sparkles } from 'lucide-react';

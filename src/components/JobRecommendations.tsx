@@ -1,6 +1,6 @@
 
 import React, { useState } from "react"
-import { useJobRecommendations, useJobMatchExplanation } from "@/hooks/useJobRecommendations"
+import { useJobRecommendations } from "@/hooks/useJobRecommendations"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -9,7 +9,6 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { 
   MapPin, 
   Calendar, 
-  DollarSign, 
   Star, 
   ChevronDown, 
   ChevronRight, 
@@ -27,9 +26,11 @@ import {
 import Link from "next/link"
 import Modal from "@/components/ui/Modal"
 import { JobMatch } from "@/hooks/useJobRecommendations"
+import {useAuth} from "@/contexts/auth-context";
 
 const JobRecommendations = () => {
-  const { data: recommendedJobs = [], isLoading } = useJobRecommendations(15)
+  const { user } = useAuth();
+  const { data: recommendedJobs = [], isLoading } = useJobRecommendations(user?.id,15)
   const [selectedJob, setSelectedJob] = useState<JobMatch | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [expandedJobs, setExpandedJobs] = useState<Set<string>>(new Set())
@@ -89,7 +90,7 @@ const JobRecommendations = () => {
           </CardTitle>
           <p className="text-indigo-600">
             AI-powered job matches based on your skills, experience, and preferences. 
-            Each recommendation includes detailed explanations to help you understand why it's a good fit.
+            Each recommendation includes detailed explanations to help you understand why it is a good fit.
           </p>
         </CardHeader>
       </Card>
@@ -376,7 +377,7 @@ const JobRecommendations = () => {
             <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-700 mb-2">No Job Recommendations Found</h3>
             <p className="text-gray-500 mb-4">
-              We couldn't find any jobs matching your profile at the moment. 
+              We could not find any jobs matching your profile at the moment. 
               Try updating your skills and preferences to get better recommendations.
             </p>
             <Button asChild variant="outline">
