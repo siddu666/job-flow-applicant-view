@@ -6,17 +6,43 @@ import { useApplications } from "@/hooks/useApplications";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, FileText, X, CheckCircle, Clock, XCircle, Search } from "lucide-react";
+import {
+  MapPin,
+  Calendar,
+  DollarSign,
+  Mail,
+  Phone,
+  ExternalLink,
+  FileText,
+  X,
+  CheckCircle,
+  Clock,
+  XCircle,
+  Search,
+  User
+} from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import { Profile } from "@/interfaces/Profile";
 import { useAuth } from "@/contexts/auth-context";
 import { generateCVSignedUrl } from "@/hooks/useProfile";
 import { toast } from "sonner";
-import { Calendar, User, Phone, FileText, ExternalLink, Mail } from "lucide-react";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "./ui/tabs";
+import { Loader2, Briefcase, Building, Eye } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+
+interface Job {
+  id: string;
+  title: string;
+  company_name: string;
+  location: string;
+  description: string;
+  employment_type?: string;
+  salary_range?: string;
+}
 
 // Define types based on the database schema
 interface Application {
@@ -35,6 +61,7 @@ interface Application {
     availability?: string;
     skills?: string[];
   };
+  job?: Job;
 }
 
 // Define status type for better type safety
@@ -396,3 +423,5 @@ export const ApplicationReview = () => {
       </div>
   );
 };
+
+export default ApplicationReview;

@@ -45,27 +45,10 @@ export const useCreateJob = () => {
       toast.success('Job posted successfully!')
     },
     onError: (error: Error) => {
-      toast.error(`Failed to post job: ${error.message}`)
+      toast.error(`Failed to create job: ${error.message}`);
     },
-  })
-}
-type JobUpdate = Database['public']['Tables']['jobs']['Update']
-
-// Get all jobs
-export function useAllJobs() {
-  return useQuery({
-    queryKey: ['jobs'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      return data as Job[]
-    },
-  })
-}
+  });
+};
 
 // Get job by ID
 export function useJobById(jobId: string) {
@@ -75,10 +58,10 @@ export function useJobById(jobId: string) {
       if (!jobId) throw new Error('Job ID is required')
 
       const { data, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .eq('id', jobId)
-        .single()
+          .from('jobs')
+          .select('*')
+          .eq('id', jobId)
+          .single()
 
       if (error) throw error
       return data as Job
@@ -87,57 +70,49 @@ export function useJobById(jobId: string) {
   })
 }
 
-
-// Update job
-export function useUpdateJob() {
-  const queryClient = useQueryClient()
+export const useUpdateJob = () => {
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ jobId, updates }: { jobId: string; updates: JobUpdate }) => {
+    mutationFn: async ({ id, updates }: { id: string; updates: Partial<Job> }) => {
       const { data, error } = await supabase
-        .from('jobs')
+        .from("jobs")
         .update(updates)
-        .eq('id', jobId)
+        .eq("id", id)
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
-      return data as Job
-    },
-    onSuccess: (data) => {
-      queryClient.setQueryData(['job', data.id], data)
-      queryClient.invalidateQueries({ queryKey: ['jobs'] })
-      toast.success('Job updated successfully')
-    },
-    onError: (error) => {
-      console.error('Error updating job:', error)
-      toast.error('Failed to update job')
-    },
-  })
-}
-
-// Delete job
-export function useDeleteJob() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async (jobId: string) => {
-      const { error } = await supabase
-        .from('jobs')
-        .delete()
-        .eq('id', jobId)
-
-      if (error) throw error
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['jobs'] })
-      toast.success('Job deleted successfully')
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      toast.success("Job updated successfully!");
     },
-    onError: (error) => {
-      console.error('Error deleting job:', error)
-      toast.error('Failed to delete job')
+    onError: (error: Error) => {
+      toast.error(`Failed to update job: ${error.message}`);
     },
-  })
-}
+  });
+};
 
-export type { Job, JobInsert, JobUpdate }
+export const useDeleteJob = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("jobs")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      toast.success("Job deleted successfully!");
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to delete job: ${error.message}`);
+    },
+  });
+};
