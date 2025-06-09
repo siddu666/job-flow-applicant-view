@@ -6,7 +6,17 @@ import { toast } from "sonner";
 import { useAuth } from "@/contexts/auth-context";
 import { Database } from "@/integrations/supabase/types";
 
-type Application = Database['public']['Tables']['applications']['Row'];
+type Application = Database['public']['Tables']['applications']['Row'] & {
+  job?: {
+    id: string;
+    title: string;
+    company_name: string;
+    location: string;
+    description: string;
+    employment_type?: string;
+    salary_range?: string;
+  };
+};
 type ApplicationUpdate = Database['public']['Tables']['applications']['Update'];
 type ApplicationInsert = Database['public']['Tables']['applications']['Insert'];
 

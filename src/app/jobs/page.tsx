@@ -85,7 +85,7 @@ function JobsPage() {
 
 export default function JobsPageWithAuth() {
   return (
-    <ProtectedRoute requiredRole="candidate">
+    <ProtectedRoute requiredRole="applicant">
       <JobsPage />
     </ProtectedRoute>
   );

@@ -43,7 +43,9 @@ export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = 
         if (userRole === 'admin') {
           router.push('/admin')
         } else if (userRole === 'recruiter') {
-          router.push('/jobs')
+          router.push('/admin')
+        } else if (userRole === 'applicant') {
+          router.push('/profile')
         } else {
           router.push('/profile')
         }

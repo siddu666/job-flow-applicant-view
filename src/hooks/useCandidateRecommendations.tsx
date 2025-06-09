@@ -430,6 +430,7 @@ export const useCandidateRecommendations = (jobId?: string, limit: number = 20) 
           (experienceMatch.score * weights.experience) +
           (locationMatch.score * weights.location) +
           (availabilityMatch.score * weights.availability)
+        )lity)
         )
 
         const { strength, compatibility } = getRecommendationAnalysis(overallScore)

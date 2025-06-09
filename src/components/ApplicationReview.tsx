@@ -31,6 +31,18 @@ import { useAuth } from "@/contexts/auth-context";
 import { generateCVSignedUrl } from "@/hooks/useProfile";
 import { toast } from "sonner";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "./ui/tabs";
+import { Loader2, Briefcase, Building, Eye } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+
+interface Job {
+  id: string;
+  title: string;
+  company_name: string;
+  location: string;
+  description: string;
+  employment_type?: string;
+  salary_range?: string;
+}
 
 // Define types based on the database schema
 interface Application {
@@ -49,6 +61,7 @@ interface Application {
     availability?: string;
     skills?: string[];
   };
+  job?: Job;
 }
 
 // Define status type for better type safety
