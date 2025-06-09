@@ -108,34 +108,24 @@ export default function JobRecommendations() {
       {/* Job Recommendations */}
       <div className="grid gap-6">
         {recommendations.map((recommendation) => (
-          <Card key={recommendation.job.id} className="hover:shadow-lg transition-shadow duration-200 border-l-4 border-l-indigo-500">
+          <Card key={recommendation.id} className="hover:shadow-lg transition-shadow duration-200 border-l-4 border-l-indigo-500">
             <CardHeader className="pb-4">
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <CardTitle className="text-xl text-gray-900 mb-2">
-                    {recommendation.job.title}
+                    {recommendation.title}
                   </CardTitle>
                   <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
                     <div className="flex items-center gap-1">
-                      <Building className="h-4 w-4" />
-                      <span>{recommendation.job.company_name}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
                       <MapPin className="h-4 w-4" />
-                      <span>{recommendation.job.location}</span>
+                      <span>{recommendation.location}</span>
                     </div>
-                    {recommendation.job.salary_range && (
-                      <div className="flex items-center gap-1">
-                        <DollarSign className="h-4 w-4" />
-                        <span>{recommendation.job.salary_range}</span>
-                      </div>
-                    )}
                   </div>
                 </div>
                 <div className="text-right">
-                  <Badge className={`${getScoreColor(recommendation.overall_score)} flex items-center gap-1 text-sm font-semibold px-3 py-1`}>
-                    {getScoreIcon(recommendation.overall_score)}
-                    {recommendation.overall_score}% Match
+                  <Badge className={`${getScoreColor(recommendation.match_score)} flex items-center gap-1 text-sm font-semibold px-3 py-1`}>
+                    {getScoreIcon(recommendation.match_score)}
+                    {recommendation.match_score}% Match
                   </Badge>
                 </div>
               </div>
@@ -145,11 +135,11 @@ export default function JobRecommendations() {
               {/* Job Description */}
               <div>
                 <p className="text-gray-700 leading-relaxed">
-                  {recommendation.job.description}
+                  {recommendation.description}
                 </p>
               </div>
 
-              {/* Match Breakdown */}
+              {/* Match Breakdown 
               <div className="bg-gray-50 rounded-lg p-4">
                 <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                   <Target className="h-4 w-4" />
@@ -178,7 +168,7 @@ export default function JobRecommendations() {
                 </div>
 
                 {/* Detailed Match Explanation */}
-                <div className="space-y-3 text-sm">
+              {/* <div className="space-y-3 text-sm">
                   <div>
                     <h5 className="font-medium text-gray-800 mb-1">Skills Analysis:</h5>
                     <p className="text-gray-600">{recommendation.skills_match.explanation}</p>
@@ -203,37 +193,33 @@ export default function JobRecommendations() {
                     <p className="text-gray-600">{recommendation.location_match.explanation}</p>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* Job Details */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
-                  <span className="text-gray-500">Employment Type:</span>
-                  <div className="font-medium">{recommendation.job.employment_type || 'Not specified'}</div>
-                </div>
-                <div>
                   <span className="text-gray-500">Experience Level:</span>
-                  <div className="font-medium">{recommendation.job.experience_level || 'Not specified'}</div>
+                  <div className="font-medium">{recommendation.experience_level || 'Not specified'}</div>
                 </div>
                 <div>
                   <span className="text-gray-500">Posted:</span>
                   <div className="font-medium flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
-                    {new Date(recommendation.job.created_at).toLocaleDateString()}
+                    {new Date(recommendation.created_at).toLocaleDateString()}
                   </div>
                 </div>
-                <div>
+                {/*<div>
                   <span className="text-gray-500">Applicants:</span>
                   <div className="font-medium flex items-center gap-1">
                     <Users className="h-3 w-3" />
-                    {recommendation.job.application_count || 0}
+                    {recommendation.application_count || 0}
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Action Button */}
               <div className="pt-4 border-t">
-                <Link href={`/apply?jobId=${recommendation.job.id}`}>
+                <Link href={`/apply?jobId=${recommendation.id}`}>
                   <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
                     Apply Now
                   </Button>

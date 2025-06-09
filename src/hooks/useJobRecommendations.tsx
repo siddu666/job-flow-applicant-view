@@ -252,7 +252,6 @@ export const useJobRecommendations = (userId?: string, limit: number = 10) => {
             (locationMatch.score * weights.location) +
             (experienceMatch.score * weights.experience)
         )
-        )
 
         return {
           id: job.id,
