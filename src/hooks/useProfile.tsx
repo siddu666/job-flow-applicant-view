@@ -61,6 +61,29 @@ interface UploadCVParams {
   file: File;
 }
 
+// Helper function to generate a fresh signed URL for CV access
+export const generateCVSignedUrl = async (cvPath: string): Promise<string | null> => {
+  if (!cvPath) return null;
+  
+  try {
+    const twoYearsInSeconds = 2 * 365 * 24 * 60 * 60; // 63,072,000 seconds
+    
+    const { data, error } = await supabase.storage
+      .from('documents')
+      .createSignedUrl(cvPath, twoYearsInSeconds);
+      
+    if (error) {
+      console.error('Error generating signed URL:', error);
+      return null;
+    }
+    
+    return data?.signedUrl || null;
+  } catch (error) {
+    console.error('Unexpected error generating signed URL:', error);
+    return null;
+  }
+};
+
 export const useUploadCV = () => {
   const queryClient = useQueryClient();
 
@@ -97,10 +120,10 @@ export const useUploadCV = () => {
           throw new Error('Failed to generate signed URL');
         }
 
-        // Update the profile table with the signed URL
+        // Store the file path instead of the signed URL
         const { error: updateError } = await supabase
             .from('profiles')
-            .update({ cv_url: signedUrl })
+            .update({ cv_url: fileName })
             .eq('id', id);
 
         if (updateError) {

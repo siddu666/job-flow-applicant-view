@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, ChevronLeft, ChevronRight, FileText, Download } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import { Profile } from "@/interfaces/Profile";
+import { generateCVSignedUrl } from "@/hooks/useProfile";
+import { toast } from "sonner";
 
 interface CandidateFilters {
   skills?: string[];
@@ -87,6 +89,36 @@ const AdminCandidates = () => {
     const firstName = candidate.first_name?.[0] || '';
     const lastName = candidate.last_name?.[0] || '';
     return firstName + lastName || 'U';
+  };
+
+  const handleCVDownload = async (candidate: Profile, action: 'view' | 'download') => {
+    if (!candidate.cv_url) {
+      toast.error("No CV available for this candidate");
+      return;
+    }
+
+    try {
+      const signedUrl = await generateCVSignedUrl(candidate.cv_url);
+      if (!signedUrl) {
+        toast.error("Unable to access CV. Please try again.");
+        return;
+      }
+
+      if (action === 'view') {
+        window.open(signedUrl, '_blank');
+      } else {
+        // Create a temporary link for download
+        const link = document.createElement('a');
+        link.href = signedUrl;
+        link.download = `${getFullName(candidate)}_CV.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (error) {
+      console.error('Error accessing CV:', error);
+      toast.error("Failed to access CV. Please try again.");
+    }
   };
 
   return (
@@ -238,13 +270,11 @@ const AdminCandidates = () => {
                               <Button 
                                 variant="outline" 
                                 size="sm" 
-                                asChild 
+                                onClick={() => handleCVDownload(candidate, 'view')}
                                 className="border-green-500 text-green-600 hover:bg-green-50"
                               >
-                                <a href={candidate.cv_url} target="_blank" rel="noopener noreferrer">
-                                  <FileText className="h-3 w-3 mr-1" />
-                                  CV
-                                </a>
+                                <FileText className="h-3 w-3 mr-1" />
+                                CV
                               </Button>
                           )}
                           {candidate.email && (
@@ -395,24 +425,20 @@ const AdminCandidates = () => {
                           <Button 
                             variant="outline" 
                             size="sm" 
-                            asChild 
+                            onClick={() => handleCVDownload(selectedCandidate, 'view')}
                             className="border-green-500 text-green-600 hover:bg-green-100"
                           >
-                            <a href={selectedCandidate.cv_url} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="h-4 w-4 mr-1" />
-                              View CV
-                            </a>
+                            <ExternalLink className="h-4 w-4 mr-1" />
+                            View CV
                           </Button>
                           <Button 
                             variant="default" 
                             size="sm" 
-                            asChild 
+                            onClick={() => handleCVDownload(selectedCandidate, 'download')}
                             className="bg-green-600 hover:bg-green-700"
                           >
-                            <a href={selectedCandidate.cv_url} download>
-                              <FileText className="h-4 w-4 mr-1" />
-                              Download CV
-                            </a>
+                            <FileText className="h-4 w-4 mr-1" />
+                            Download CV
                           </Button>
                         </div>
                       </div>

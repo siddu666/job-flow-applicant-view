@@ -1,6 +1,6 @@
 
 import { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
-import { useProfile, useUpdateProfile, useUploadCV } from "@/hooks/useProfile";
+import { useProfile, useUpdateProfile, useUploadCV, generateCVSignedUrl } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/auth-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -300,6 +300,25 @@ const CandidateProfile = () => {
       ...prev,
       skills: prev.skills.filter((skill) => skill !== skillToRemove),
     }));
+  };
+
+  const handleViewCV = async () => {
+    if (!profile?.cv_url) {
+      toast.error("No CV available");
+      return;
+    }
+
+    try {
+      const signedUrl = await generateCVSignedUrl(profile.cv_url);
+      if (signedUrl) {
+        window.open(signedUrl, "_blank");
+      } else {
+        toast.error("Unable to access CV. Please try again.");
+      }
+    } catch (error) {
+      console.error('Error accessing CV:', error);
+      toast.error("Failed to access CV. Please try again.");
+    }
   };
 
   const addCertification = () => {
@@ -647,7 +666,7 @@ const CandidateProfile = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => window.open(profile.cv_url!, "_blank")}
+                      onClick={handleViewCV}
                       className="border-green-300 text-green-700 hover:bg-green-50"
                     >
                       View CV

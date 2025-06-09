@@ -1,13 +1,21 @@
 'use client'
 
 import React, { useState } from "react";
+import { useAllCandidates } from "@/hooks/useAllCandidates";
 import { useApplications } from "@/hooks/useApplications";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, FileText, X, CheckCircle, Clock, XCircle, Search } from "lucide-react";
+import Modal from "@/components/ui/Modal";
+import { Profile } from "@/interfaces/Profile";
+import { useAuth } from "@/contexts/auth-context";
+import { generateCVSignedUrl } from "@/hooks/useProfile";
+import { toast } from "sonner";
 import { Calendar, User, Phone, FileText, ExternalLink, Mail } from "lucide-react";
 
 // Define types based on the database schema
@@ -62,6 +70,40 @@ export const ApplicationReview = () => {
     const detailTab = document.querySelector('[data-value="detail"]') as HTMLElement;
     if (detailTab) {
       detailTab.click();
+    }
+  };
+  const getInitials = (profile: Profile) => {
+    const firstName = profile.first_name?.[0] || '';
+    const lastName = profile.last_name?.[0] || '';
+    return firstName + lastName || 'U';
+  };
+
+  const handleCVAccess = async (cvPath: string, action: 'view' | 'download', candidateName?: string) => {
+    if (!cvPath) {
+      toast.error("No CV available");
+      return;
+    }
+
+    try {
+      const signedUrl = await generateCVSignedUrl(cvPath);
+      if (!signedUrl) {
+        toast.error("Unable to access CV. Please try again.");
+        return;
+      }
+
+      if (action === 'view') {
+        window.open(signedUrl, '_blank');
+      } else {
+        const link = document.createElement('a');
+        link.href = signedUrl;
+        link.download = candidateName ? `${candidateName}_CV.pdf` : 'CV.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (error) {
+      console.error('Error accessing CV:', error);
+      toast.error("Failed to access CV. Please try again.");
     }
   };
 
@@ -182,24 +224,26 @@ export const ApplicationReview = () => {
                                     <FileText className="h-4 w-4 text-green-600" />
                                     <span className="text-green-700 text-xs font-medium">CV Available</span>
                                     <div className="flex gap-1 ml-auto">
-                                      <a
-                                          href={application.cv_url}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="text-green-600 hover:text-green-800 text-xs"
-                                          onClick={(e) => e.stopPropagation()}
-                                      >
-                                        View
-                                      </a>
-                                      <span className="text-gray-400">|</span>
-                                      <a
-                                          href={application.cv_url}
-                                          download
-                                          className="text-green-600 hover:text-green-800 text-xs"
-                                          onClick={(e) => e.stopPropagation()}
-                                      >
-                                        Download
-                                      </a>
+                                       <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleCVAccess(application.cv_url || '', 'view', application.applicant?.full_name);
+                                            }}
+                                          >
+                                            <ExternalLink className="h-4 w-4" />
+                                          </Button>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleCVAccess(application.cv_url || '', 'download', application.applicant?.full_name);
+                                            }}
+                                          >
+                                            <FileText className="h-4 w-4" />
+                                          </Button>
                                     </div>
                                   </div>
                               )}
@@ -306,23 +350,20 @@ export const ApplicationReview = () => {
                               <span className="text-sm">Resume Attached</span>
                             </div>
                             <div className="flex space-x-2">
-                              <a
-                                  href={selectedApp.cv_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 px-3 py-1 text-sm border border-blue-500 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"
+                             <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleCVAccess(selectedApp.cv_url || '', 'view', selectedApp.applicant?.full_name)}
                               >
-                                <ExternalLink className="h-3 w-3" />
-                                View
-                              </a>
-                              <a
-                                  href={selectedApp.cv_url}
-                                  download
-                                  className="inline-flex items-center gap-1 px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                                <ExternalLink className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleCVAccess(selectedApp.cv_url || '', 'download', selectedApp.applicant?.full_name)}
                               >
-                                <FileText className="h-3 w-3" />
-                                Download
-                              </a>
+                                <FileText className="h-4 w-4" />
+                              </Button>
                             </div>
                           </div>
                         </div>
