@@ -1,72 +1,113 @@
-'use client'
 
-import React, { useState } from 'react'
-import { useAuth } from '@/contexts/auth-context'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {ProtectedRoute} from '@/components/ProtectedRoute'
-import AdminCandidates from '@/components/admin/AdminCandidates'
-import JobManagement from '@/components/admin/JobManagement'
-import JobCandidateRecommendations from '@/components/admin/JobCandidateRecommendations'
-import { Users, Briefcase, Settings, Target } from 'lucide-react'
+'use client';
 
-const AdminDashboard = () => {
-  const { user } = useAuth()
+import { useAuth } from '@/contexts/auth-context';
+import { useProfile } from '@/hooks/useProfile';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Users, Briefcase, Target, BarChart3 } from 'lucide-react';
+import { Suspense } from 'react';
+import AdminCandidates from '@/components/admin/AdminCandidates';
+import JobManagement from '@/components/admin/JobManagement';
+import JobCandidateRecommendations from '@/components/admin/JobCandidateRecommendations';
+import ApplicationReview from '@/components/ApplicationReview';
+
+function AdminDashboard() {
+  const { user } = useAuth();
+  const { profile } = useProfile();
 
   return (
-    <ProtectedRoute requiredRole='admin'>
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto p-6">
+        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">Welcome back, {user?.email}</p>
+          <p className="text-gray-600">Welcome back, {profile?.first_name || 'Admin'}</p>
         </div>
 
-        <Tabs defaultValue="recommendations" className="space-y-6">
+        {/* Dashboard Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Candidates</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">Loading...</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
+              <Briefcase className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">Loading...</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Recommendations</CardTitle>
+              <Target className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">Smart</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Match Rate</CardTitle>
+              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">85%</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content */}
+        <Tabs defaultValue="candidates" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="recommendations" className="flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              Job Matching
-            </TabsTrigger>
-            <TabsTrigger value="candidates" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Candidates
-            </TabsTrigger>
-            <TabsTrigger value="jobs" className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4" />
-              Jobs
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              Settings
-            </TabsTrigger>
+            <TabsTrigger value="candidates">Candidates</TabsTrigger>
+            <TabsTrigger value="jobs">Job Management</TabsTrigger>
+            <TabsTrigger value="recommendations">AI Recommendations</TabsTrigger>
+            <TabsTrigger value="applications">Applications</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="recommendations">
-            <JobCandidateRecommendations />
+          <TabsContent value="candidates" className="space-y-6">
+            <Suspense fallback={<div>Loading candidates...</div>}>
+              <AdminCandidates />
+            </Suspense>
           </TabsContent>
 
-          <TabsContent value="candidates">
-            <AdminCandidates />
+          <TabsContent value="jobs" className="space-y-6">
+            <Suspense fallback={<div>Loading job management...</div>}>
+              <JobManagement />
+            </Suspense>
           </TabsContent>
 
-          <TabsContent value="jobs">
-            <JobManagement />
+          <TabsContent value="recommendations" className="space-y-6">
+            <Suspense fallback={<div>Loading recommendations...</div>}>
+              <JobCandidateRecommendations />
+            </Suspense>
           </TabsContent>
 
-          <TabsContent value="settings">
-            <Card>
-              <CardHeader>
-                <CardTitle>Settings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">Settings panel coming soon...</p>
-              </CardContent>
-            </Card>
+          <TabsContent value="applications" className="space-y-6">
+            <Suspense fallback={<div>Loading applications...</div>}>
+              <ApplicationReview />
+            </Suspense>
           </TabsContent>
         </Tabs>
       </div>
-    </ProtectedRoute>
-  )
+    </div>
+  );
 }
 
-export default AdminDashboard
+export default function AdminPage() {
+  return (
+    <ProtectedRoute requiredRole="admin">
+      <AdminDashboard />
+    </ProtectedRoute>
+  );
+}

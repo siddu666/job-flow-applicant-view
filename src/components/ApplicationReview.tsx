@@ -410,3 +410,5 @@ export const ApplicationReview = () => {
       </div>
   );
 };
+
+export default ApplicationReview;

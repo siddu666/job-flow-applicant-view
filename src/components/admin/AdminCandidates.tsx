@@ -462,5 +462,5 @@ const AdminCandidates = () => {
   );
 };
 
-export { AdminCandidates };
+export default AdminCandidates;
 export default AdminCandidates;
