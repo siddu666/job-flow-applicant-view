@@ -178,18 +178,29 @@ export const ApplicationReview = () => {
                               )}
 
                               {application.cv_url && (
-                                  <div className="flex items-center gap-1 mt-2">
-                                    <FileText className="h-4 w-4 text-blue-600" />
-                                    <a
-                                        href={application.cv_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-600 hover:underline text-sm"
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                      View CV
-                                      <ExternalLink className="h-3 w-3 inline ml-1" />
-                                    </a>
+                                  <div className="flex items-center gap-2 mt-2 p-2 bg-green-50 rounded-md">
+                                    <FileText className="h-4 w-4 text-green-600" />
+                                    <span className="text-green-700 text-xs font-medium">CV Available</span>
+                                    <div className="flex gap-1 ml-auto">
+                                      <a
+                                          href={application.cv_url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="text-green-600 hover:text-green-800 text-xs"
+                                          onClick={(e) => e.stopPropagation()}
+                                      >
+                                        View
+                                      </a>
+                                      <span className="text-gray-400">|</span>
+                                      <a
+                                          href={application.cv_url}
+                                          download
+                                          className="text-green-600 hover:text-green-800 text-xs"
+                                          onClick={(e) => e.stopPropagation()}
+                                      >
+                                        Download
+                                      </a>
+                                    </div>
                                   </div>
                               )}
                             </div>
@@ -284,18 +295,36 @@ export const ApplicationReview = () => {
                     )}
 
                     {selectedApp.cv_url && (
-                        <div>
-                          <h4 className="font-semibold mb-3">CV/Resume</h4>
-                          <a
-                              href={selectedApp.cv_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 text-blue-600 hover:underline"
-                          >
-                            <FileText className="h-4 w-4" />
-                            View CV/Resume
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
+                        <div className="border border-blue-200 bg-blue-50 rounded-lg p-4">
+                          <h4 className="font-semibold mb-3 text-blue-800 flex items-center">
+                            <FileText className="h-5 w-5 mr-2" />
+                            CV/Resume
+                          </h4>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center text-blue-700">
+                              <div className="h-2 w-2 bg-blue-500 rounded-full mr-2"></div>
+                              <span className="text-sm">Resume Attached</span>
+                            </div>
+                            <div className="flex space-x-2">
+                              <a
+                                  href={selectedApp.cv_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 px-3 py-1 text-sm border border-blue-500 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                                View
+                              </a>
+                              <a
+                                  href={selectedApp.cv_url}
+                                  download
+                                  className="inline-flex items-center gap-1 px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                              >
+                                <FileText className="h-3 w-3" />
+                                Download
+                              </a>
+                            </div>
+                          </div>
                         </div>
                     )}
 

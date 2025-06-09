@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, ChevronLeft, ChevronRight, FileText } from "lucide-react";
+import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, ChevronLeft, ChevronRight, FileText, Download } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import { Profile } from "@/interfaces/Profile";
 
@@ -216,23 +216,46 @@ const AdminCandidates = () => {
                           </div>
                       )}
 
-                      <div className="mt-4 flex space-x-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => openCandidateModal(candidate)}
-                            className="border-indigo-500 text-indigo-500 hover:bg-indigo-50"
-                        >
-                          View Profile
-                        </Button>
-                        {candidate.email && (
-                            <Button variant="outline" size="sm" asChild className="border-indigo-500 text-indigo-500 hover:bg-indigo-50">
-                              <a href={`mailto:${candidate.email}`}>
-                                <Mail className="h-3 w-3 mr-1" />
-                                Email
-                              </a>
-                            </Button>
+                      <div className="mt-4 flex flex-col space-y-2">
+                        {/* CV Status Indicator */}
+                        {candidate.cv_url && (
+                            <div className="flex items-center text-green-600 text-xs">
+                              <FileText className="h-3 w-3 mr-1" />
+                              <span>CV Available</span>
+                            </div>
                         )}
+                        
+                        <div className="flex space-x-2">
+                          <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openCandidateModal(candidate)}
+                              className="border-indigo-500 text-indigo-500 hover:bg-indigo-50"
+                          >
+                            View Profile
+                          </Button>
+                          {candidate.cv_url && (
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                asChild 
+                                className="border-green-500 text-green-600 hover:bg-green-50"
+                              >
+                                <a href={candidate.cv_url} target="_blank" rel="noopener noreferrer">
+                                  <FileText className="h-3 w-3 mr-1" />
+                                  CV
+                                </a>
+                              </Button>
+                          )}
+                          {candidate.email && (
+                              <Button variant="outline" size="sm" asChild className="border-indigo-500 text-indigo-500 hover:bg-indigo-50">
+                                <a href={`mailto:${candidate.email}`}>
+                                  <Mail className="h-3 w-3 mr-1" />
+                                  Email
+                                </a>
+                              </Button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -356,15 +379,47 @@ const AdminCandidates = () => {
                     </div>
                 )}
 
+                {/* CV Section */}
+                {selectedCandidate.cv_url && (
+                    <div className="border border-green-200 bg-green-50 rounded-lg p-4">
+                      <h3 className="font-semibold mb-3 text-green-800 flex items-center">
+                        <FileText className="h-5 w-5 mr-2" />
+                        CV/Resume
+                      </h3>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-green-700">
+                          <div className="h-2 w-2 bg-green-500 rounded-full mr-2"></div>
+                          <span className="text-sm">CV Available</span>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            asChild 
+                            className="border-green-500 text-green-600 hover:bg-green-100"
+                          >
+                            <a href={selectedCandidate.cv_url} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="h-4 w-4 mr-1" />
+                              View CV
+                            </a>
+                          </Button>
+                          <Button 
+                            variant="default" 
+                            size="sm" 
+                            asChild 
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            <a href={selectedCandidate.cv_url} download>
+                              <FileText className="h-4 w-4 mr-1" />
+                              Download CV
+                            </a>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                )}
+
                 <div className="flex space-x-2 pt-4">
-                  {selectedCandidate.cv_url && (
-                      <Button variant="outline" asChild className="border-indigo-500 text-indigo-500 hover:bg-indigo-50">
-                        <a href={selectedCandidate.cv_url} target="_blank" rel="noopener noreferrer">
-                          <FileText className="h-4 w-4 mr-2" />
-                          View Resume
-                        </a>
-                      </Button>
-                  )}
                   {selectedCandidate.portfolio_url && (
                       <Button variant="outline" asChild className="border-indigo-500 text-indigo-500 hover:bg-indigo-50">
                         <a href={selectedCandidate.portfolio_url} target="_blank" rel="noopener noreferrer">
