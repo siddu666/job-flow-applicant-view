@@ -73,7 +73,7 @@ export const useUploadCV = () => {
         // Upload the file to Supabase Storage
         const { error: uploadError } = await supabase.storage
             .from('documents')
-            .upload(fileName, file);
+            .upload(fileName, file, { upsert: true });
 
         if (uploadError) {
           console.error('Upload error:', uploadError);
@@ -92,13 +92,30 @@ export const useUploadCV = () => {
           throw new Error(`Failed to generate signed URL: ${signedUrlError.message}`);
         }
 
-        return data?.signedUrl;
+        const signedUrl = data?.signedUrl;
+        if (!signedUrl) {
+          throw new Error('Failed to generate signed URL');
+        }
+
+        // Update the profile table with the signed URL
+        const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ cv_url: signedUrl })
+            .eq('id', id);
+
+        if (updateError) {
+          console.error('Error updating profile with CV URL:', updateError);
+          throw new Error(`Failed to update profile: ${updateError.message}`);
+        }
+
+        return signedUrl;
       } catch (error) {
         console.error("Unexpected error uploading CV:", error);
         throw error;
       }
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['profile', variables.id] });
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       toast.success("CV uploaded successfully!");
     },

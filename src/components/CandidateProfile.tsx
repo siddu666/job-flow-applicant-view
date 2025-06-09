@@ -278,15 +278,8 @@ const CandidateProfile = () => {
     }
 
     try {
-      const cv_url = await uploadCV.mutateAsync({ id: user.id, file });
-      await updateProfile.mutateAsync({
-        userId: user.id,
-        updates: {
-          ...formData,
-          cv_url: cv_url,
-        },
-      });
-      toast.success("CV uploaded successfully!");
+      await uploadCV.mutateAsync({ id: user.id, file });
+      // CV URL is now automatically updated in the profile table by useUploadCV hook
     } catch (error) {
       console.error("Error uploading CV:", error);
       toast.error("Failed to upload CV. Please try again.");
