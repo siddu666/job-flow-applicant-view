@@ -165,7 +165,7 @@ const JobCandidateRecommendations = () => {
                               <Calendar className="h-4 w-4" />
                               {job.experience_level || 'Any level'}
                             </div>
-                            {(job.salary_min || job.salary_max) && (
+                            {/*{(job.salary_min || job.salary_max) && (
                               <div className="flex items-center gap-1">
                                 <DollarSign className="h-4 w-4" />
                                 {job.salary_min && job.salary_max 
@@ -174,7 +174,7 @@ const JobCandidateRecommendations = () => {
                                   ? `From ${job.salary_min.toLocaleString()} SEK`
                                   : `Up to ${job.salary_max?.toLocaleString()} SEK`}
                               </div>
-                            )}
+                            )} */}
                           </div>
                         </div>
                       </div>
@@ -362,7 +362,7 @@ const JobCandidateRecommendations = () => {
               <div>
                 <h2 className="text-xl font-semibold text-indigo-800">{getFullName(selectedCandidate)}</h2>
                 <p className="text-gray-600">
-                  {selectedCandidate.current_position || 'Professional'}
+                  {selectedCandidate.current_location || 'Professional'}
                 </p>
                 {selectedCandidate.experience_years && (
                   <p className="text-sm text-gray-500">

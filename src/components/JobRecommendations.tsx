@@ -145,7 +145,7 @@ const JobRecommendations = () => {
                   )}
                 </div>
 
-                {/* Salary Range */}
+                {/* Salary Range
                 {(job.salary_min || job.salary_max) && (
                   <div className="flex items-center gap-1 text-sm text-green-700 bg-green-50 px-2 py-1 rounded">
                     <DollarSign className="h-4 w-4" />
@@ -159,7 +159,7 @@ const JobRecommendations = () => {
                         : 'Competitive salary'}
                     </span>
                   </div>
-                )}
+                )} */}
 
                 <p className="text-sm text-gray-700 line-clamp-3">
                   {job.description}

@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import ProtectedRoute from '@/components/ProtectedRoute'
+import {ProtectedRoute} from '@/components/ProtectedRoute'
 import AdminCandidates from '@/components/admin/AdminCandidates'
 import JobManagement from '@/components/admin/JobManagement'
 import JobCandidateRecommendations from '@/components/admin/JobCandidateRecommendations'
@@ -14,7 +14,7 @@ const AdminDashboard = () => {
   const { user } = useAuth()
 
   return (
-    <ProtectedRoute allowedRoles={['admin']}>
+    <ProtectedRoute requiredRole='admin'>
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>

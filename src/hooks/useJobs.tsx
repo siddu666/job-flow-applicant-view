@@ -45,27 +45,10 @@ export const useCreateJob = () => {
       toast.success('Job posted successfully!')
     },
     onError: (error: Error) => {
-      toast.error(`Failed to post job: ${error.message}`)
+      toast.error(`Failed to create job: ${error.message}`);
     },
-  })
-}
-type JobUpdate = Database['public']['Tables']['jobs']['Update']
-
-// Get all jobs
-export function useAllJobs() {
-  return useQuery({
-    queryKey: ['jobs'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      return data as Job[]
-    },
-  })
-}
+  });
+};
 
 // Get job by ID
 export function useJobById(jobId: string) {
@@ -75,10 +58,10 @@ export function useJobById(jobId: string) {
       if (!jobId) throw new Error('Job ID is required')
 
       const { data, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .eq('id', jobId)
-        .single()
+          .from('jobs')
+          .select('*')
+          .eq('id', jobId)
+          .single()
 
       if (error) throw error
       return data as Job
@@ -86,113 +69,6 @@ export function useJobById(jobId: string) {
     enabled: !!jobId,
   })
 }
-
-
-// Update job
-export function useUpdateJob() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async ({ jobId, updates }: { jobId: string; updates: JobUpdate }) => {
-      const { data, error } = await supabase
-        .from('jobs')
-        .update(updates)
-        .eq('id', jobId)
-        .select()
-        .single()
-
-      if (error) throw error
-      return data as Job
-    },
-    onSuccess: (data) => {
-      queryClient.setQueryData(['job', data.id], data)
-      queryClient.invalidateQueries({ queryKey: ['jobs'] })
-      toast.success('Job updated successfully')
-    },
-    onError: (error) => {
-      console.error('Error updating job:', error)
-      toast.error('Failed to update job')
-    },
-  })
-}
-
-// Delete job
-export function useDeleteJob() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async (jobId: string) => {
-      const { error } = await supabase
-        .from('jobs')
-        .delete()
-        .eq('id', jobId)
-
-      if (error) throw error
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['jobs'] })
-      toast.success('Job deleted successfully')
-    },
-    onError: (error) => {
-      console.error('Error deleting job:', error)
-      toast.error('Failed to delete job')
-    },
-  })
-}
-
-export type { Job, JobInsert, JobUpdate }
-'use client'
-
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Tables } from "@/integrations/supabase/types";
-import { toast } from "sonner";
-
-export type Job = Tables<'jobs'>;
-
-export const useJobs = () => {
-  return useQuery({
-    queryKey: ['jobs'],
-    queryFn: async (): Promise<Job[]> => {
-      const { data, error } = await supabase
-        .from("jobs")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching jobs:", error);
-        throw error;
-      }
-
-      return data || [];
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-};
-
-export const useCreateJob = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (jobData: Partial<Job>) => {
-      const { data, error } = await supabase
-        .from("jobs")
-        .insert(jobData)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['jobs'] });
-      toast.success("Job created successfully!");
-    },
-    onError: (error: Error) => {
-      toast.error(`Failed to create job: ${error.message}`);
-    },
-  });
-};
 
 export const useUpdateJob = () => {
   const queryClient = useQueryClient();
