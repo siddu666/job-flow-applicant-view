@@ -64,19 +64,19 @@ interface UploadCVParams {
 // Helper function to generate a fresh signed URL for CV access
 export const generateCVSignedUrl = async (cvPath: string): Promise<string | null> => {
   if (!cvPath) return null;
-  
+
   try {
     const twoYearsInSeconds = 2 * 365 * 24 * 60 * 60; // 63,072,000 seconds
-    
+
     const { data, error } = await supabase.storage
       .from('documents')
       .createSignedUrl(cvPath, twoYearsInSeconds);
-      
+
     if (error) {
       console.error('Error generating signed URL:', error);
       return null;
     }
-    
+
     return data?.signedUrl || null;
   } catch (error) {
     console.error('Unexpected error generating signed URL:', error);
@@ -103,12 +103,10 @@ export const useUploadCV = () => {
           throw new Error(`Failed to upload CV: ${uploadError.message}`);
         }
 
-        const twoYearsInSeconds = 2 * 365 * 24 * 60 * 60; // 63,072,000 seconds
-
-        // Generate a signed URL for private access
+        // Generate a signed URL (valid for 1 year - more reasonable duration)
         const { data, error: signedUrlError } = await supabase.storage
             .from('documents')
-            .createSignedUrl(fileName, twoYearsInSeconds);
+            .createSignedUrl(fileName, 60 * 60 * 24 * 365); // 1 year
 
         if (signedUrlError) {
           console.error('Error generating signed URL:', signedUrlError);

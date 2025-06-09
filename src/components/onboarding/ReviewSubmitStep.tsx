@@ -108,7 +108,10 @@ const ReviewSubmitStep: React.FC<ReviewSubmitStepProps> = ({
 
       const { error: profileError } = await supabase
           .from('profiles')
-          .upsert(profileData, { onConflict: 'id' });
+          .upsert(profileData, { 
+            onConflict: 'id',
+            ignoreDuplicates: false 
+          });
 
       if (profileError) throw profileError;
 
