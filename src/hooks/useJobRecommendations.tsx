@@ -25,39 +25,58 @@ export const useJobRecommendations = (userId?: string, limit: number = 5) => {
           return [];
         }
 
-        // Get all jobs
+        // Get all active jobs
         const { data: jobs, error: jobsError } = await supabase
           .from("jobs")
           .select("*")
-          .order("created_at", { ascending: false });
+          .order("created_at", { ascending: false })
+          .limit(50); // Limit to prevent too many API calls
 
         if (jobsError) {
           console.error("Error fetching jobs for recommendations:", jobsError);
           return [];
         }
 
+        if (!jobs || jobs.length === 0) return [];
+
         // Calculate match scores using the database function
         const jobsWithScores: JobWithMatch[] = [];
 
-        for (const job of jobs) {
-          const { data: matchScore, error: scoreError } = await supabase.rpc(
-            'calculate_candidate_match_score',
-            {
-              candidate_skills: profile.skills || [],
-              candidate_experience: profile.experience_years || 0,
-              candidate_location: profile.current_location || '',
-              job_skills: job.skills || [],
-              job_experience_level: job.experience_level || 'entry',
-              job_location: job.location || ''
-            }
-          );
+        // Process jobs in batches to avoid overwhelming the database
+        const batchSize = 10;
+        for (let i = 0; i < jobs.length; i += batchSize) {
+          const batch = jobs.slice(i, i + batchSize);
+          
+          const batchPromises = batch.map(async (job) => {
+            try {
+              const { data: matchScore, error: scoreError } = await supabase.rpc(
+                'calculate_candidate_match_score',
+                {
+                  candidate_skills: profile.skills || [],
+                  candidate_experience: profile.experience_years || 0,
+                  candidate_location: profile.current_location || '',
+                  job_skills: job.skills || [],
+                  job_experience_level: job.experience_level || 'entry',
+                  job_location: job.location || ''
+                }
+              );
 
-          if (!scoreError && matchScore !== null) {
-            jobsWithScores.push({
-              ...job,
-              match_score: matchScore
-            });
-          }
+              if (!scoreError && matchScore !== null && matchScore > 20) { // Only include jobs with >20% match
+                return {
+                  ...job,
+                  match_score: matchScore
+                };
+              }
+              return null;
+            } catch (error) {
+              console.error(`Error calculating match for job ${job.id}:`, error);
+              return null;
+            }
+          });
+
+          const batchResults = await Promise.all(batchPromises);
+          const validResults = batchResults.filter(result => result !== null) as JobWithMatch[];
+          jobsWithScores.push(...validResults);
         }
 
         // Sort by match score and return top matches
@@ -71,6 +90,7 @@ export const useJobRecommendations = (userId?: string, limit: number = 5) => {
       }
     },
     enabled: !!userId,
-    staleTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 15 * 60 * 1000, // 15 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes
   });
 };
