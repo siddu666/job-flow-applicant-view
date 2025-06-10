@@ -37,7 +37,7 @@ export function Navigation() {
                   Justera Group
                 </div>
                 <div className="text-sm text-gray-600 font-medium">
-                  Rasing Arc
+                  Raising Arc
                 </div>
               </div>
             </Link>
