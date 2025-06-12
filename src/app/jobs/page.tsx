@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 export default function Jobs() {
-    const { jobs} = useJobs();
+    const { jobs } = useJobs();
 
     // State for filters
     const [locationFilter, setLocationFilter] = useState('');
@@ -37,136 +37,142 @@ export default function Jobs() {
     // Change page
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-        return (
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="max-w-4xl mx-auto my-8"
-            >
-                <Card className="border-yellow-200 bg-yellow-50">
-                    <CardContent className="p-6 text-center">
-                        <Target className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold text-yellow-800 mb-2">
-                            Complete Your Profile
-                        </h3>
-                        <p className="text-yellow-700 mb-4">
-                            To receive personalized job recommendations, please complete your profile. This will help us suggest jobs that align with your skills and preferences. Once you've finished, head over to the 'Recommended Jobs' page to explore your matche.
-                        </p>
-                        <Link href="/profile">
-                            <Button className="bg-yellow-600 hover:bg-yellow-700 text-white">
-                                Complete Profile
-                            </Button>
-                        </Link>
-                    </CardContent>
-                                <CardContent className="p-6">
-                                    <div className="flex flex-col md:flex-row gap-4 mb-6">
-                                        <div className="relative flex-grow">
-                                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                                            <input
-                                                type="text"
-                                                placeholder="Filter by location"
-                                                value={locationFilter}
-                                                onChange={(e) => setLocationFilter(e.target.value)}
-                                                className="pl-10 p-2 border rounded w-full"
-                                            />
-                                        </div>
-                                        <div className="relative flex-grow">
-                                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                                            <input
-                                                type="text"
-                                                placeholder="Filter by skills"
-                                                value={skillsFilter}
-                                                onChange={(e) => setSkillsFilter(e.target.value)}
-                                                className="pl-10 p-2 border rounded w-full"
-                                            />
-                                        </div>
-                                        <div className="relative flex-grow">
-                                            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                                            <input
-                                                type="text"
-                                                placeholder="Filter by experience"
-                                                value={experienceFilter}
-                                                onChange={(e) => setExperienceFilter(e.target.value)}
-                                                className="pl-10 p-2 border rounded w-full"
-                                            />
-                                        </div>
-                                    </div>
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-6xl mx-auto my-8 px-4 sm:px-6 lg:px-8"
+        >
+            {/* Complete Profile Section */}
+            <Card className="border-yellow-200 bg-yellow-50 shadow-md mb-8">
+                <CardContent className="p-6 text-center">
+                    <Target className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-yellow-800 mb-2">
+                        Complete Your Profile
+                    </h3>
+                    <p className="text-yellow-700 mb-4">
+                        To receive personalized job recommendations, please complete your profile. This will help us suggest jobs that align with your skills and preferences. Once you've finished, head over to the 'Recommended Jobs' page to explore your matches.
+                    </p>
+                    <Link href="/profile">
+                        <Button className="bg-yellow-600 hover:bg-yellow-700 text-white">
+                            Complete Profile
+                        </Button>
+                    </Link>
+                </CardContent>
+            </Card>
 
-                                    {currentJobs.length === 0 ? (
-                                        <Card className="p-6 text-center">
-                                            <Target className="h-12 w-12 text-blue-500 mx-auto mb-4" />
-                                            <h3 className="text-lg font-semibold text-blue-800 mb-2">
-                                                No Jobs Found
-                                            </h3>
-                                            <p className="text-blue-700">
-                                                No jobs match your current filters.
-                                            </p>
-                                        </Card>
-                                    ) : (
-                                        <div className="space-y-6">
-                                            <div className="grid gap-6">
-                                                {currentJobs.map((job) => (
-                                                    <motion.div
-                                                        key={job.id}
-                                                        whileHover={{ scale: 1.02 }}
-                                                    >
-                                                        <Link href={`/jobs/detail?id=${job.id}`}>
-                                                            <Card className="hover:shadow-lg transition-shadow duration-200 border-l-4 border-l-indigo-500 cursor-pointer">
-                                                                <CardHeader className="pb-4">
-                                                                    <div className="flex justify-between items-start mb-4">
-                                                                        <div className="flex-1">
-                                                                            <CardTitle className="text-xl text-gray-900 mb-2 flex items-center">
-                                                                                <Briefcase className="mr-2" /> {job.title}
-                                                                            </CardTitle>
-                                                                            <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
-                                                                                <div className="flex items-center gap-1">
-                                                                                    <MapPin className="h-4 w-4" />
-                                                                                    <span>{job.location}</span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </CardHeader>
-                                                                <CardContent>
-                                                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4">
-                                                                        <div>
-                                                                            <span className="text-gray-500">Experience Level:</span>
-                                                                            <div className="font-medium">{job.experience_level || 'Not specified'}</div>
-                                                                        </div>
-                                                                        <div>
-                                                                            <span className="text-gray-500">Posted:</span>
-                                                                            <div className="font-medium flex items-center gap-1">
-                                                                                <Calendar className="h-3 w-3" />
-                                                                                <span>
-                                    {job.created_at ? new Date(job.created_at).toLocaleDateString() : new Date().toLocaleDateString()}
-                                  </span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </CardContent>
-                                                            </Card>
-                                                        </Link>
-                                                    </motion.div>
-                                                ))}
-                                            </div>
+            {/* Job Recommendations Section */}
+            <Card className="border-blue-200 bg-blue-50 shadow-md">
+                <CardContent className="p-6">
+                    <div className="flex flex-col md:flex-row gap-4 mb-6">
+                        <div className="relative flex-grow">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Filter by location"
+                                value={locationFilter}
+                                onChange={(e) => setLocationFilter(e.target.value)}
+                                className="pl-10 p-3 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            />
+                        </div>
+                        <div className="relative flex-grow">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Filter by skills"
+                                value={skillsFilter}
+                                onChange={(e) => setSkillsFilter(e.target.value)}
+                                className="pl-10 p-3 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            />
+                        </div>
+                        <div className="relative flex-grow">
+                            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Filter by experience"
+                                value={experienceFilter}
+                                onChange={(e) => setExperienceFilter(e.target.value)}
+                                className="pl-10 p-3 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            />
+                        </div>
+                    </div>
 
-                                            <div className="flex justify-center mt-6">
-                                                {Array.from({ length: Math.ceil(filteredJobs.length / jobsPerPage) }, (_, index) => (
-                                                    <Button
-                                                        key={index}
-                                                        onClick={() => paginate(index + 1)}
-                                                        className="mx-1"
-                                                        variant={currentPage === index + 1 ? "default" : "outline"}
-                                                    >
-                                                        {index + 1}
-                                                    </Button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </CardContent>
-                </Card>
-            </motion.div>
-        );
+                    {currentJobs.length === 0 ? (
+                        <Card className="p-6 text-center shadow-md">
+                            <Target className="h-12 w-12 text-blue-500 mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold text-blue-800 mb-2">
+                                No Jobs Found
+                            </h3>
+                            <p className="text-blue-700">
+                                No jobs match your current filters.
+                            </p>
+                        </Card>
+                    ) : (
+                        <div className="space-y-6">
+                            <div className="grid gap-6">
+                                {currentJobs.map((job) => (
+                                    <motion.div
+                                        key={job.id}
+                                        whileHover={{ scale: 1.02 }}
+                                        className="transition-shadow duration-200"
+                                    >
+                                        <Link href={`/jobs/detail?id=${job.id}`}>
+                                            <Card className="hover:shadow-lg transition-shadow duration-200 border-l-4 border-l-indigo-500 cursor-pointer rounded-lg">
+                                                <CardHeader className="pb-4">
+                                                    <div className="flex justify-between items-start mb-4">
+                                                        <div className="flex-1">
+                                                            <CardTitle className="text-xl text-gray-900 mb-2 flex items-center">
+                                                                <Briefcase className="mr-2" /> {job.title}
+                                                            </CardTitle>
+                                                            <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                                                                <div className="flex items-center gap-1">
+                                                                    <MapPin className="h-4 w-4" />
+                                                                    <span>{job.location}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </CardHeader>
+                                                <CardContent>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm mt-4">
+                                                        <div>
+                                                            <span className="text-gray-500">Experience Level:</span>
+                                                            <div className="font-medium">{job.experience_level || 'Not specified'}</div>
+                                                        </div>
+                                                        <div>
+                                                            <span className="text-gray-500">Posted:</span>
+                                                            <div className="font-medium flex items-center gap-1">
+                                                                <Calendar className="h-3 w-3" />
+                                                                <span>
+                                                                    {job.created_at ? new Date(job.created_at).toLocaleDateString() : new Date().toLocaleDateString()}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        </Link>
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            <div className="flex justify-center mt-6">
+                                {Array.from({ length: Math.ceil(filteredJobs.length / jobsPerPage) }, (_, index) => (
+                                    <Button
+                                        key={index}
+                                        onClick={() => paginate(index + 1)}
+                                        className="mx-1"
+                                        variant={currentPage === index + 1 ? "default" : "outline"}
+                                    >
+                                        {index + 1}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+        </motion.div>
+    );
 }
