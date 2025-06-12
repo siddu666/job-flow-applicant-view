@@ -102,7 +102,7 @@ export default function JobDetail() {
                                 <User className="h-5 w-5 text-indigo-600 mr-2" />
                                 <h3 className="text-gray-600 font-medium">Posted By</h3>
                             </div>
-                            <p className="font-medium mt-1">{job.posted_by || 'Not specified'}</p>
+                            <p className="font-medium mt-1">hrteam@justeragroup.com</p>
                         </motion.div>
 
                         <motion.div
