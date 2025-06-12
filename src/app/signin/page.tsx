@@ -27,7 +27,7 @@ export default function SignInPage() {
     try {
       await signIn(loginForm.email, loginForm.password);
       toast.success('Successfully signed in!');
-      router.push('/jobs');
+      router.push('/jobs/recommended');
     } catch (err) {
       console.error('Sign in error:', err)
     } finally {
