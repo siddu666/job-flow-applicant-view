@@ -9,8 +9,8 @@ import {MainLayout} from "@/components/layout/main-layout";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Job Flow - Talent Acquisition Platform",
-  description: "Connect with top talent and find your dream job",
+  title: "Justera Group Careers",
+  description: "Connect with world-class opportunities and unlock your potential",
 };
 
 export default function RootLayout({
