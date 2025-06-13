@@ -28,12 +28,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let isCancelled = false;
-    
+
     const getSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
         if (isCancelled) return;
-        
+
         if (error) {
           console.error('Error getting session:', error)
         } else {
@@ -57,10 +57,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (isCancelled) return;
-        
+
         setSession(session)
         setUser(session?.user ?? null)
-        
+
         if (event === 'SIGNED_IN') {
           console.log('User signed in successfully')
         } else if (event === 'SIGNED_OUT') {
