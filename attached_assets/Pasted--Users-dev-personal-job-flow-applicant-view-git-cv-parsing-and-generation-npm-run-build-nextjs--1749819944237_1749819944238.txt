@@ -1,0 +1,91 @@
+/Users/dev/personal/job-flow-applicant-view git:[cv_parsing_and_generation]
+npm run build
+
+> nextjs-job-flow-app@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.29
+  - Environments: .env
+
+   Creating an optimized production build ...
+Failed to compile.
+
+./src/components/CandidateProfile.tsx
+Error: 
+  x Expected ',', got '{'
+     ,-[/Users/dev/personal/job-flow-applicant-view/src/components/CandidateProfile.tsx:413:1]
+ 413 |         </div>
+ 414 |       </div>
+ 415 | 
+ 416 |       {/* Profile Editor Modal */}
+     :       ^
+ 417 |       <Modal isOpen={showEditor} onClose={() => setShowEditor(false)}>
+ 418 |         <ProfileEditor 
+ 419 |           profile={profile}
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/CandidateProfile.tsx
+./src/app/profile/page.tsx
+
+./src/lib/cv-processing-service.ts
+Error: 
+  x the name `validationResult` is defined multiple times
+    ,-[/Users/dev/personal/job-flow-applicant-view/src/lib/cv-processing-service.ts:17:1]
+ 17 |   async processCV(file: File, userId: string): Promise<CVProcessingResult> {
+ 18 |     try {
+ 19 |       // Step 1: Validate file type and size
+ 20 |       const validationResult = this.validateFile(file);
+    :             ^^^^^^^^|^^^^^^^
+    :                     `-- previous definition of `validationResult` here
+ 21 |       if (!validationResult.valid) {
+ 22 |         return {
+ 23 |           success: false,
+ 24 |           error: validationResult.error
+ 25 |         };
+ 26 |       }
+ 27 | 
+ 28 |       // Step 2: Extract text from PDF
+ 29 |       const extractedData = await PDFProcessor.extractText(file);
+ 30 |       const preprocessedText = PDFProcessor.preprocessText(extractedData.text);
+ 31 |       
+ 32 |       // Step 3: Validate extracted text quality
+ 33 |       if (!PDFProcessor.validateExtractedText(preprocessedText)) {
+ 34 |         return {
+ 35 |           success: false,
+ 36 |           rejected: true,
+ 37 |           rejectionReason: 'CV does not contain sufficient readable content'
+ 38 |         };
+ 39 |       }
+ 40 | 
+ 41 |       // Step 4: Parse CV with OpenAI
+ 42 |       const openaiParser = new OpenAICVParser(config.openai.apiKey);
+ 43 |       const parsingResult: CVParsingResult = await openaiParser.parseCV(preprocessedText);
+ 44 |       
+ 45 |       if (!parsingResult.success) {
+ 46 |         return {
+ 47 |           success: false,
+ 48 |           error: `Failed to parse CV: ${parsingResult.error}`
+ 49 |         };
+ 50 |       }
+ 51 | 
+ 52 |       // Step 5: Validate extracted data
+ 53 |       const validationResult = CVDataValidator.validateCVData(parsingResult.data!);
+    :             ^^^^^^^^|^^^^^^^
+    :                     `-- `validationResult` redefined here
+ 54 |       if (!validationResult.isValid) {
+ 55 |         return {
+ 56 |           success: false,
+    `----
+
+Import trace for requested module:
+./src/lib/cv-processing-service.ts
+./src/components/onboarding/ResumeLinksStep.tsx
+./src/components/onboarding/OnboardingSteps.tsx
+./src/app/contact/page.tsx
+
+
+> Build failed because of webpack errors
