@@ -6,11 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, ChevronLeft, ChevronRight, FileText, Download } from "lucide-react";
+import { Search, MapPin, Calendar, DollarSign, Mail, Phone, ExternalLink, ChevronLeft, ChevronRight, FileText, Download, FileOutput } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import { Profile } from "@/interfaces/Profile";
 import { generateCVSignedUrl } from "@/hooks/useProfile";
 import { toast } from "sonner";
+import CVGeneratorComponent from "./CVGenerator";
 
 interface CandidateFilters {
   skills?: string[];
@@ -28,6 +29,8 @@ const AdminCandidates = () => {
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [selectedCandidate, setSelectedCandidate] = useState<Profile | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCandidateForCV, setSelectedCandidateForCV] = useState<Profile | null>(null);
+  const [isCVGeneratorOpen, setIsCVGeneratorOpen] = useState(false);
 
   const { data: candidatesResult } = useAllCandidates(filters);
   const candidates = candidatesResult || [];
@@ -71,6 +74,16 @@ const AdminCandidates = () => {
 
   const closeCandidateModal = () => {
     setIsModalOpen(false);
+  };
+
+  const openCVGenerator = (candidate: Profile) => {
+    setSelectedCandidateForCV(candidate);
+    setIsCVGeneratorOpen(true);
+  };
+
+  const closeCVGenerator = () => {
+    setIsCVGeneratorOpen(false);
+    setSelectedCandidateForCV(null);
   };
 
   const handlePageChange = (page: number) => {
@@ -257,7 +270,7 @@ const AdminCandidates = () => {
                             </div>
                         )}
                         
-                        <div className="flex space-x-2">
+                        <div className="flex flex-wrap gap-2">
                           <Button
                               variant="outline"
                               size="sm"
@@ -265,6 +278,15 @@ const AdminCandidates = () => {
                               className="border-indigo-500 text-indigo-500 hover:bg-indigo-50"
                           >
                             View Profile
+                          </Button>
+                          <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openCVGenerator(candidate)}
+                              className="border-purple-500 text-purple-600 hover:bg-purple-50"
+                          >
+                            <FileOutput className="h-3 w-3 mr-1" />
+                            Generate CV
                           </Button>
                           {candidate.cv_url && (
                               <Button 
@@ -456,6 +478,16 @@ const AdminCandidates = () => {
                   )}
                 </div>
               </div>
+          )}
+        </Modal>
+
+        {/* CV Generator Modal */}
+        <Modal isOpen={isCVGeneratorOpen} onClose={closeCVGenerator}>
+          {selectedCandidateForCV && (
+            <CVGeneratorComponent
+              candidate={selectedCandidateForCV}
+              onClose={closeCVGenerator}
+            />
           )}
         </Modal>
       </div>

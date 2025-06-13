@@ -8,11 +8,43 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Loader2, MapPin, Calendar, CheckCircle, AlertCircle, Target } from 'lucide-react'
 import Link from 'next/link'
+import React, { useState } from 'react';
+import { AlertTriangle, TrendingUp } from 'lucide-react';
+import { useSkillGapAnalysis } from '@/hooks/useSkillGapAnalysis';
+import SkillGapAnalysis from './SkillGapAnalysis';
+import Modal from '@/components/ui/Modal';
 
-export default function JobRecommendations() {
-    const { user } = useAuth()
-    const { data: profile, isLoading: profileLoading } = useProfile(user?.id)
-    const { data: recommendations = [], isLoading, error } = useJobRecommendations(user?.id)
+const JobRecommendations = () => {
+  const { user } = useAuth();
+  const { data: profile, isLoading: profileLoading } = useProfile(user?.id)
+  const { data: recommendations = [], isLoading, error } = useJobRecommendations(user?.id)
+  const [expandedJob, setExpandedJob] = useState<string | null>(null);
+  const [selectedJobForGapAnalysis, setSelectedJobForGapAnalysis] = useState<any>(null);
+  const [isGapAnalysisOpen, setIsGapAnalysisOpen] = useState(false);
+
+  const toggleExpand = (jobId: string) => {
+    setExpandedJob(expandedJob === jobId ? null : jobId);
+  };
+
+  const openGapAnalysis = (job: any) => {
+    setSelectedJobForGapAnalysis(job);
+    setIsGapAnalysisOpen(true);
+  };
+
+  const closeGapAnalysis = () => {
+    setIsGapAnalysisOpen(false);
+    setSelectedJobForGapAnalysis(null);
+  };
+
+  const handleSkillsUpdated = (newSkills: string[]) => {
+    // Profile will be refetched automatically due to the mutation
+    console.log('Skills updated:', newSkills);
+  };
+
+  const handleExperienceUpdated = (experience: number) => {
+    // Profile will be refetched automatically due to the mutation
+    console.log('Experience updated:', experience);
+  };
 
     if (profileLoading || isLoading) {
         return (
@@ -199,3 +231,5 @@ export default function JobRecommendations() {
         </div>
     )
 }
+
+export default JobRecommendations
