@@ -15,6 +15,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { useProfile } from '@/hooks/useProfile'
 import { CVProcessingService } from '@/lib/cv-processing-service'
 import ProfileEditor from './ProfileEditor'
+import ProfileCompletionGuide from './ProfileCompletionGuide'
 import Modal from '@/components/ui/Modal'
 import { Profile } from '@/interfaces/Profile'
 import { toast } from 'sonner'
@@ -133,9 +134,17 @@ const CandidateProfile = () => {
           </div>
         </div>
 
+        {/* Profile Completion Guide */}
+        <div className="mb-8">
+          <ProfileCompletionGuide 
+            profile={profile}
+            onEdit={() => setShowEditor(true)}
+          />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-8"></div>
             {/* Personal Information */}
             <InfoSection 
               title="Personal Information" 

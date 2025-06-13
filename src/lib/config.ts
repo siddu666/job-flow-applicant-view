@@ -11,9 +11,13 @@ export const config = {
   storage: {
     documentsUrl: process.env.NEXT_PUBLIC_SUPABASE_URL + '/storage/v1/object/public/documents/',
   },
+  openai: {
+    apiKey: process.env.OPENAI_API_KEY || '',
+  },
   features: {
     cvProcessing: true,
     skillGapAnalysis: true,
     adminCVGeneration: true,
+    aiParsing: !!process.env.OPENAI_API_KEY,
   }
 } as const;

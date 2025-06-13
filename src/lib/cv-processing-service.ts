@@ -1,7 +1,9 @@
 
 import { PDFProcessor } from './pdf-processor';
-import { SimpleCVParser, ParsedCVData, CVParsingResult } from './simple-cv-parser';
+import { OpenAICVParser, ParsedCVData, CVParsingResult } from './openai-cv-parser';
 import { supabase } from '@/integrations/supabase/client';
+import { config } from './config';
+import { CVDataValidator } from './cv-data-validator';
 
 export interface CVProcessingResult {
   success: boolean;
@@ -36,8 +38,9 @@ export class CVProcessingService {
         };
       }
 
-      // Step 4: Parse CV with simple parser
-      const parsingResult: CVParsingResult = SimpleCVParser.parseCV(preprocessedText);
+      // Step 4: Parse CV with OpenAI
+      const openaiParser = new OpenAICVParser(config.openai.apiKey);
+      const parsingResult: CVParsingResult = await openaiParser.parseCV(preprocessedText);
       
       if (!parsingResult.success) {
         return {
@@ -46,7 +49,17 @@ export class CVProcessingService {
         };
       }
 
-      // Step 5: Check minimum requirements
+      // Step 5: Validate extracted data
+      const validationResult = CVDataValidator.validateCVData(parsingResult.data!);
+      if (!validationResult.isValid) {
+        return {
+          success: false,
+          rejected: true,
+          rejectionReason: `CV is missing required information: ${validationResult.missingFields.join(', ')}`
+        };
+      }
+
+      // Step 5a: Check minimum requirements
       if (!parsingResult.hasMinimumRequirements) {
         return {
           success: false,

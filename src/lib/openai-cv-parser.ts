@@ -16,6 +16,19 @@ export interface ParsedCVData {
   github_url?: string;
   bio?: string;
   certifications?: string[];
+  education?: string[];
+  hobbies?: string[];
+  languages?: string[];
+  work_experience?: WorkExperience[];
+}
+
+export interface WorkExperience {
+  title: string;
+  company: string;
+  location?: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
 }
 
 export interface CVParsingResult {
@@ -89,8 +102,8 @@ Please extract the following information from this CV/Resume text and return it 
   "full_name": "Full name of the person",
   "email": "Email address",
   "phone": "Phone number (optional)",
-  "skills": ["Array of technical skills"],
-  "tools": ["Array of tools, software, frameworks"],
+  "skills": ["Array of technical skills, programming languages"],
+  "tools": ["Array of tools, software, frameworks, platforms"],
   "project_summary": "Brief summary of key projects and achievements",
   "experience_years": "Number of years of experience (estimate if not explicit)",
   "current_position": "Current job title (optional)",
@@ -99,15 +112,31 @@ Please extract the following information from this CV/Resume text and return it 
   "linkedin_url": "LinkedIn profile URL (optional)",
   "github_url": "GitHub profile URL (optional)",
   "bio": "Professional summary or objective (optional)",
-  "certifications": ["Array of certifications (optional)"]
+  "certifications": ["Array of certifications with issuing organization"],
+  "education": ["Array of education entries: degree, institution, year"],
+  "hobbies": ["Array of hobbies and personal interests"],
+  "languages": ["Array of languages with proficiency level"],
+  "work_experience": [
+    {
+      "title": "Job title",
+      "company": "Company name",
+      "location": "Work location (optional)",
+      "startDate": "Start date (optional)",
+      "endDate": "End date or 'Present' (optional)",
+      "description": "Job responsibilities and achievements (optional)"
+    }
+  ]
 }
 
 Rules:
 1. Only include information that is clearly present in the CV
-2. For skills and tools, extract technical skills, programming languages, frameworks, software
-3. If a field is not found or unclear, omit it or use null
-4. Ensure the JSON is valid and properly formatted
-5. For experience_years, estimate based on work history if not explicitly stated
+2. For skills and tools, differentiate between technical skills and software/tools
+3. Extract all work experience entries with as much detail as available
+4. Include education with degree, institution, and graduation year if available
+5. Extract hobbies, interests, and languages mentioned
+6. If a field is not found or unclear, omit it or use null
+7. Ensure the JSON is valid and properly formatted
+8. For experience_years, estimate based on work history if not explicitly stated
 
 CV Text:
 ${cvText}
