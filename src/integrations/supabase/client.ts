@@ -2,11 +2,11 @@
 import { createClient } from '@supabase/supabase-js'
 import { Database } from './types'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://your-project.supabase.co'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://klnojmnykjrknpxckmsw.supabase.co'
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'your_supabase_anon_key_here'
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase URL or anon key is missing. Using default values.')
+if (!supabaseUrl || !supabaseAnonKey || supabaseAnonKey === 'your_supabase_anon_key_here') {
+  console.error('Supabase configuration is missing. Please check your environment variables.')
 }
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
