@@ -13,11 +13,13 @@ export const config = {
   },
   openai: {
     apiKey: process.env.OPENAI_API_KEY || '',
+    enabled: !!process.env.OPENAI_API_KEY,
   },
   features: {
     cvProcessing: true,
     skillGapAnalysis: true,
     adminCVGeneration: true,
     aiParsing: !!process.env.OPENAI_API_KEY,
+    simpleParsing: true, // Fallback parsing without AI
   }
 } as const;

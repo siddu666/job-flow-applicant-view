@@ -38,9 +38,17 @@ export class CVProcessingService {
         };
       }
 
-      // Step 4: Parse CV with OpenAI
-      const openaiParser = new OpenAICVParser(config.openai.apiKey);
-      const parsingResult: CVParsingResult = await openaiParser.parseCV(preprocessedText);
+      // Step 4: Parse CV with OpenAI or fallback
+      let parsingResult: CVParsingResult;
+      
+      if (config.openai.enabled && config.openai.apiKey) {
+        const openaiParser = new OpenAICVParser(config.openai.apiKey);
+        parsingResult = await openaiParser.parseCV(preprocessedText);
+      } else {
+        // Use simple parsing as fallback
+        const { SimpleCVParser } = await import('./simple-cv-parser');
+        parsingResult = SimpleCVParser.parseCV(preprocessedText);
+      }
       
       if (!parsingResult.success) {
         return {
@@ -50,12 +58,12 @@ export class CVProcessingService {
       }
 
       // Step 5: Validate extracted data
-      const validationResult = CVDataValidator.validateCVData(parsingResult.data!);
-      if (!validationResult.isValid) {
+      const dataValidationResult = CVDataValidator.validateCVData(parsingResult.data!);
+      if (!dataValidationResult.isValid) {
         return {
           success: false,
           rejected: true,
-          rejectionReason: `CV is missing required information: ${validationResult.missingFields.join(', ')}`
+          rejectionReason: `CV is missing required information: ${dataValidationResult.missingFields.join(', ')}`
         };
       }
 

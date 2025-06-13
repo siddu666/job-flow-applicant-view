@@ -144,7 +144,7 @@ const CandidateProfile = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column */}
-          <div className="lg:col-span-2 space-y-8"></div>
+          <div className="lg:col-span-2 space-y-8">
             {/* Personal Information */}
             <InfoSection 
               title="Personal Information" 

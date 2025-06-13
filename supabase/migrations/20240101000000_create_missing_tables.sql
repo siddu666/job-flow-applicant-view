@@ -1,3 +1,4 @@
+
 -- Create profiles table with comprehensive fields
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
@@ -44,18 +45,19 @@ CREATE TABLE IF NOT EXISTS jobs (
   description TEXT NOT NULL,
   company TEXT NOT NULL,
   location TEXT NOT NULL,
-  job_type TEXT NOT NULL, -- full-time, part-time, contract, etc.
-  experience_level TEXT NOT NULL, -- entry, mid, senior, etc.
+  job_type TEXT NOT NULL,
+  experience_level TEXT NOT NULL,
   salary_min INTEGER,
   salary_max INTEGER,
   required_skills TEXT[] DEFAULT '{}',
   preferred_skills TEXT[] DEFAULT '{}',
   benefits TEXT[] DEFAULT '{}',
   remote_work_allowed BOOLEAN DEFAULT false,
-  experience_required INTEGER, -- minimum years of experience
+  experience_required INTEGER,
   department TEXT,
   posted_by UUID REFERENCES auth.users,
   is_active BOOLEAN DEFAULT true,
+  status TEXT DEFAULT 'active',
   application_deadline DATE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
@@ -66,7 +68,7 @@ CREATE TABLE IF NOT EXISTS applications (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   job_id UUID REFERENCES jobs ON DELETE CASCADE NOT NULL,
   applicant_id UUID REFERENCES profiles ON DELETE CASCADE NOT NULL,
-  status TEXT DEFAULT 'pending', -- pending, reviewed, shortlisted, rejected, hired
+  status TEXT DEFAULT 'pending',
   cover_letter TEXT,
   additional_notes TEXT,
   applied_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
@@ -100,19 +102,6 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('documents', 'documents', true)
 ON CONFLICT (id) DO NOTHING;
 
--- Create storage policies
-CREATE POLICY "Users can upload their own documents" ON storage.objects
-FOR INSERT WITH CHECK (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
-
-CREATE POLICY "Users can view their own documents" ON storage.objects
-FOR SELECT USING (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
-
-CREATE POLICY "Users can update their own documents" ON storage.objects
-FOR UPDATE USING (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
-
-CREATE POLICY "Users can delete their own documents" ON storage.objects
-FOR DELETE USING (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
-
 -- Enable RLS
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
@@ -127,6 +116,9 @@ FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update their own profile" ON profiles
 FOR UPDATE USING (auth.uid() = id);
 
+CREATE POLICY "Users can insert their own profile" ON profiles
+FOR INSERT WITH CHECK (auth.uid() = id);
+
 CREATE POLICY "Admins can view all profiles" ON profiles
 FOR SELECT USING (
   EXISTS (
@@ -137,7 +129,7 @@ FOR SELECT USING (
 
 -- Jobs policies
 CREATE POLICY "Anyone can view active jobs" ON jobs
-FOR SELECT USING (is_active = true);
+FOR SELECT USING (is_active = true OR status = 'active');
 
 CREATE POLICY "Admins can manage jobs" ON jobs
 FOR ALL USING (
@@ -205,6 +197,19 @@ INSERT INTO job_categories (name, description, icon, color) VALUES
 ('Human Resources', 'HR, recruitment, and people operations', 'Users', '#DC2626'),
 ('Customer Support', 'Customer service and support roles', 'MessageCircle', '#0891B2')
 ON CONFLICT (name) DO NOTHING;
+
+-- Storage policies
+CREATE POLICY "Users can upload their own documents" ON storage.objects
+FOR INSERT WITH CHECK (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+CREATE POLICY "Users can view their own documents" ON storage.objects
+FOR SELECT USING (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+CREATE POLICY "Users can update their own documents" ON storage.objects
+FOR UPDATE USING (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+CREATE POLICY "Users can delete their own documents" ON storage.objects
+FOR DELETE USING (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
 
 -- Create function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
