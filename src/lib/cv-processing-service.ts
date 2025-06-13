@@ -1,8 +1,7 @@
 
 import { PDFProcessor } from './pdf-processor';
-import { OpenAICVParser, ParsedCVData, CVParsingResult } from './openai-cv-parser';
+import { SimpleCVParser, ParsedCVData, CVParsingResult } from './simple-cv-parser';
 import { supabase } from '@/integrations/supabase/client';
-import { config } from './config';
 
 export interface CVProcessingResult {
   success: boolean;
@@ -13,16 +12,6 @@ export interface CVProcessingResult {
 }
 
 export class CVProcessingService {
-  private openaiParser: OpenAICVParser;
-
-  constructor() {
-    const apiKey = config.openai.apiKey;
-    if (!apiKey) {
-      throw new Error('OpenAI API key not found in environment variables. Please set OPENAI_API_KEY or NEXT_PUBLIC_OPENAI_API_KEY');
-    }
-    this.openaiParser = new OpenAICVParser(apiKey);
-  }
-
   async processCV(file: File, userId: string): Promise<CVProcessingResult> {
     try {
       // Step 1: Validate file type and size
@@ -47,8 +36,8 @@ export class CVProcessingService {
         };
       }
 
-      // Step 4: Parse CV with OpenAI
-      const parsingResult: CVParsingResult = await this.openaiParser.parseCV(preprocessedText);
+      // Step 4: Parse CV with simple parser
+      const parsingResult: CVParsingResult = SimpleCVParser.parseCV(preprocessedText);
       
       if (!parsingResult.success) {
         return {
@@ -62,7 +51,7 @@ export class CVProcessingService {
         return {
           success: false,
           rejected: true,
-          rejectionReason: 'CV does not meet minimum requirements (missing essential information like skills, experience, or projects)'
+          rejectionReason: 'CV does not meet minimum requirements (missing name, email, or skills)'
         };
       }
 
@@ -127,7 +116,6 @@ export class CVProcessingService {
   }
 
   private async updateUserProfile(userId: string, parsedData: ParsedCVData, cvUrl: string): Promise<void> {
-    // Prepare update data, merging with existing profile
     const updateData = {
       first_name: parsedData.full_name.split(' ')[0] || '',
       last_name: parsedData.full_name.split(' ').slice(1).join(' ') || '',
@@ -145,6 +133,9 @@ export class CVProcessingService {
       cv_url: cvUrl,
       tools: parsedData.tools || [],
       project_summary: parsedData.project_summary || null,
+      education: parsedData.education || [],
+      hobbies: parsedData.hobbies || [],
+      languages: parsedData.languages || [],
       updated_at: new Date().toISOString()
     };
 

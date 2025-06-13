@@ -1,260 +1,226 @@
--- Enable required extensions
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-```
-
-```sql
--- Create profiles table
+-- Create profiles table with comprehensive fields
 CREATE TABLE IF NOT EXISTS profiles (
-  id UUID REFERENCES auth.users(id) PRIMARY KEY,
-  email TEXT NOT NULL,
+  id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
   first_name TEXT,
   last_name TEXT,
+  email TEXT,
   phone TEXT,
+  date_of_birth DATE,
+  gender TEXT,
   address TEXT,
   city TEXT,
+  state TEXT,
+  zip_code TEXT,
+  country TEXT,
+  current_title TEXT,
+  current_position TEXT,
+  current_company TEXT,
   current_location TEXT,
+  experience_years INTEGER,
+  skills TEXT[] DEFAULT '{}',
+  tools TEXT[] DEFAULT '{}',
+  education TEXT[] DEFAULT '{}',
+  certifications TEXT[] DEFAULT '{}',
+  hobbies TEXT[] DEFAULT '{}',
+  languages TEXT[] DEFAULT '{}',
+  expected_salary TEXT,
+  work_authorization TEXT,
   visa_status TEXT,
-  authorized_to_work BOOLEAN DEFAULT false,
-  skills TEXT[],
-  experience INTEGER,
-  education TEXT,
-  preferred_job_type TEXT,
-  availability TEXT,
+  bio TEXT,
+  project_summary TEXT,
   cv_url TEXT,
   linkedin_url TEXT,
+  github_url TEXT,
   portfolio_url TEXT,
-  role TEXT DEFAULT 'user' CHECK (role IN ('user', 'admin', 'recruiter')),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE
+  role TEXT DEFAULT 'candidate',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
-```
 
-```sql
 -- Create jobs table
 CREATE TABLE IF NOT EXISTS jobs (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   title TEXT NOT NULL,
+  description TEXT NOT NULL,
   company TEXT NOT NULL,
   location TEXT NOT NULL,
-  type TEXT NOT NULL,
-  salary_range TEXT,
-  description TEXT NOT NULL,
-  requirements TEXT NOT NULL,
-  experience_level TEXT,
-  skills TEXT[],
-  posted_by UUID REFERENCES profiles(id) NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE
+  job_type TEXT NOT NULL, -- full-time, part-time, contract, etc.
+  experience_level TEXT NOT NULL, -- entry, mid, senior, etc.
+  salary_min INTEGER,
+  salary_max INTEGER,
+  required_skills TEXT[] DEFAULT '{}',
+  preferred_skills TEXT[] DEFAULT '{}',
+  benefits TEXT[] DEFAULT '{}',
+  remote_work_allowed BOOLEAN DEFAULT false,
+  experience_required INTEGER, -- minimum years of experience
+  department TEXT,
+  posted_by UUID REFERENCES auth.users,
+  is_active BOOLEAN DEFAULT true,
+  application_deadline DATE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
-```
 
-```sql
 -- Create applications table
 CREATE TABLE IF NOT EXISTS applications (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  job_id UUID REFERENCES jobs(id) ON DELETE CASCADE NOT NULL,
-  applicant_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'reviewing', 'interviewed', 'accepted', 'rejected')),
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  job_id UUID REFERENCES jobs ON DELETE CASCADE NOT NULL,
+  applicant_id UUID REFERENCES profiles ON DELETE CASCADE NOT NULL,
+  status TEXT DEFAULT 'pending', -- pending, reviewed, shortlisted, rejected, hired
   cover_letter TEXT,
-  cv_url TEXT,
-  applied_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE,
+  additional_notes TEXT,
+  applied_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  reviewed_at TIMESTAMP WITH TIME ZONE,
+  reviewed_by UUID REFERENCES auth.users,
+  interview_scheduled_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
   UNIQUE(job_id, applicant_id)
 );
-```
 
-```sql
+-- Create job_categories table
+CREATE TABLE IF NOT EXISTS job_categories (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  description TEXT,
+  icon TEXT,
+  color TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- Create job_category_mappings table
+CREATE TABLE IF NOT EXISTS job_category_mappings (
+  job_id UUID REFERENCES jobs ON DELETE CASCADE,
+  category_id UUID REFERENCES job_categories ON DELETE CASCADE,
+  PRIMARY KEY (job_id, category_id)
+);
+
 -- Create storage bucket for documents
 INSERT INTO storage.buckets (id, name, public) 
 VALUES ('documents', 'documents', true)
 ON CONFLICT (id) DO NOTHING;
-```
 
-```sql
--- Enable Row Level Security
+-- Create storage policies
+CREATE POLICY "Users can upload their own documents" ON storage.objects
+FOR INSERT WITH CHECK (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+CREATE POLICY "Users can view their own documents" ON storage.objects
+FOR SELECT USING (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+CREATE POLICY "Users can update their own documents" ON storage.objects
+FOR UPDATE USING (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+CREATE POLICY "Users can delete their own documents" ON storage.objects
+FOR DELETE USING (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+-- Enable RLS
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
-```
+ALTER TABLE job_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE job_category_mappings ENABLE ROW LEVEL SECURITY;
 
-```sql
--- Create RLS policies for profiles
+-- Profiles policies
 CREATE POLICY "Users can view their own profile" ON profiles
-  FOR SELECT USING (auth.uid() = id);
+FOR SELECT USING (auth.uid() = id);
 
 CREATE POLICY "Users can update their own profile" ON profiles
-  FOR UPDATE USING (auth.uid() = id);
+FOR UPDATE USING (auth.uid() = id);
 
-CREATE POLICY "Users can insert their own profile" ON profiles
-  FOR INSERT WITH CHECK (auth.uid() = id);
-```
+CREATE POLICY "Admins can view all profiles" ON profiles
+FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM profiles 
+    WHERE id = auth.uid() AND role = 'admin'
+  )
+);
 
-```sql
--- Create RLS policies for jobs
-CREATE POLICY "Anyone can view jobs" ON jobs
-  FOR SELECT TO authenticated USING (true);
+-- Jobs policies
+CREATE POLICY "Anyone can view active jobs" ON jobs
+FOR SELECT USING (is_active = true);
 
-CREATE POLICY "Recruiters can create jobs" ON jobs
-  FOR INSERT TO authenticated 
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM profiles 
-      WHERE id = auth.uid() AND role IN ('admin', 'recruiter')
-    )
-  );
+CREATE POLICY "Admins can manage jobs" ON jobs
+FOR ALL USING (
+  EXISTS (
+    SELECT 1 FROM profiles 
+    WHERE id = auth.uid() AND role = 'admin'
+  )
+);
 
-CREATE POLICY "Job creators can update their jobs" ON jobs
-  FOR UPDATE TO authenticated 
-  USING (posted_by = auth.uid());
-```
-
-```sql
--- Create RLS policies for applications
+-- Applications policies
 CREATE POLICY "Users can view their own applications" ON applications
-  FOR SELECT TO authenticated 
-  USING (applicant_id = auth.uid());
-
-CREATE POLICY "Recruiters can view applications for their jobs" ON applications
-  FOR SELECT TO authenticated 
-  USING (
-    EXISTS (
-      SELECT 1 FROM jobs j 
-      JOIN profiles p ON p.id = auth.uid()
-      WHERE j.id = applications.job_id 
-      AND (j.posted_by = auth.uid() OR p.role IN ('admin', 'recruiter'))
-    )
-  );
+FOR SELECT USING (auth.uid() = applicant_id);
 
 CREATE POLICY "Users can create applications" ON applications
-  FOR INSERT TO authenticated 
-  WITH CHECK (applicant_id = auth.uid());
+FOR INSERT WITH CHECK (auth.uid() = applicant_id);
 
-CREATE POLICY "Recruiters can update application status" ON applications
-  FOR UPDATE TO authenticated 
-  USING (
-    EXISTS (
-      SELECT 1 FROM jobs j 
-      JOIN profiles p ON p.id = auth.uid()
-      WHERE j.id = applications.job_id 
-      AND (j.posted_by = auth.uid() OR p.role IN ('admin', 'recruiter'))
-    )
-  );
-```
-
-```sql
--- Create activity_logs table
-CREATE TABLE IF NOT EXISTS activity_logs (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
-  action TEXT NOT NULL,
-  resource_type TEXT,
-  resource_id TEXT,
-  metadata JSONB DEFAULT '{}',
-  ip_address INET,
-  user_agent TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+CREATE POLICY "Admins can view all applications" ON applications
+FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM profiles 
+    WHERE id = auth.uid() AND role = 'admin'
+  )
 );
 
--- Create activity_check_tokens table for periodic checks
-CREATE TABLE IF NOT EXISTS activity_check_tokens (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
-  token TEXT NOT NULL UNIQUE,
-  expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
-  used_at TIMESTAMP WITH TIME ZONE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+CREATE POLICY "Admins can update applications" ON applications
+FOR UPDATE USING (
+  EXISTS (
+    SELECT 1 FROM profiles 
+    WHERE id = auth.uid() AND role = 'admin'
+  )
 );
 
--- Create audit_logs table for GDPR compliance
-CREATE TABLE IF NOT EXISTS audit_logs (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  user_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
-  action TEXT NOT NULL,
-  resource_type TEXT,
-  resource_id TEXT,
-  old_values JSONB,
-  new_values JSONB,
-  metadata JSONB DEFAULT '{}',
-  ip_address INET,
-  user_agent TEXT,
-  gdpr_related BOOLEAN DEFAULT false,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+-- Job categories policies
+CREATE POLICY "Anyone can view job categories" ON job_categories
+FOR SELECT USING (true);
+
+CREATE POLICY "Admins can manage job categories" ON job_categories
+FOR ALL USING (
+  EXISTS (
+    SELECT 1 FROM profiles 
+    WHERE id = auth.uid() AND role = 'admin'
+  )
 );
 
--- Enable RLS on new tables
-ALTER TABLE activity_logs ENABLE ROW LEVEL SECURITY;
-ALTER TABLE activity_check_tokens ENABLE ROW LEVEL SECURITY;
-ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
+-- Job category mappings policies
+CREATE POLICY "Anyone can view job category mappings" ON job_category_mappings
+FOR SELECT USING (true);
 
--- RLS policies for activity_logs
-CREATE POLICY "Users can view their own activity logs" ON activity_logs
-  FOR SELECT TO authenticated 
-  USING (user_id = auth.uid());
+CREATE POLICY "Admins can manage job category mappings" ON job_category_mappings
+FOR ALL USING (
+  EXISTS (
+    SELECT 1 FROM profiles 
+    WHERE id = auth.uid() AND role = 'admin'
+  )
+);
 
-CREATE POLICY "System can insert activity logs" ON activity_logs
-  FOR INSERT TO authenticated 
-  WITH CHECK (true);
+-- Insert default job categories
+INSERT INTO job_categories (name, description, icon, color) VALUES
+('Technology', 'Software development, IT, and tech roles', 'Code', '#3B82F6'),
+('Marketing', 'Digital marketing, content, and growth roles', 'Megaphone', '#10B981'),
+('Sales', 'Business development and sales positions', 'TrendingUp', '#F59E0B'),
+('Design', 'UI/UX, graphic design, and creative roles', 'Palette', '#8B5CF6'),
+('Operations', 'Business operations and management', 'Settings', '#6B7280'),
+('Finance', 'Accounting, finance, and related roles', 'DollarSign', '#059669'),
+('Human Resources', 'HR, recruitment, and people operations', 'Users', '#DC2626'),
+('Customer Support', 'Customer service and support roles', 'MessageCircle', '#0891B2')
+ON CONFLICT (name) DO NOTHING;
 
--- RLS policies for activity_check_tokens
-CREATE POLICY "Users can view their own tokens" ON activity_check_tokens
-  FOR SELECT TO authenticated 
-  USING (user_id = auth.uid());
+-- Create function to update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = TIMEZONE('utc'::text, NOW());
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
 
-CREATE POLICY "System can manage tokens" ON activity_check_tokens
-  FOR ALL TO authenticated 
-  USING (true);
+-- Create triggers to automatically update updated_at
+CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON profiles
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
--- RLS policies for audit_logs
-CREATE POLICY "Admins can view all audit logs" ON audit_logs
-  FOR SELECT TO authenticated 
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles 
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+CREATE TRIGGER update_jobs_updated_at BEFORE UPDATE ON jobs
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-CREATE POLICY "Users can view their own audit logs" ON audit_logs
-  FOR SELECT TO authenticated 
-  USING (user_id = auth.uid());
-
-CREATE POLICY "System can insert audit logs" ON audit_logs
-  FOR INSERT TO authenticated 
-  WITH CHECK (true);
-
--- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_profiles_role ON profiles(role);
-CREATE INDEX IF NOT EXISTS idx_jobs_posted_by ON jobs(posted_by);
-CREATE INDEX IF NOT EXISTS idx_jobs_created_at ON jobs(created_at);
-CREATE INDEX IF NOT EXISTS idx_applications_job_id ON applications(job_id);
-CREATE INDEX IF NOT EXISTS idx_applications_applicant_id ON applications(applicant_id);
-CREATE INDEX IF NOT EXISTS idx_applications_status ON applications(status);
-
--- Indexes for new tables
-CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id ON activity_logs(user_id);
-CREATE INDEX IF NOT EXISTS idx_activity_logs_created_at ON activity_logs(created_at);
-CREATE INDEX IF NOT EXISTS idx_activity_check_tokens_user_id ON activity_check_tokens(user_id);
-CREATE INDEX IF NOT EXISTS idx_activity_check_tokens_token ON activity_check_tokens(token);
-CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);
-CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);
-CREATE INDEX IF NOT EXISTS idx_audit_logs_gdpr_related ON audit_logs(gdpr_related);
-```
-
-```sql
--- Storage policies for documents bucket
-CREATE POLICY "Users can upload their own documents" ON storage.objects
-  FOR INSERT TO authenticated
-  WITH CHECK (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
-
-CREATE POLICY "Users can view their own documents" ON storage.objects
-  FOR SELECT TO authenticated
-  USING (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
-
-CREATE POLICY "Users can update their own documents" ON storage.objects
-  FOR UPDATE TO authenticated
-  USING (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
-
-CREATE POLICY "Users can delete their own documents" ON storage.objects
-  FOR DELETE TO authenticated
-  USING (bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]);
-```
+CREATE TRIGGER update_applications_updated_at BEFORE UPDATE ON applications
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
