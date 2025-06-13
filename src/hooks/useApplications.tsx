@@ -26,20 +26,51 @@ export const useApplications = () => {
 
   // Get user's applications
   const { data: applications = [], isLoading, error } = useQuery({
-    queryKey: ["applications", user?.id],
+    queryKey: ["all-applications", user?.id],
     queryFn: async () => {
       if (!user?.id) throw new Error("No user");
 
+      // Fetch all applications with job and applicant details
       const { data, error } = await supabase
           .from("applications")
-          .select('*, jobs(*)')
-          .eq("applicant_id", user.id)
+          .select(`
+        *,
+        jobs(*),
+        profiles:applications_applicant_id_fkey(
+          id,
+          first_name,
+          last_name,
+          email,
+          phone,
+          availability,
+          skills
+        )
+      `)
           .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      return data as (Application & { jobs: Database['public']['Tables']['jobs']['Row'] })[];
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      console.log('Fetched applications:', data);
+
+      // Transform data to match your interface
+      return data?.map(app => ({
+        ...app,
+        applicant: app.profiles ? {
+          id: app.profiles.id,
+          full_name: `${app.profiles.first_name} ${app.profiles.last_name}`,
+          email: app.profiles.email,
+          phone: app.profiles.phone,
+          availability: app.profiles.availability,
+          skills: app.profiles.skills
+        } : null
+      })) || [];
     },
     enabled: !!user?.id,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 3,
   });
 
   // Check if user has applied to a job

@@ -1,6 +1,7 @@
+// Debug version of ApplicationReview component
 'use client'
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAllCandidates } from "@/hooks/useAllCandidates";
 import { useApplications } from "@/hooks/useApplications";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,7 +45,6 @@ interface Job {
   salary_range?: string;
 }
 
-// Define types based on the database schema
 interface Application {
   job_id: string;
   applicant_id: string;
@@ -52,29 +52,67 @@ interface Application {
   created_at?: string | null;
   cv_url?: string | null;
   status?: string | null;
-  // Extended fields that would come from joins with applicants/users table
-  applicant?: {
+  applicant: {
     id: string;
-    full_name?: string;
-    email?: string;
-    phone?: string;
-    availability?: string;
-    skills?: string[];
-  };
-  job?: Job;
+    full_name?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    availability?: string | null;
+    skills?: string[] | null;
+  } | null; // Use null here if the data can be null
+  job?: Job | null; // Use null here if the data can be null
 }
 
-// Define status type for better type safety
 type ApplicationStatus = "pending" | "under_review" | "interview_scheduled" | "accepted" | "rejected";
 
 export const ApplicationReview = () => {
-  const { applications = [], isLoading } = useApplications();
+  const { applications = [], isLoading, error } = useApplications();
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all');
 
-  const filteredApplications = applications.filter((app: Application) =>
-      statusFilter === "all" || app.status === statusFilter
-  );
+  // Debug logging
+  useEffect(() => {
+    console.log('=== APPLICATION REVIEW DEBUG ===');
+    console.log('Raw applications data:', applications);
+    console.log('Applications length:', applications?.length);
+    console.log('Applications type:', typeof applications);
+    console.log('Applications is array:', Array.isArray(applications));
+    console.log('IsLoading:', isLoading);
+    console.log('Error:', error);
+    console.log('Status filter:', statusFilter);
+
+    // Log each application individually
+    if (applications && Array.isArray(applications)) {
+      applications.forEach((app, index) => {
+        console.log(`Application ${index}:`, {
+          job_id: app.job_id,
+          applicant_id: app.applicant_id,
+          status: app.status,
+          applicant: app.applicant,
+          created_at: app.created_at
+        });
+      });
+    }
+  }, [applications, isLoading, error, statusFilter]);
+
+  // Safe filtering with debug logging
+  const filteredApplications = React.useMemo(() => {
+    console.log('Filtering applications...');
+
+    if (!applications || !Array.isArray(applications)) {
+      console.log('No applications or not an array');
+      return [];
+    }
+
+    const filtered = applications.filter((app: Application) => {
+      const matchesFilter = statusFilter === "all" || app.status === statusFilter;
+      console.log(`App ${app.applicant_id} - Status: ${app.status}, Filter: ${statusFilter}, Matches: ${matchesFilter}`);
+      return matchesFilter;
+    });
+
+    console.log('Filtered applications:', filtered.length);
+    return filtered;
+  }, [applications, statusFilter]);
 
   const getStatusColor = (status: string): string => {
     switch (status) {
@@ -93,16 +131,10 @@ export const ApplicationReview = () => {
 
   const handleViewDetails = (application: Application) => {
     setSelectedApp(application);
-    // Auto-switch to detail tab when viewing details
     const detailTab = document.querySelector('[data-value="detail"]') as HTMLElement;
     if (detailTab) {
       detailTab.click();
     }
-  };
-  const getInitials = (profile: Profile) => {
-    const firstName = profile.first_name?.[0] || '';
-    const lastName = profile.last_name?.[0] || '';
-    return firstName + lastName || 'U';
   };
 
   const handleCVAccess = async (cvPath: string, action: 'view' | 'download', candidateName?: string) => {
@@ -134,11 +166,32 @@ export const ApplicationReview = () => {
     }
   };
 
+  // Enhanced loading state
   if (isLoading) {
     return (
         <div className="flex items-center justify-center p-8">
           <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
             <div className="animate-pulse text-gray-500">Loading applications...</div>
+          </div>
+        </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+        <div className="flex items-center justify-center p-8">
+          <div className="text-center">
+            <XCircle className="h-8 w-8 text-red-500 mx-auto mb-4" />
+            <div className="text-red-600">Error loading applications: {error.message || 'Unknown error'}</div>
+            <Button
+                variant="outline"
+                className="mt-4"
+                onClick={() => window.location.reload()}
+            >
+              Retry
+            </Button>
           </div>
         </div>
     );
@@ -149,9 +202,9 @@ export const ApplicationReview = () => {
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Application Reviews</h2>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">
-              {filteredApplications.length} application{filteredApplications.length !== 1 ? 's' : ''}
-            </span>
+          <span className="text-sm text-gray-600">
+            {filteredApplications.length} application{filteredApplications.length !== 1 ? 's' : ''}
+          </span>
             <Select value={statusFilter} onValueChange={(value: string) => setStatusFilter(value as ApplicationStatus | 'all')}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Filter by status" />
@@ -178,17 +231,34 @@ export const ApplicationReview = () => {
             {filteredApplications.length === 0 ? (
                 <Card>
                   <CardContent className="p-8 text-center">
-                    <p className="text-gray-500">
-                      {statusFilter === "all"
-                          ? "No applications found."
-                          : `No applications with status "${formatStatus(statusFilter)}".`
-                      }
-                    </p>
+                    <div className="space-y-2">
+                      <p className="text-gray-500">
+                        {statusFilter === "all"
+                            ? "No applications found."
+                            : `No applications with status "${formatStatus(statusFilter)}".`
+                        }
+                      </p>
+                      <p className="text-sm text-gray-400">
+                        Raw applications count: {applications?.length || 0}
+                      </p>
+                      {applications && applications.length > 0 && (
+                          <div className="mt-4 text-left">
+                            <p className="text-sm font-medium text-gray-600 mb-2">Available statuses in data:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {Array.from(new Set(applications.map(app => app.status || 'null'))).map(status => (
+                                  <Badge key={status} variant="outline" className="text-xs">
+                                    {status}
+                                  </Badge>
+                              ))}
+                            </div>
+                          </div>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
             ) : (
-                filteredApplications.map((application: Application) => (
-                    <Card key={`${application.job_id}-${application.applicant_id}`} className="cursor-pointer hover:shadow-md transition-shadow">
+                filteredApplications.map((application: Application, index: number) => (
+                    <Card key={`${application.job_id}-${application.applicant_id}-${index}`} className="cursor-pointer hover:shadow-md transition-shadow">
                       <CardContent className="p-6">
                         <div className="flex items-start justify-between">
                           <div className="flex items-start space-x-4">
@@ -233,8 +303,8 @@ export const ApplicationReview = () => {
 
                               {application.applicant?.skills && application.applicant.skills.length > 0 && (
                                   <div className="flex flex-wrap gap-1 mt-2">
-                                    {application.applicant.skills.slice(0, 3).map((skill, index) => (
-                                        <Badge key={index} variant="secondary" className="text-xs">
+                                    {application.applicant.skills.slice(0, 3).map((skill, skillIndex) => (
+                                        <Badge key={skillIndex} variant="secondary" className="text-xs">
                                           {skill}
                                         </Badge>
                                     ))}
@@ -251,26 +321,26 @@ export const ApplicationReview = () => {
                                     <FileText className="h-4 w-4 text-green-600" />
                                     <span className="text-green-700 text-xs font-medium">CV Available</span>
                                     <div className="flex gap-1 ml-auto">
-                                       <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              handleCVAccess(application.cv_url || '', 'view', application.applicant?.full_name);
-                                            }}
-                                          >
-                                            <ExternalLink className="h-4 w-4" />
-                                          </Button>
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              handleCVAccess(application.cv_url || '', 'download', application.applicant?.full_name);
-                                            }}
-                                          >
-                                            <FileText className="h-4 w-4" />
-                                          </Button>
+                                      <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleCVAccess(application.cv_url || '', 'view', application?.applicant?.full_name || "");
+                                          }}
+                                      >
+                                        <ExternalLink className="h-4 w-4" />
+                                      </Button>
+                                      <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleCVAccess(application.cv_url || '', 'download', application.applicant?.full_name || "");
+                                          }}
+                                      >
+                                        <FileText className="h-4 w-4" />
+                                      </Button>
                                     </div>
                                   </div>
                               )}
@@ -377,17 +447,17 @@ export const ApplicationReview = () => {
                               <span className="text-sm">Resume Attached</span>
                             </div>
                             <div className="flex space-x-2">
-                             <Button
+                              <Button
                                   variant="ghost"
                                   size="icon"
-                                  onClick={() => handleCVAccess(selectedApp.cv_url || '', 'view', selectedApp.applicant?.full_name)}
+                                  onClick={() => handleCVAccess(selectedApp.cv_url || '', 'view', selectedApp.applicant?.full_name || "")}
                               >
                                 <ExternalLink className="h-4 w-4" />
                               </Button>
                               <Button
                                   variant="ghost"
                                   size="icon"
-                                  onClick={() => handleCVAccess(selectedApp.cv_url || '', 'download', selectedApp.applicant?.full_name)}
+                                  onClick={() => handleCVAccess(selectedApp.cv_url || '', 'download', selectedApp.applicant?.full_name || "")}
                               >
                                 <FileText className="h-4 w-4" />
                               </Button>

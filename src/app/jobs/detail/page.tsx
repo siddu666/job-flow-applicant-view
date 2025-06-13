@@ -1,10 +1,10 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, usePathname } from 'next/navigation';
 import { useJobs } from "@/hooks/useJobs";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin, Calendar, Briefcase, User, FileText, Code, Clock, RefreshCw, ArrowLeft } from 'lucide-react';
+import { MapPin, Calendar, Briefcase, User, FileText, Code, Clock, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
@@ -24,6 +24,7 @@ interface Job {
 
 export default function JobDetail() {
     const searchParams = useSearchParams();
+    const pathname = usePathname();
     const jobId = searchParams.get('id');
     const { jobs, loading: jobsLoading } = useJobs();
 
@@ -50,6 +51,9 @@ export default function JobDetail() {
             </div>
         );
     }
+
+    // Construct the current path using pathname and searchParams
+    const currentPath = pathname + window.location.search;
 
     return (
         <motion.div
@@ -166,7 +170,7 @@ export default function JobDetail() {
                         whileHover={{ scale: 1.02 }}
                         className="pt-4 border-t"
                     >
-                        <Link href={`/apply?jobId=${job.id}`} className="block">
+                        <Link href={`/apply?jobId=${job.id}&redirect=${encodeURIComponent(currentPath)}`} className="block">
                             <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 text-lg">
                                 Apply Now
                             </Button>

@@ -52,7 +52,7 @@ export default function Jobs() {
                         Complete Your Profile
                     </h3>
                     <p className="text-yellow-700 mb-4">
-                        To receive personalized job recommendations, please complete your profile. This will help us suggest jobs that align with your skills and preferences. Once you've finished, head over to the 'Recommended Jobs' page to explore your matches.
+                        To receive personalized job recommendations, please complete your profile. This will help us suggest jobs that align with your skills and preferences. Once you have finished, head over to the Recommended Jobs page to explore your matches.
                     </p>
                     <Link href="/profile">
                         <Button className="bg-yellow-600 hover:bg-yellow-700 text-white">

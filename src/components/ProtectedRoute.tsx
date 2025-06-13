@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/contexts/auth-context'
 import { useProfile } from '@/hooks/useProfile'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 interface ProtectedRouteProps {
@@ -16,6 +16,7 @@ export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = 
   const { data: profile, isLoading: profileLoading } = useProfile(user?.id)
   const router = useRouter()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [hasRedirected, setHasRedirected] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
 
@@ -29,7 +30,9 @@ export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = 
     // If user is not authenticated and page requires auth
     if (!user && !allowUnauthenticated) {
       setHasRedirected(true)
-      router.push('/signin')
+      // Store the current path they were trying to access
+      const redirectUrl = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
+      router.push(`/signin?redirect=${encodeURIComponent(redirectUrl)}`)
       return
     }
 
@@ -51,7 +54,7 @@ export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = 
         }
       }
     }
-  }, [user, profile, loading, profileLoading, requiredRole, router, allowUnauthenticated, hasRedirected, isMounted])
+  }, [user, profile, loading, profileLoading, requiredRole, router, allowUnauthenticated, hasRedirected, isMounted, pathname, searchParams])
 
   // Show loading while checking auth or not mounted
   if (!isMounted || loading || (requiredRole && user && profileLoading)) {
@@ -77,5 +80,3 @@ export function ProtectedRoute({ children, requiredRole, allowUnauthenticated = 
 
   return <>{children}</>
 }
-
-
