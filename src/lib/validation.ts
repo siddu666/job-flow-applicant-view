@@ -309,6 +309,22 @@ export const fileUploadSchema = z.object({
     }, "File type must be PDF, DOC, DOCX, or TXT"),
 });
 
+// CV processing validation
+export const cvProcessingSchema = z.object({
+  full_name: z.string().min(2, "Full name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  skills: z.array(z.string()).min(1, "At least one skill is required"),
+  experience_years: z.number().min(0).optional(),
+  project_summary: z.string().min(20, "Project summary must be meaningful").optional(),
+}).refine(data => {
+  // Must have either experience years or meaningful projects
+  return (data.experience_years && data.experience_years > 0) || 
+         (data.project_summary && data.project_summary.length >= 20);
+}, {
+  message: "CV must contain either work experience or meaningful project descriptions",
+  path: ["experience_years"]
+});
+
 // Search and filter validation
 export const searchFiltersSchema = z.object({
   query: z.string()

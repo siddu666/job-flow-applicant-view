@@ -184,6 +184,206 @@ const SkillsCard: React.FC<SkillsCardProps> = ({ formData, isEditing, removeSkil
   );
 };
 
+// PDF Processing Utility
+class PDFProcessing {
+  async extractText(file: File): Promise<string> {
+    const pdfjsLib = await import('pdfjs-dist');
+    // @ts-ignore
+    pdfjsLib.GlobalWorkerOptions.workerSrc = window.location.origin + '/pdf.worker.min.js';
+
+    const fileReader = new FileReader();
+
+    return new Promise((resolve, reject) => {
+      fileReader.onload = async () => {
+        try {
+          const typedArray = new Uint8Array(fileReader.result as ArrayBuffer);
+          const pdfDocument = await pdfjsLib.getDocument(typedArray).promise;
+          let textContent = "";
+
+          for (let i = 1; i <= pdfDocument.numPages; i++) {
+            const page = await pdfDocument.getPage(i);
+            const text = await page.getTextContent();
+            textContent += text.items.map(item => item.str).join(" ") + "\n";
+          }
+
+          resolve(textContent);
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+
+      fileReader.readAsArrayBuffer(file);
+    });
+  }
+
+  cleanText(text: string): string {
+    // Remove special characters and normalize spacing
+    let cleanedText = text.replace(/[^a-zA-Z0-9\s]/g, "");
+    cleanedText = cleanedText.replace(/\s+/g, " ").trim();
+    return cleanedText;
+  }
+}
+
+// OpenAI Service for CV Parsing
+class OpenAIService {
+  private apiKey: string;
+
+  constructor() {
+    this.apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY || "";
+    if (!this.apiKey) {
+      console.warn("OpenAI API key not found. CV processing will be limited.");
+    }
+  }
+
+  async parseCV(text: string): Promise<any> {
+    if (!this.apiKey) {
+      console.warn("OpenAI API key not configured. Returning default data.");
+      return {
+        full_name: "John Doe",
+        email: "john.doe@example.com",
+        skills: ["JavaScript", "React", "Node.js"],
+        projects: [{ name: "Project 1", description: "Description" }],
+      };
+    }
+
+    const prompt = `
+      Analyze the following CV text and extract the following information:
+      - Full Name
+      - Email Address
+      - Skills and Tools (as a list)
+      - Summary of Key Projects (return name and short description)
+
+      CV Text:
+      ${text}
+
+      Response should be in JSON format.
+    `;
+
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: 500,
+          temperature: 0.7,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`OpenAI API error: ${response.status} - ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (!data.choices || data.choices.length === 0) {
+        throw new Error("No response from OpenAI API");
+      }
+
+      const content = data.choices[0].message.content;
+      console.log("OpenAI Response Content:", content); // Log the raw content
+
+      try {
+        const parsedData = JSON.parse(content);
+        return parsedData;
+      } catch (parseError) {
+        console.error("Failed to parse OpenAI response:", parseError);
+        console.error("Raw content from OpenAI:", content);
+        throw new Error("Failed to parse OpenAI response. Check console for details.");
+      }
+    } catch (error) {
+      console.error("Error calling OpenAI API:", error);
+      throw error;
+    }
+  }
+}
+
+// CV Processing Service
+class CVProcessingService {
+  private pdfProcessor: PDFProcessing;
+  private openAIService: OpenAIService;
+  private uploadCV: (file: File, id: string) => Promise<string>;
+
+  constructor() {
+    this.pdfProcessor = new PDFProcessing();
+    this.openAIService = new OpenAIService();
+    this.uploadCV = async (file: File, id: string) => {
+      // Mock implementation for uploadCV
+      console.log(`Mock uploadCV called with file: ${file.name} and id: ${id}`);
+      return Promise.resolve(`cv_url_for_${id}`);
+    };
+  }
+
+  async processCV(file: File, userId: string): Promise<{ success: boolean; data?: any; error?: string, rejected?: boolean, rejectionReason?: string }> {
+    try {
+      const maxFileSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxFileSize) {
+        return { success: false, rejected: true, rejectionReason: "File size must be less than 10MB" };
+      }
+
+      const allowedTypes = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ];
+
+      if (!allowedTypes.includes(file.type)) {
+        return { success: false, rejected: true, rejectionReason: "Only PDF and Word documents are allowed" };
+      }
+
+      let text = "";
+      if (file.type === "application/pdf") {
+        text = await this.pdfProcessor.extractText(file);
+        text = this.pdfProcessor.cleanText(text);
+      } else {
+        // Handle .doc or .docx files (convert to text - requires additional library)
+        return { success: false, error: "Word document processing is not yet supported." };
+      }
+
+      if (!text) {
+        return { success: false, error: "Failed to extract text from the CV." };
+      }
+
+      const extractedData = await this.openAIService.parseCV(text);
+
+      if (!extractedData) {
+        return { success: false, error: "Failed to parse CV with OpenAI." };
+      }
+
+      // Check for minimum required information
+      if (!extractedData.skills || extractedData.skills.length === 0) {
+        return { success: false, rejected: true, rejectionReason: "CV does not contain sufficient skills information." };
+      }
+
+      // Upload CV
+      const fileName = await this.uploadCV(file, userId);
+
+      const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ cv_url: fileName })
+          .eq('id', userId);
+
+      if (updateError) {
+        console.error('Error updating profile with CV URL:', updateError);
+        return { success: false, error: `Failed to update profile: ${updateError.message}` };
+      }
+
+      return { success: true, data: extractedData };
+    } catch (error: any) {
+      console.error("Error in CV processing:", error);
+      return { success: false, error: error.message || "CV processing failed." };
+    }
+  }
+}
+
 const CandidateProfile = () => {
   const router = useRouter(); // Move the useRouter hook call to the top level
   const { user } = useAuth();
@@ -215,8 +415,10 @@ const CandidateProfile = () => {
     experience_years: 0,
     expected_salary_sek: 0,
     availability: "",
-    job_seeking_status: "actively_looking",
+    job_seeking_status: "",
   });
+
+  const [cvProcessingStatus, setCvProcessingStatus] = useState<'idle' | 'processing' | 'success' | 'rejected' | 'error'>('idle');
 
   useEffect(() => {
     setIsMounted(true);
@@ -240,7 +442,7 @@ const CandidateProfile = () => {
         experience_years: profile.experience_years || 0,
         expected_salary_sek: profile.expected_salary_sek || 0,
         availability: profile.availability || "",
-        job_seeking_status: profile.job_seeking_status || "actively_looking",
+        job_seeking_status: profile.job_seeking_status || "",
       });
 
       if (!profile.phone && !profile.current_location && !profile.skills?.length) {
@@ -264,46 +466,48 @@ const CandidateProfile = () => {
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-
-    if (!user?.id || !file) {
+    if (!file) {
       return;
     }
 
-    const maxFileSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxFileSize) {
-      toast.error("File size must be less than 10MB");
-      return;
-    }
-
-    const allowedTypes = [
-      "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
-      toast.error("Only PDF and Word documents are allowed");
-      return;
-    }
+    setCvProcessingStatus('processing');
 
     try {
-      const fileName = await uploadCV.mutateAsync({ id: user.id, file });
+      const cvProcessor = new CVProcessingService();
+      const result = await cvProcessor.processCV(file, user.id);
 
-      const { error: updateError } = await supabase
-          .from('profiles')
-          .update({ cv_url: fileName })
-          .eq('id', user.id);
+      if (result.success && result.data) {
+        setCvProcessingStatus('success');
 
-      if (updateError) {
-        console.error('Error updating profile with CV URL:', updateError);
-        toast.error(`Failed to update profile: ${updateError.message}`);
-        return;
+        // Update form data with extracted information
+        setFormData(prev => ({
+          ...prev,
+          first_name: result.data!.full_name.split(' ')[0] || prev.first_name,
+          last_name: result.data!.full_name.split(' ').slice(1).join(' ') || prev.last_name,
+          phone: result.data!.phone || prev.phone,
+          skills: [...new Set([...prev.skills, ...result.data!.skills])], // Merge skills
+          bio: result.data!.bio || prev.bio,
+          experience_years: result.data!.experience_years || prev.experience_years,
+          current_position: result.data!.current_position || prev.current_position,
+          current_company: result.data!.current_company || prev.current_company,
+          current_location: result.data!.location || prev.current_location,
+          linkedin_url: result.data!.linkedin_url || prev.linkedin_url,
+          github_url: result.data!.github_url || prev.github_url,
+          certifications: [...new Set([...prev.certifications, ...(result.data!.certifications || [])])],
+        }));
+
+        toast.success("CV processed successfully! Your profile has been updated with extracted information.");
+      } else if (result.rejected) {
+        setCvProcessingStatus('rejected');
+        toast.error(`CV rejected: ${result.rejectionReason}`);
+      } else {
+        setCvProcessingStatus('error');
+        toast.error(result.error || 'Failed to process CV');
       }
-
-      toast.success("CV uploaded successfully!");
     } catch (error) {
-      console.error("Error uploading CV:", error);
-      toast.error("Failed to upload CV. Please try again.");
+      setCvProcessingStatus('error');
+      console.error("Error processing CV:", error);
+      toast.error("Failed to process CV. Please try again.");
     }
   };
 

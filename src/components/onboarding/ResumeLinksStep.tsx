@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ChevronLeft, Upload, FileText } from 'lucide-react';
+import { ChevronLeft, Upload, FileText, CheckCircle, AlertTriangle, Loader2 } from 'lucide-react';
 import { OnboardingData } from './OnboardingSteps';
+import { CVProcessingService } from '@/lib/cv-processing-service';
+import { toast } from 'sonner';
+import { useAuth } from '@/contexts/auth-context';
 
 interface ResumeLinksStepProps {
   data: OnboardingData;
@@ -19,6 +22,10 @@ const ResumeLinksStep: React.FC<ResumeLinksStepProps> = ({
   onPrev 
 }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingStatus, setProcessingStatus] = useState<'idle' | 'processing' | 'success' | 'rejected' | 'error'>('idle');
+  const [extractedData, setExtractedData] = useState<any>(null);
+  const { user } = useAuth();
 
   const validateStep = () => {
     const newErrors: Record<string, string> = {};
@@ -49,24 +56,41 @@ const ResumeLinksStep: React.FC<ResumeLinksStepProps> = ({
     }
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      // Validate file type
-      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-      if (!allowedTypes.includes(file.type)) {
-        setErrors({ cvFile: 'Please upload a PDF or Word document' });
-        return;
-      }
+    if (!file || !user) return;
 
-      // Validate file size (10MB limit)
-      if (file.size > 10 * 1024 * 1024) {
-        setErrors({ cvFile: 'File size must be less than 10MB' });
-        return;
-      }
+    setIsProcessing(true);
+    setProcessingStatus('processing');
+    setErrors({});
 
-      updateData({ cvFile: file });
-      setErrors({});
+    try {
+      const cvProcessor = new CVProcessingService();
+      const result = await cvProcessor.processCV(file, user.id);
+
+      if (result.success && result.data) {
+        setProcessingStatus('success');
+        setExtractedData(result.data);
+        updateData({ cvFile: file });
+        toast.success('CV processed successfully! Profile information extracted.');
+      } else if (result.rejected) {
+        setProcessingStatus('rejected');
+        setErrors({ 
+          cvFile: `CV rejected: ${result.rejectionReason}. Please upload a CV with more detailed information about your skills and experience.`
+        });
+        toast.error('CV does not meet minimum requirements');
+      } else {
+        setProcessingStatus('error');
+        setErrors({ cvFile: result.error || 'Failed to process CV' });
+        toast.error('Failed to process CV');
+      }
+    } catch (error) {
+      setProcessingStatus('error');
+      setErrors({ cvFile: 'Failed to process CV. Please try again.' });
+      toast.error('An error occurred while processing your CV');
+      console.error('CV processing error:', error);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -74,24 +98,43 @@ const ResumeLinksStep: React.FC<ResumeLinksStepProps> = ({
     <div className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="cvUpload">CV/Resume Upload</Label>
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+        <div className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+          processingStatus === 'success' ? 'border-green-300 bg-green-50' :
+          processingStatus === 'rejected' ? 'border-red-300 bg-red-50' :
+          processingStatus === 'error' ? 'border-red-300 bg-red-50' :
+          'border-gray-300'
+        }`}>
           <input
             type="file"
             id="cvUpload"
             accept=".pdf,.doc,.docx"
             onChange={handleFileUpload}
             className="hidden"
+            disabled={isProcessing}
           />
-          <label htmlFor="cvUpload" className="cursor-pointer">
-            <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+          <label htmlFor="cvUpload" className={`cursor-pointer ${isProcessing ? 'pointer-events-none' : ''}`}>
+            {isProcessing ? (
+              <Loader2 className="h-8 w-8 text-blue-500 mx-auto mb-2 animate-spin" />
+            ) : processingStatus === 'success' ? (
+              <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
+            ) : processingStatus === 'rejected' || processingStatus === 'error' ? (
+              <AlertTriangle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+            ) : (
+              <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+            )}
+            
             <p className="text-sm text-gray-600">
-              Click to upload your CV/Resume
+              {isProcessing ? 'Processing your CV...' :
+               processingStatus === 'success' ? 'CV processed successfully!' :
+               processingStatus === 'rejected' ? 'CV rejected - please try another' :
+               processingStatus === 'error' ? 'Processing failed - click to retry' :
+               'Click to upload your CV/Resume'}
             </p>
             <p className="text-xs text-gray-500 mt-1">
               PDF, DOC, or DOCX (max 10MB)
             </p>
           </label>
-          {data.cvFile && (
+          {data.cvFile && processingStatus === 'success' && (
             <div className="mt-3 flex items-center justify-center text-green-600">
               <FileText className="h-4 w-4 mr-2" />
               <span className="text-sm">{data.cvFile.name}</span>
@@ -99,6 +142,22 @@ const ResumeLinksStep: React.FC<ResumeLinksStepProps> = ({
           )}
         </div>
         {errors.cvFile && <p className="text-red-500 text-sm">{errors.cvFile}</p>}
+        
+        {extractedData && processingStatus === 'success' && (
+          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+            <h4 className="font-semibold text-blue-800 mb-2">Extracted Information:</h4>
+            <div className="text-sm text-blue-700 space-y-1">
+              <p><strong>Name:</strong> {extractedData.full_name}</p>
+              <p><strong>Email:</strong> {extractedData.email}</p>
+              {extractedData.skills?.length > 0 && (
+                <p><strong>Skills:</strong> {extractedData.skills.slice(0, 5).join(', ')}{extractedData.skills.length > 5 ? '...' : ''}</p>
+              )}
+              {extractedData.experience_years && (
+                <p><strong>Experience:</strong> {extractedData.experience_years} years</p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="space-y-2">
