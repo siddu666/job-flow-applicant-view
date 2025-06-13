@@ -1,0 +1,44 @@
+CV Upload and Parsing:
+
+The system shall allow users to upload a CV in PDF format.
+The system shall parse the uploaded PDF to extract raw text, supporting various PDF formats.
+Text Preprocessing:
+
+The system shall clean and preprocess the extracted text by removing special characters, correcting spacing issues, and standardizing the format.
+The preprocessing module shall be configurable to handle different text normalization rules.
+Information Extraction:
+
+The system shall send the preprocessed text to an AI service (e.g., OpenAI API) to extract structured information, including:
+Full name
+Contact information (email, phone, LinkedIn)
+Professional summary
+Technical skills and tools
+Work experience (job title, company, location, duration, description)
+Education (degree, institution, duration)
+Certifications (name, issuing organization, issue date, expiry date)
+Hobbies and languages
+Data Storage:
+
+The system shall store the extracted information in a structured database with separate tables for each section:
+Personal Information
+Professional Profile
+Technical Skills
+Work Experience
+Education
+Certifications
+Hobbies and Languages
+Each table shall contain appropriate fields to store relevant data.
+Profile Management:
+
+The system shall provide an interface for users to view their profile information.
+Users shall be able to edit and update their profile information.
+The system shall display the extracted CV information on the user's profile page in a structured format.
+Certifications Management:
+
+The system shall handle certifications, including their storage and display on the CV.
+If certifications are missing in the uploaded CV, the system shall provide placeholders or omit the section based on configuration.
+CV Generation:
+
+The system shall generate a CV document by combining information from all the tables.
+The generated CV shall follow a standardized format (e.g., Juster Group AB CV format).
+The system shall allow admins to generate and download the CV in various formats (e.g., PDF, Word).
