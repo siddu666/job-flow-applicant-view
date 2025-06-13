@@ -1,3 +1,4 @@
+
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -107,91 +108,75 @@ ALTER TABLE activity_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE activity_check_tokens ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 
--- Drop existing policies to prevent conflicts
+-- Drop ALL existing policies to prevent conflicts
 DROP POLICY IF EXISTS "Users can view their own profile" ON profiles;
 DROP POLICY IF EXISTS "Users can update their own profile" ON profiles;
 DROP POLICY IF EXISTS "Users can insert their own profile" ON profiles;
+DROP POLICY IF EXISTS "profiles_select_own" ON profiles;
+DROP POLICY IF EXISTS "profiles_insert_own" ON profiles;
+DROP POLICY IF EXISTS "profiles_update_own" ON profiles;
 DROP POLICY IF EXISTS "Anyone can view jobs" ON jobs;
 DROP POLICY IF EXISTS "Recruiters can create jobs" ON jobs;
 DROP POLICY IF EXISTS "Job creators can update their jobs" ON jobs;
+DROP POLICY IF EXISTS "jobs_select_all" ON jobs;
+DROP POLICY IF EXISTS "jobs_insert_recruiters" ON jobs;
+DROP POLICY IF EXISTS "jobs_update_own" ON jobs;
 
--- Create simple, non-recursive RLS policies for profiles
-CREATE POLICY "profiles_select_own" ON profiles
-  FOR SELECT USING (auth.uid() = id);
+-- Create simple RLS policies without recursion
+-- Profile policies - use auth.uid() directly
+CREATE POLICY "profiles_select" ON profiles
+  FOR SELECT USING (id = auth.uid());
 
-CREATE POLICY "profiles_insert_own" ON profiles
-  FOR INSERT WITH CHECK (auth.uid() = id);
+CREATE POLICY "profiles_insert" ON profiles
+  FOR INSERT WITH CHECK (id = auth.uid());
 
-CREATE POLICY "profiles_update_own" ON profiles
-  FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "profiles_update" ON profiles
+  FOR UPDATE USING (id = auth.uid());
 
--- Create RLS policies for jobs
-CREATE POLICY "jobs_select_all" ON jobs
-  FOR SELECT TO authenticated USING (true);
+-- Job policies - simplified
+CREATE POLICY "jobs_select" ON jobs
+  FOR SELECT USING (true);
 
-CREATE POLICY "jobs_insert_recruiters" ON jobs
-  FOR INSERT TO authenticated 
-  WITH CHECK (auth.uid() = posted_by);
+CREATE POLICY "jobs_insert" ON jobs
+  FOR INSERT WITH CHECK (posted_by = auth.uid());
 
-CREATE POLICY "jobs_update_own" ON jobs
-  FOR UPDATE TO authenticated 
-  USING (auth.uid() = posted_by);
+CREATE POLICY "jobs_update" ON jobs
+  FOR UPDATE USING (posted_by = auth.uid());
 
--- Create RLS policies for applications
-CREATE POLICY "applications_select_own" ON applications
-  FOR SELECT TO authenticated 
-  USING (auth.uid() = applicant_id);
+-- Application policies
+CREATE POLICY "applications_select_applicant" ON applications
+  FOR SELECT USING (applicant_id = auth.uid());
 
-CREATE POLICY "applications_select_recruiters" ON applications
-  FOR SELECT TO authenticated 
-  USING (
-    EXISTS (
-      SELECT 1 FROM jobs 
-      WHERE jobs.id = applications.job_id 
-      AND jobs.posted_by = auth.uid()
+CREATE POLICY "applications_select_recruiter" ON applications
+  FOR SELECT USING (
+    posted_by = auth.uid() AND EXISTS (
+      SELECT 1 FROM jobs WHERE jobs.id = applications.job_id AND jobs.posted_by = auth.uid()
     )
   );
 
-CREATE POLICY "applications_insert_own" ON applications
-  FOR INSERT TO authenticated 
-  WITH CHECK (auth.uid() = applicant_id);
+CREATE POLICY "applications_insert" ON applications
+  FOR INSERT WITH CHECK (applicant_id = auth.uid());
 
-CREATE POLICY "applications_update_recruiters" ON applications
-  FOR UPDATE TO authenticated 
-  USING (
-    EXISTS (
-      SELECT 1 FROM jobs 
-      WHERE jobs.id = applications.job_id 
-      AND jobs.posted_by = auth.uid()
-    )
-  );
+-- Activity logs policies
+CREATE POLICY "activity_logs_select" ON activity_logs
+  FOR SELECT USING (user_id = auth.uid());
 
--- RLS policies for activity_logs
-CREATE POLICY "activity_logs_select_own" ON activity_logs
-  FOR SELECT TO authenticated 
-  USING (auth.uid() = user_id);
+CREATE POLICY "activity_logs_insert" ON activity_logs
+  FOR INSERT WITH CHECK (user_id = auth.uid());
 
-CREATE POLICY "activity_logs_insert_system" ON activity_logs
-  FOR INSERT TO authenticated 
-  WITH CHECK (true);
+-- Activity check tokens policies
+CREATE POLICY "activity_check_tokens_select" ON activity_check_tokens
+  FOR SELECT USING (user_id = auth.uid());
 
--- RLS policies for activity_check_tokens
-CREATE POLICY "activity_check_tokens_select_own" ON activity_check_tokens
-  FOR SELECT TO authenticated 
-  USING (auth.uid() = user_id);
+CREATE POLICY "activity_check_tokens_manage" ON activity_check_tokens
+  FOR ALL USING (user_id = auth.uid());
 
-CREATE POLICY "activity_check_tokens_manage_own" ON activity_check_tokens
-  FOR ALL TO authenticated 
-  USING (auth.uid() = user_id);
+-- Audit logs policies
+CREATE POLICY "audit_logs_select" ON audit_logs
+  FOR SELECT USING (user_id = auth.uid());
 
--- RLS policies for audit_logs
-CREATE POLICY "audit_logs_select_own" ON audit_logs
-  FOR SELECT TO authenticated 
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "audit_logs_insert_system" ON audit_logs
-  FOR INSERT TO authenticated 
-  WITH CHECK (true);
+CREATE POLICY "audit_logs_insert" ON audit_logs
+  FOR INSERT WITH CHECK (user_id = auth.uid());
 
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
